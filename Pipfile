@@ -11,6 +11,7 @@ flake8 = "*"
 [packages]
 flask = "*"
 coverage = "*"
+pytest = "*"
 psycopg2 = "*"
 
 [requires]

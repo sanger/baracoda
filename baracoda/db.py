@@ -25,11 +25,28 @@ def close_db(e=None):
     """
     Close the connection to the database.
     """
-    db = g.pop('db', None)
+    db_obj = g.pop('db', None)
 
-    if db is not None:
-        db.connection.close()
+    if (db_obj is not None) and ('connection' in db_obj.__dict__.keys()):
+        db_obj.connection.close()
 
+
+def exists_sequence(cursor, sequence_name):
+    cursor.execute(
+        f"SELECT sequence_name \
+            FROM information_schema.sequences \
+            WHERE sequence_name='{sequence_name}';")
+    seq_check = cursor.fetchone()
+    return seq_check
+
+def create_sequence(cursor, sequence_name, sequence_start):
+    current_app.logger.debug(f'Creating the sequence: {sequence_name}')
+    cursor.execute(
+        f'CREATE SEQUENCE {sequence_name} START {sequence_start};'
+    )
+
+def reset_sequence_to_value(cursor, sequence_name, sequence_start):
+    cursor.execute(f'ALTER SEQUENCE {sequence_name} RESTART WITH {sequence_start};')
 
 def init_db():
     """
@@ -41,17 +58,14 @@ def init_db():
     with db.connection:
         with db.cursor as cursor:
             sequence_name = current_app.config.sequence_name
-            cursor.execute(
-                f"SELECT sequence_name \
-                  FROM information_schema.sequences \
-                  WHERE sequence_name='{sequence_name}';")
-            seq_check = cursor.fetchone()
+            sequence_start = current_app.config.sequence_start
 
-            if not seq_check:
-                current_app.logger.debug(f'Creating the sequence: {sequence_name}')
-                cursor.execute(
-                    f'CREATE SEQUENCE {sequence_name} START {current_app.config.sequence_start};'
-                )
+            if not exists_sequence(cursor, sequence_name):
+                create_sequence(cursor, sequence_name, sequence_start)
+            
+            if (current_app.config.reset_sequence == True):
+                reset_sequence_to_value(cursor, sequence_name, sequence_start)                
+
 
 @click.command('init-db')
 @with_appcontext
@@ -62,12 +76,11 @@ def init_db_command():
 
 def get_next_value():
     db = get_db()
-
     with db.cursor as cursor:
         cursor.execute(f"SELECT nextval('{current_app.config.sequence_name}');")
         result = cursor.fetchone()
 
-    return str(result[0])
+    return result[0]
 
 
 def init_app(app):
