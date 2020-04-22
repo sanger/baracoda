@@ -35,7 +35,7 @@ def exists_sequence(cursor, sequence_name):
     cursor.execute(
         f"SELECT sequence_name \
             FROM information_schema.sequences \
-            WHERE sequence_name='{sequence_name}';")
+            WHERE sequence_name='{sequence_name.lower()}';")
     seq_check = cursor.fetchone()
     return seq_check
 
@@ -52,19 +52,21 @@ def init_db():
     """
         Initialise the required database components.
     """
+
     current_app.logger.debug('init_db()')
     db = get_db()
 
     with db.connection:
         with db.cursor as cursor:
-            sequence_name = current_app.config.sequence_name
-            sequence_start = current_app.config.sequence_start
+            for prefix_record in current_app.config['prefixes']:
+                sequence_name = prefix_record['prefix']
+                sequence_start = prefix_record['sequence_start']
 
-            if not exists_sequence(cursor, sequence_name):
-                create_sequence(cursor, sequence_name, sequence_start)
-            
-            if (current_app.config.reset_sequence == True):
-                reset_sequence_to_value(cursor, sequence_name, sequence_start)                
+                if not exists_sequence(cursor, sequence_name):
+                    create_sequence(cursor, sequence_name, sequence_start)
+                
+                if (current_app.config.reset_sequence == True):
+                    reset_sequence_to_value(cursor, sequence_name, sequence_start)                
 
 
 @click.command('init-db')
@@ -74,10 +76,18 @@ def init_db_command():
     click.echo('Initialized the database')
 
 
-def get_next_value():
+def get_next_value(sequence_name: str):
     db = get_db()
     with db.cursor as cursor:
-        cursor.execute(f"SELECT nextval('{current_app.config.sequence_name}');")
+        cursor.execute(f"SELECT nextval('{sequence_name.lower()}');")
+        result = cursor.fetchone()
+
+    return result[0]
+
+def get_current_value(sequence_name: str):
+    db = get_db()
+    with db.cursor as cursor:
+        cursor.execute(f"SELECT last_value FROM {sequence_name.lower()};")
         result = cursor.fetchone()
 
     return result[0]
