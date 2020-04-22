@@ -7,12 +7,16 @@ verify_ssl = true
 yapf = "*"
 rope = "*"
 flake8 = "*"
+coverage = "*"
+pytest = "*"
 
 [packages]
 flask = "*"
-coverage = "*"
-pytest = "*"
 psycopg2 = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3.8"
+
+[pipenv]
+allow_prereleases = true
