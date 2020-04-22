@@ -10,7 +10,7 @@ def app():
             "DB_HOST":"localhost",
             "DB_PORT":5432,
             "DB_USER":"postgres",
-            "DB_PASSWORD":"",
+            "DB_PASSWORD":"postgres",
             "DB_DBNAME":"baracoda_test",
             "SEQUENCE_NAME":"heron",
             "SEQUENCE_START":1
