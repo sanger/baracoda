@@ -34,7 +34,11 @@ def test_get_last_barcode(client):
 def test_get_index_prefixes(client, app):
     response = client.get("/prefixes", headers={"Content-type": "application/json"})
     assert response.json == [
-        {"prefix": "SANG", "description": "Sanger barcodes", "centre": "Sanger"},
+        {
+            "prefix": "SANG",
+            "description": "Sanger barcodes",
+            "centre": "Sanger Institute",
+        },
         {"prefix": "NIRE", "description": "Nire barcodes", "centre": "Nire"},
     ]
     assert response.status_code == 200
@@ -42,10 +46,15 @@ def test_get_index_prefixes(client, app):
 
 def test_prefix_search(client):
     response = client.get(
-        "/search/prefixes?centre=Sanger", headers={"Content-type": "application/json"}
+        "/search/prefixes?centre=Sanger Institute",
+        headers={"Content-type": "application/json"},
     )
     assert response.json == [
-        {"prefix": "SANG", "description": "Sanger barcodes", "centre": "Sanger"}
+        {
+            "prefix": "SANG",
+            "description": "Sanger barcodes",
+            "centre": "Sanger Institute",
+        }
     ]
     assert response.status_code == 200
 

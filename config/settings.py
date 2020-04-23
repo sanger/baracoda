@@ -1,7 +1,11 @@
 def development_config():
     return {
         "prefixes": [
-            {"prefix": "SANG", "description": "Sanger barcodes", "centre": "Sanger"},
+            {
+                "prefix": "SANG",
+                "description": "Sanger barcodes",
+                "centre": "Sanger Institute",
+            },
             {"prefix": "NIRE", "description": "Nire barcodes", "centre": "Nire"},
         ],
         "valid_prefixes": ["SANG", "NIRE"],
@@ -13,7 +17,11 @@ def development_config():
 def testing_config():
     return {
         "prefixes": [
-            {"prefix": "SANG", "description": "Sanger barcodes", "centre": "Sanger"},
+            {
+                "prefix": "SANG",
+                "description": "Sanger barcodes",
+                "centre": "Sanger Institute",
+            },
             {"prefix": "NIRE", "description": "Nire barcodes", "centre": "Nire"},
         ],
         "valid_prefixes": ["SANG", "NIRE"],
