@@ -45,8 +45,6 @@ def get_all_prefixes():
 
 @bp.route("/search/prefixes", methods=["GET"])
 def search_prefix_by_centre():
-    import pdb
-
     name = request.args.get("centre", "")
     if name == "":
         return (
