@@ -12,7 +12,7 @@ def development_config():
         ],
         'valid_prefixes': ['SANG', 'NIRE'],
         'sequence_name': 'heron',
-        'sequence_start': 1
+        'sequence_start': 200000
     }
 
 def testing_config():
@@ -29,7 +29,7 @@ def testing_config():
         ],
         'valid_prefixes': ['SANG', 'NIRE'],
         'sequence_name': 'heron',
-        'sequence_start': 1,
+        'sequence_start': 200000,
         'reset_sequence': True
     }
 

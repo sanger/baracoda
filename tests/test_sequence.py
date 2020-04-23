@@ -10,10 +10,10 @@ def test_invalid_prefix_is_forbidden(client):
 
 def test_get_new_barcode(client):
     response = client.post('/prefix/SANG/new', headers={'Content-type': 'application/json'})
-    assert response.json == {'barcode': 'SANG-1F'}
+    assert response.json == {'barcode': 'SANG-30D404'}
     assert response.status_code == 201
 
 def test_get_last_barcode(client):
     response = client.get('/prefix/SANG/last', headers={'Content-type': 'application/json'})
-    assert response.json == {'barcode': 'SANG-1F'}
+    assert response.json == {'barcode': 'SANG-30D404'}
     assert response.status_code == 200

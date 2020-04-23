@@ -18,7 +18,7 @@ def endpoint_for_barcode_render(prefix, barcode_index_generator, status_code_suc
     except WrongPrefixError as error:
         return jsonify({'errors': [str(error)]}), 422
 
-    next_value = barcode_index_generator(prefix)
+    next_value = barcode_index_generator(current_app.config['sequence_name'])
 
     hex_str = format(next_value, 'X')
     barcode = formatter.barcode(hex_str)
