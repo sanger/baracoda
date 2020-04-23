@@ -46,6 +46,7 @@ def create_sequence(cursor, sequence_name, sequence_start):
     )
 
 def reset_sequence_to_value(cursor, sequence_name, sequence_start):
+    current_app.logger.debug(f'Resetting the sequence: {sequence_name} to {sequence_start}')
     cursor.execute(f'ALTER SEQUENCE {sequence_name} RESTART WITH {sequence_start};')
 
 def init_db():
@@ -61,11 +62,10 @@ def init_db():
             for prefix_record in current_app.config['prefixes']:
                 sequence_name = prefix_record['prefix']
                 sequence_start = prefix_record['sequence_start']
-
                 if not exists_sequence(cursor, sequence_name):
                     create_sequence(cursor, sequence_name, sequence_start)
                 
-                if (current_app.config.reset_sequence == True):
+                if ('reset_sequence' in prefix_record) and (prefix_record['reset_sequence'] == True):
                     reset_sequence_to_value(cursor, sequence_name, sequence_start)                
 
 

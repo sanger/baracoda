@@ -53,7 +53,13 @@ DB_DBNAME=baracoda_dev
 # pipenv shell
 ```
 
-6. Start the app:
+6. Initialize the database and create required sequences (only needed when we change the config/settings.py):
+
+```bash
+# flask init-db
+```
+
+7. Start the app:
 ```bash
 # flask run
 ```
