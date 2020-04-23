@@ -3,16 +3,16 @@ def development_config():
         'prefixes': [
             {
                 'prefix': 'SANG',
-                'description': 'Sanger barcodes',
-                'sequence_start': 1
+                'description': 'Sanger barcodes'
             },
             {
                 'prefix': 'NIRE',
-                'description': 'Nire barcodes',
-                'sequence_start': 1
+                'description': 'Nire barcodes'
             }
         ],
-        'valid_prefixes': ['SANG', 'NIRE']
+        'valid_prefixes': ['SANG', 'NIRE'],
+        'sequence_name': 'heron',
+        'sequence_start': 1
     }
 
 def testing_config():
@@ -20,18 +20,17 @@ def testing_config():
         'prefixes': [
             {
                 'prefix': 'SANG',
-                'description': 'Sanger barcodes',
-                'sequence_start': 1,
-                'reset_sequence': True
+                'description': 'Sanger barcodes'
             },
             {
                 'prefix': 'NIRE',
-                'description': 'Nire barcodes',
-                'sequence_start': 1,
-                'reset_sequence': True
+                'description': 'Nire barcodes'
             }
         ],
-        'valid_prefixes': ['SANG', 'NIRE']
+        'valid_prefixes': ['SANG', 'NIRE'],
+        'sequence_name': 'heron',
+        'sequence_start': 1,
+        'reset_sequence': True
     }
 
 def production_config():

@@ -59,14 +59,13 @@ def init_db():
 
     with db.connection:
         with db.cursor as cursor:
-            for prefix_record in current_app.config['prefixes']:
-                sequence_name = prefix_record['prefix']
-                sequence_start = prefix_record['sequence_start']
-                if not exists_sequence(cursor, sequence_name):
-                    create_sequence(cursor, sequence_name, sequence_start)
-                
-                if ('reset_sequence' in prefix_record) and (prefix_record['reset_sequence'] == True):
-                    reset_sequence_to_value(cursor, sequence_name, sequence_start)                
+            sequence_name = current_app.config['sequence_name']
+            sequence_start = current_app.config['sequence_start']
+            if not exists_sequence(cursor, sequence_name):
+                create_sequence(cursor, sequence_name, sequence_start)
+            
+            if ('reset_sequence' in current_app.config) and (current_app.config['reset_sequence'] == True):
+                reset_sequence_to_value(cursor, sequence_name, sequence_start)                
 
 
 @click.command('init-db')
