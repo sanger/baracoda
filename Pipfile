@@ -9,6 +9,7 @@ rope = "*"
 flake8 = "*"
 coverage = "*"
 pytest = "*"
+black = "*"
 
 [packages]
 flask = "*"

@@ -1,4 +1,4 @@
-def default_config():
+def development_config():
     return { 
         'prefixes': [
             {
@@ -15,11 +15,24 @@ def default_config():
         'valid_prefixes': ['SANG', 'NIRE']
     }
 
-def development_config():
-    return default_config()
-
 def testing_config():
-    return default_config()
+    return { 
+        'prefixes': [
+            {
+                'prefix': 'SANG',
+                'description': 'Sanger barcodes',
+                'sequence_start': 1,
+                'reset_sequence': True
+            },
+            {
+                'prefix': 'NIRE',
+                'description': 'Nire barcodes',
+                'sequence_start': 1,
+                'reset_sequence': True
+            }
+        ],
+        'valid_prefixes': ['SANG', 'NIRE']
+    }
 
 def production_config():
-    return default_config()
+    return development_config()

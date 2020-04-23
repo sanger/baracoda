@@ -6,14 +6,11 @@ from baracoda.db import init_db
 def app():
     app = create_app(
         {
-            "RESET_SEQUENCE": True,
             "DB_HOST":"localhost",
             "DB_PORT":5432,
             "DB_USER":"postgres",
             "DB_PASSWORD":"postgres",
-            "DB_DBNAME":"baracoda_test",
-            "SEQUENCE_NAME":"heron",
-            "SEQUENCE_START":1
+            "DB_DBNAME":"baracoda_test"
         }
     )
 
