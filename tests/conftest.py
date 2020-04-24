@@ -4,14 +4,6 @@ from baracoda.db import init_db
 import click
 
 
-@click.command()
-@click.option(
-    "--test-from-folder", default=".", help="Folder that contains .csv files to test."
-)
-def test_from_folder():
-    pass
-
-
 @pytest.fixture
 def app():
     app = create_app(
