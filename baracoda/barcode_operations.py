@@ -77,7 +77,7 @@ class BarcodeOperations:
 
     def __query_for_last_barcode(self):
         self.__cursor.execute(
-            f"SELECT barcode FROM barcodes WHERE barcodes.prefix='{self.prefix}' ORDER BY created_at DESC LIMIT 1;"
+            f"SELECT barcode FROM barcodes WHERE barcodes.prefix='{self.prefix}' ORDER BY id DESC LIMIT 1;"
         )
         result = self.__cursor.fetchone()
         return result[0]
