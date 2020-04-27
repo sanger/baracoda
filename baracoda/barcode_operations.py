@@ -1,89 +1,127 @@
+import logging
 import re
 from datetime import datetime
 
-from baracoda.db import get_db
-from baracoda.exceptions import ValidationError
 from baracoda.barcode_formats import HeronFormatter
+from baracoda.db import get_db
+from baracoda.exceptions import InvalidPrefixError
+
+logger = logging.getLogger(__name__)
 
 
 class BarcodeOperations:
-    def __init__(self, params):
-        self.sequence_name = params["sequence_name"]
-        self.prefix = params["prefix"]
-
-        if "count" in params:
-            self.count = params["count"]
-        else:
-            self.count = 1
+    def __init__(self, sequence_name: str, prefix: str):
+        logger.debug("Instantiate....")
+        self.sequence_name = sequence_name
+        self.prefix = prefix
 
         self.__check_prefix()
-        self.__check_count()
 
-        self.formatter = HeronFormatter({"prefix": self.prefix})
+        self.formatter = HeronFormatter(prefix=self.prefix)
 
-    def generate_barcodes(self):
-        records = []
+    def generate_barcode(self) -> str:
+        """Generate and store a barcode using the Heron formatter.
+
+        Returns:
+            str -- the generated barcode in the Heron format
+        """
         db = get_db()
+
         with db.connection:
             with db.cursor as self.__cursor:
-                for i in range(0, self.count):
-                    next_value = self.__get_next_value(self.sequence_name)
+                next_value = self.__get_next_value(self.sequence_name)
 
-                    hex_str = format(next_value, "X")
-                    barcode = self.formatter.barcode(hex_str)
+                #  convert the next value to hexidecimal
+                hex_str = format(next_value, "X")
+                barcode = self.formatter.barcode(hex_str)
 
-                    records.append({"barcode": barcode})
-                self.__store_barcodes(records)
-        return records
+                self.__store_barcode(barcode)
 
-    def get_last_barcode(self, prefix: str):
+        return barcode
+
+    def get_last_barcode(self, prefix: str) -> str:
+        """Get the last barcode generated for the specified sequence.
+
+        Arguments:
+            prefix {str} -- prefix to use query for the last barcode
+
+        Returns:
+            str -- last barcode generated for prefix
+        """
         db = get_db()
+
         with db.connection:
             with db.cursor as self.__cursor:
-                return self.__query_for_last_barcode()
+                last_barcode = self.__get_last_barcode()
 
-    #
-    # Validations private methods
-    def __check_count(self):
-        if not self.count > 0:
-            raise ValidationError(
-                "The number of elements in count has to be higher than 0"
-            )
+        return last_barcode
 
-    def __check_prefix(self):
+    def __check_prefix(self) -> None:
+        """Checks the provided prefix.
+
+        Raises:
+            InvalidPrefixError: the prefix does not pass the regex test
+        """
         if not self.__validate_prefix():
-            raise ValidationError("The provided prefix is not allowed")
+            raise InvalidPrefixError()
 
-    def __validate_prefix(self):
-        if not type(self.prefix) == str:
+    def __validate_prefix(self) -> bool:
+        """Validate the prefix used for the Heron barcodes. Currently accepting uppercase letters
+        and numbers between 1 and 10 characters long.
+
+        Returns:
+            bool -- whether the prefix passed validation
+        """
+        if type(self.prefix) != str:
             return False
-        expr = re.compile("^[A-Z0-9]{1,10}$")
-        return bool(expr.match(self.prefix))
 
-    # Database access private methods
-    def __store_barcodes(self, records):
-        timestamp = datetime.now()
+        pattern = re.compile(r"^[A-Z0-9]{1,10}$")
 
-        values = ",".join(
-            map(
-                lambda x: f"('{x['barcode']}', '{self.prefix}', '{timestamp}')",
-                records,
-            )
-        )
-        command_str = (
-            f"INSERT INTO barcodes (barcode, prefix, created_at) VALUES {values};"
-        )
+        return bool(pattern.match(self.prefix))
+
+    def __store_barcode(self, barcode: str) -> None:
+        """Store the barcode, prefix and timestamp to the database for later querying.
+
+        Arguments:
+            barcode {str} -- barcode to store
+        """
+        now = datetime.now()
+
+        values = f"('{barcode}', '{self.prefix}', '{now}')"
+
+        command_str = f"INSERT INTO barcodes (barcode, prefix, created_at) VALUES {values};"
+
         self.__cursor.execute(command_str)
 
-    def __query_for_last_barcode(self):
+    def __get_last_barcode(self) -> str:
+        """Query the database for the last barcode created for the prefix.
+
+        Returns:
+            str -- last barcode generated for prefix
+        """
+
         self.__cursor.execute(
-            f"SELECT barcode FROM barcodes WHERE barcodes.prefix='{self.prefix}' ORDER BY id DESC LIMIT 1;"
+            f"SELECT barcode FROM barcodes "
+            f"WHERE barcodes.prefix='{self.prefix}' "
+            "ORDER BY id DESC "
+            "LIMIT 1;"
         )
+
         result = self.__cursor.fetchone()
+
         return result[0]
 
-    def __get_next_value(self, sequence_name: str):
+    def __get_next_value(self, sequence_name: str) -> str:
+        """Get the next value from the sequence.
+
+        Arguments:
+            sequence_name {str} -- name of the sequence to query
+
+        Returns:
+            str -- next value in sequence
+        """
         self.__cursor.execute(f"SELECT nextval('{sequence_name.lower()}');")
+
         result = self.__cursor.fetchone()
 
         return result[0]

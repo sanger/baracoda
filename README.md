@@ -1,72 +1,77 @@
 # baracoda
+
 Generate barcodes on demand
 
 ## How to set up a development environment
 
 1. Install postgresql
 
-```bash
-brew install postgresql
-```
+        brew install postgresql
 
-2. Configure Postgresql:
+1. Configure Postgresql:
 
-To configure postgresql database for the project you only need to create the database and add a user to access it. For example, to create the databases baracoda_dev and baracoda_test and create the user postgres with password postgres to access them:
+    To configure postgresql database for the project you only need to create the database and add a user
+    to access it. For example, to create the databases baracoda_dev and baracoda_test and create the
+    user postgres with password postgres to access them:
 
-```bash
-(baracoda) bash-3.2$ psql
-psql (12.2)
-Type "help" for help.
-=# create database baracoda_dev;
-CREATE DATABASE
-=# create database baracoda_test;
-CREATE DATABASE
-=# create user postgres with encrypted password 'postgres';
-CREATE ROLE
-=# grant all privileges on database baracoda_dev to postgres;
-GRANT
-=# grant all privileges on database baracoda_test to postgres;
-GRANT
-```
+        (baracoda) bash-3.2$ psql
+        psql (12.2)
+        Type "help" for help.
+        =# create database baracoda_dev;
+        CREATE DATABASE
+        =# create database baracoda_test;
+        CREATE DATABASE
+        =# create user postgres with encrypted password 'postgres';
+        CREATE ROLE
+        =# grant all privileges on database baracoda_dev to postgres;
+        GRANT
+        =# grant all privileges on database baracoda_test to postgres;
+        GRANT
 
-3. Create a .env file with the database and environment configuration for the environment we want to run. For example, for a development environment we could use:
+1. Create a `.env` file with the database and environment configuration for the environment we want
+to run. For example, for a development environment we could use:
 
-```python
-FLASK_APP=baracoda
-FLASK_ENV=development
-DB_HOST=localhost
-DB_PORT=5432
-DB_USER=postgres
-DB_PASSWORD=postgres
-DB_DBNAME=baracoda_dev
-```
+        FLASK_APP=baracoda
+        FLASK_ENV=development
+        DB_HOST=localhost
+        DB_PORT=5432
+        DB_USER=postgres
+        DB_PASSWORD=postgres
+        DB_DBNAME=baracoda_dev
 
-4. Install the python libraries with pipenv:
+1. Install the python libraries with pipenv:
 
-```bash
-# pipenv install
-```
+        pipenv install
 
-5. Run the pipenv shell
+    If running into trouble with the  package, try: `export LDFLAGS="-L/usr/local/opt/openssl@1.1/lib"`
+    and running `pipenv install` again.
 
-```bash
-# pipenv shell
-```
+1. Run the pipenv shell
 
-6. Initialize the database and create required sequences (only needed when we change the config/settings.py):
+        pipenv shell
 
-```bash
-# flask init-db
-```
+1. Initialize the database and create required sequences (only needed when we change the config/settings.py):
 
-7. Start the app:
-```bash
-# flask run
-```
+        flask init-db
+
+1. Start the app:
+
+        flask run
+
+## Routes
+
+The following routes are available from this service:
+
+    flask routes
+
+    Endpoint                           Methods  Rule
+    ---------------------------------  -------  -----------------------
+    barcode_creation.get_last_barcode  GET      /barcodes/<prefix>/last
+    barcode_creation.get_next_barcode  POST     /barcodes/<prefix>/new
+    static                             GET      /static/<path:filename>
 
 ## Running the tests
 
 Run the following command inside a pipenv shell:
-```bash
-python -m pytest
-```
+
+    python -m pytest

@@ -4,17 +4,20 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-yapf = "*"
 rope = "*"
 flake8 = "*"
-coverage = "*"
+coverage = {extras = ["toml"],version = "*"}
 pytest = "*"
 black = "*"
+pytest-cov = "*"
+mypy = "*"
 
 [packages]
 flask = "*"
 psycopg2 = "*"
 gunicorn = "*"
+colorlog = "*"
+slackclient = "*"
 
 [requires]
 python_version = "3.8"

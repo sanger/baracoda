@@ -1,7 +1,8 @@
 import pytest
+
 from baracoda import create_app
+from baracoda.barcode_formats import HeronFormatter
 from baracoda.db import init_db
-import click
 
 
 @pytest.fixture
@@ -13,6 +14,9 @@ def app():
             "DB_USER": "postgres",
             "DB_PASSWORD": "postgres",
             "DB_DBNAME": "baracoda_test",
+            "SEQUENCE_NAME": "heron",
+            "SEQUENCE_START": "200000",
+            "SEQUENCE_RESET": True,
         }
     )
 
@@ -25,3 +29,8 @@ def app():
 @pytest.fixture
 def client(app):
     return app.test_client()
+
+
+@pytest.fixture
+def heron_formatter():
+    return HeronFormatter(prefix="SANG")
