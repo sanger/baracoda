@@ -4,7 +4,7 @@ from logging import Handler
 from slack import WebClient  # type: ignore
 from slack.errors import SlackApiError  # type: ignore
 
-client = WebClient(token=os.environ["SLACK_API_TOKEN"])
+client = WebClient(token=os.getenv("SLACK_API_TOKEN", ""))
 
 
 class SlackHandler(Handler):
@@ -15,7 +15,7 @@ class SlackHandler(Handler):
     def send_message(self, sent_str):
         try:
             client.chat_postMessage(
-                channel=os.environ["SLACK_CHANNEL_ID"],
+                channel=os.getenv("SLACK_CHANNEL_ID", ""),
                 blocks=[
                     {
                         "type": "section",

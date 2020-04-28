@@ -17,6 +17,8 @@ def app():
             "SEQUENCE_NAME": "heron",
             "SEQUENCE_START": "200000",
             "SEQUENCE_RESET": True,
+            "SLACK_API_TOKEN": "",
+            "SLACK_CHANNEL_ID": "",
         }
     )
 

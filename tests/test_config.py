@@ -11,5 +11,7 @@ def test_creates_app_right_config():
             "DB_DBNAME": "mydb",
             "SEQUENCE_NAME": "heron",
             "SEQUENCE_START": 1,
+            "SLACK_API_TOKEN": "",
+            "SLACK_CHANNEL_ID": "",
         }
     )
