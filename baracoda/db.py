@@ -1,7 +1,5 @@
 import logging
-import types
 from collections import namedtuple
-from typing import Dict, NamedTuple
 
 import click
 import psycopg2  # type: ignore

@@ -1,6 +1,5 @@
 import logging
 import logging.config
-import os
 
 from flask import Flask
 
@@ -22,26 +21,9 @@ def create_app(test_config=None):
         app.config.from_mapping(test_config)
 
     logging.config.dictConfig(LOGGING_CONF)
-    logger.error("test")
-
-    # ensure the instance folder exists
-    try:
-        os.makedirs(app.instance_path)
-    except OSError:
-        pass
 
     db.init_app(app)
 
     app.register_blueprint(barcodes.bp)
-
-    @app.route("/hello")
-    def hello():
-        logger.debug("hello")
-        logger.error("hello")
-        try:
-            raise Exception("testing")
-        except Exception as e:
-            pass
-        return "hello world"
 
     return app
