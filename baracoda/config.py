@@ -1,5 +1,6 @@
 from os import getenv
 
+DB_DBNAME = getenv("DB_DBNAME")
 DB_HOST = getenv("DB_HOST")
 DB_PASSWORD = getenv("DB_PASSWORD")
 DB_PORT = getenv("DB_PORT")
@@ -10,6 +11,7 @@ SLACK_API_TOKEN = getenv("SLACK_API_TOKEN", "")
 SLACK_CHANNEL_ID = getenv("SLACK_CHANNEL_ID", "")
 
 REQUIRED_CONFIG = (
+    "DB_DBNAME",
     "DB_HOST",
     "DB_PASSWORD",
     "DB_PORT",

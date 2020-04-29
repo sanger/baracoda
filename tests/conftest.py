@@ -1,8 +1,8 @@
 import pytest
 
 from baracoda import create_app
-from baracoda.barcode_formats import HeronFormatter
 from baracoda.db import init_db
+from baracoda.formats import HeronFormatter
 
 
 @pytest.fixture

@@ -1,10 +1,11 @@
 import logging
 import re
 from datetime import datetime
+from typing import Optional
 
-from baracoda.barcode_formats import HeronFormatter
 from baracoda.db import get_db
 from baracoda.exceptions import InvalidPrefixError
+from baracoda.formats import HeronFormatter
 
 logger = logging.getLogger(__name__)
 
@@ -39,14 +40,14 @@ class BarcodeOperations:
 
         return barcode
 
-    def get_last_barcode(self, prefix: str) -> str:
+    def get_last_barcode(self, prefix: str) -> Optional[str]:
         """Get the last barcode generated for the specified sequence.
 
         Arguments:
             prefix {str} -- prefix to use query for the last barcode
 
         Returns:
-            str -- last barcode generated for prefix
+            Optional[str] -- last barcode generated for prefix or None
         """
         db = get_db()
 
@@ -93,11 +94,11 @@ class BarcodeOperations:
 
         self.__cursor.execute(command_str)
 
-    def __get_last_barcode(self) -> str:
+    def __get_last_barcode(self) -> Optional[str]:
         """Query the database for the last barcode created for the prefix.
 
         Returns:
-            str -- last barcode generated for prefix
+            Optional[str] -- last barcode generated for prefix or None
         """
 
         self.__cursor.execute(
@@ -107,9 +108,10 @@ class BarcodeOperations:
             "LIMIT 1;"
         )
 
-        result = self.__cursor.fetchone()
-
-        return result[0]
+        if result := self.__cursor.fetchone():
+            return result[0]
+        else:
+            return None
 
     def __get_next_value(self, sequence_name: str) -> str:
         """Get the next value from the sequence.

@@ -4,8 +4,8 @@ from typing import Any, Tuple
 
 from flask import Blueprint, current_app, jsonify
 
-from baracoda.barcode_operations import BarcodeOperations
 from baracoda.exceptions import InvalidPrefixError
+from baracoda.operations import BarcodeOperations
 
 bp = Blueprint("barcode_creation", __name__)
 

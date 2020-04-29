@@ -18,6 +18,11 @@ def test_get_new_barcode(client):
 
 
 def test_get_last_barcode(client):
+    # with no barcode present
+    response = client.get("/barcodes/SANG/last")
+    assert response.status_code == HTTPStatus.NOT_FOUND
+
+    # when creating barcodes
     response = client.post("/barcodes/SANG/new")
     response = client.get("/barcodes/SANG/last")
     assert response.json == {"barcode": "SANG-30D404"}
