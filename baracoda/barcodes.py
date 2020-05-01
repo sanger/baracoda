@@ -4,6 +4,7 @@ from typing import Any, Tuple
 
 from flask import Blueprint, current_app
 
+from baracoda.exceptions import InvalidPrefixError
 from baracoda.operations import BarcodeOperations
 
 bp = Blueprint("barcode_creation", __name__)
@@ -22,6 +23,8 @@ def get_next_barcode(prefix: str) -> Tuple[Any, int]:
 
         return {"barcode": barcode}, HTTPStatus.CREATED
 
+    except InvalidPrefixError as e:
+        return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.BAD_REQUEST
     except Exception as e:
         return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.INTERNAL_SERVER_ERROR
 
@@ -39,5 +42,7 @@ def get_last_barcode(prefix: str) -> Tuple[Any, int]:
             return "", HTTPStatus.NOT_FOUND
         return {"barcode": barcode}, HTTPStatus.OK
 
+    except InvalidPrefixError as e:
+        return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.BAD_REQUEST
     except Exception as e:
         return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.INTERNAL_SERVER_ERROR
