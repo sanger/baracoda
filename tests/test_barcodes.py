@@ -8,7 +8,7 @@ def test_param_empty_prefix_value(client):
 
 def test_invalid_prefix_is_rejected(client):
     response = client.post("/barcodes/TEST123412_edu/new")
-    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+    assert response.status_code == HTTPStatus.BAD_REQUEST
 
 
 def test_get_new_barcode(client):
@@ -18,6 +18,11 @@ def test_get_new_barcode(client):
 
 
 def test_get_last_barcode(client):
+    # with no barcode present
+    response = client.get("/barcodes/SANG/last")
+    assert response.status_code == HTTPStatus.NOT_FOUND
+
+    # when creating barcodes
     response = client.post("/barcodes/SANG/new")
     response = client.get("/barcodes/SANG/last")
     assert response.json == {"barcode": "SANG-30D404"}

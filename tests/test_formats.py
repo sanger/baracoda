@@ -1,4 +1,4 @@
-from baracoda.barcode_formats import HeronFormatter
+from baracoda.formats import HeronFormatter
 
 
 def test_checksum_conversion(heron_formatter):
