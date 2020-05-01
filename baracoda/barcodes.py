@@ -2,9 +2,8 @@ import logging
 from http import HTTPStatus
 from typing import Any, Tuple
 
-from flask import Blueprint, current_app, jsonify
+from flask import Blueprint, current_app
 
-from baracoda.exceptions import InvalidPrefixError
 from baracoda.operations import BarcodeOperations
 
 bp = Blueprint("barcode_creation", __name__)
@@ -23,8 +22,8 @@ def get_next_barcode(prefix: str) -> Tuple[Any, int]:
 
         return {"barcode": barcode}, HTTPStatus.CREATED
 
-    except InvalidPrefixError as error:
-        return jsonify({"errors": [str(error)]}), HTTPStatus.UNPROCESSABLE_ENTITY
+    except Exception as e:
+        return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.INTERNAL_SERVER_ERROR
 
 
 @bp.route("/barcodes/<prefix>/last", methods=["GET"])
@@ -38,7 +37,7 @@ def get_last_barcode(prefix: str) -> Tuple[Any, int]:
 
         if barcode is None:
             return "", HTTPStatus.NOT_FOUND
-        return jsonify({"barcode": barcode}), HTTPStatus.OK
+        return {"barcode": barcode}, HTTPStatus.OK
 
-    except InvalidPrefixError as error:
-        return jsonify({"errors": [str(error)]}), HTTPStatus.UNPROCESSABLE_ENTITY
+    except Exception as e:
+        return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.INTERNAL_SERVER_ERROR
