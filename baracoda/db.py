@@ -58,9 +58,9 @@ def init_db():
         # schema_loader = "".join(schema_file.readlines())
         schema_loader = schema_file.read()
 
-    with db.connection:
-        with db.cursor as cursor:
-            cursor.execute(schema_loader)
+    session = db.session()
+    session.execute(schema_loader)
+    session.commit()
 
 
 @click.command("init-db")

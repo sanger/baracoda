@@ -39,7 +39,6 @@ def get_new_barcode(prefix: str) -> Tuple[Any, int]:
         operator = BarcodeOperations(
             prefix=prefix, sequence_name=current_app.config["SEQUENCE_NAME"]
         )
-
         barcode = operator.create_barcode()
 
         return barcode.to_hash(), HTTPStatus.CREATED

@@ -21,6 +21,7 @@ slackclient = "*"
 sqlalchemy = "*"
 pgcopy = "*"
 alembic = "*"
+autoenv = "*"
 
 [requires]
 python_version = "3.8"

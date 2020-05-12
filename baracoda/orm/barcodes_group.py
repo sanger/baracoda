@@ -9,7 +9,7 @@ class BarcodesGroup(Base):
 
     id = Column(Integer, Sequence("barcodes_groups_id_seq"), primary_key=True)
     created_at = Column(DateTime)
-    barcodes = relationship("Barcode", back_populates="barcode_group")
+    barcodes = relationship("Barcode", back_populates="barcodes_group")
 
     def __repr__(self):
         return "<BarcodesGroup(id='%s', barcodesCount='%s', created_at='%s')>" % (

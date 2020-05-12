@@ -22,6 +22,10 @@ REQUIRED_CONFIG = (
     "SLACK_CHANNEL_ID",
 )
 
+DB_URI = getenv(
+    "DB_URI", f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_DBNAME}"
+)
+
 for config in REQUIRED_CONFIG:
     if not eval(config):
         raise ValueError(f"{config} required for Flask application")

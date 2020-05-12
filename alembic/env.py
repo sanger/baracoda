@@ -1,11 +1,17 @@
 from logging.config import fileConfig
 
+from sqlalchemy import create_engine
+
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
 from alembic import context
 
-from baracoda.db import get_db_uri, get_db
+import sys
+
+sys.path = ["", ".."] + sys.path[1:]
+
+from baracoda.config import DB_URI
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -19,7 +25,7 @@ fileConfig(config.config_file_name)
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-from baracoda.orm import Base
+from baracoda.orm.base import Base
 
 target_metadata = Base.metadata
 
@@ -41,9 +47,9 @@ def run_migrations_offline():
     script output.
 
     """
-    url = get_db_uri()  # config.get_main_option("sqlalchemy.url")
+    # config.get_main_option("sqlalchemy.url")
     context.configure(
-        url=url,
+        url=DB_URI,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
@@ -60,8 +66,7 @@ def run_migrations_online():
     and associate a connection with the context.
 
     """
-    db = get_db()
-    connectable = db.engine
+    connectable = create_engine(DB_URI, poolclass=pool.NullPool)
     # connectable = engine_from_config(
     #    config.get_section(config.config_ini_section),
     #    prefix="sqlalchemy.",
