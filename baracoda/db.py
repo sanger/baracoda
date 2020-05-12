@@ -3,31 +3,36 @@ from collections import namedtuple
 
 import click
 import psycopg2  # type: ignore
+from sqlalchemy.orm import sessionmaker
 from flask import current_app, g
 from flask.cli import with_appcontext
+
+from sqlalchemy import create_engine
 
 SCHEMA_FILE = "baracoda/sql/schema.sql"
 
 logger = logging.getLogger(__name__)
 
 
+def get_db_uri():
+    user = current_app.config["DB_USER"]
+    password = current_app.config["DB_PASSWORD"]
+    host = current_app.config["DB_HOST"]
+    port = current_app.config["DB_PORT"]
+    dbname = current_app.config["DB_DBNAME"]
+    return f"postgresql+psycopg2://{user}:{password}@{host}:{port}/{dbname}"
+
+
 def get_db():
     logger.debug("Getting a connection to the database")
 
     if "db" not in g:
-        Database = namedtuple("Database", ["connection", "cursor"])
+        Database = namedtuple("Database", ["session", "engine"])
 
-        connection = psycopg2.connect(
-            user=current_app.config["DB_USER"],
-            password=current_app.config["DB_PASSWORD"],
-            host=current_app.config["DB_HOST"],
-            port=current_app.config["DB_PORT"],
-            dbname=current_app.config["DB_DBNAME"],
-        )
+        engine = create_engine(get_db_uri(), echo=True)
+        session = sessionmaker(bind=engine)
 
-        cursor = connection.cursor()
-
-        g.db = Database(connection, cursor)
+        g.db = Database(session, engine)
 
     return g.db
 
@@ -66,5 +71,5 @@ def init_db_command():
 
 
 def init_app(app):
-    app.teardown_appcontext(close_db)
+    # app.teardown_appcontext(close_db)
     app.cli.add_command(init_db_command)
