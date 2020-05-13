@@ -2,7 +2,7 @@ import logging
 from http import HTTPStatus
 from typing import Any, Tuple
 
-from flask import Blueprint, current_app, request
+from flask import Blueprint, current_app, request, g
 
 from baracoda.exceptions import InvalidPrefixError
 from baracoda.operations import BarcodeOperations
@@ -57,7 +57,6 @@ def get_last_barcode(prefix: str) -> Tuple[Any, int]:
         )
 
         barcode = operator.get_last_barcode(prefix)
-
         if barcode is None:
             return "", HTTPStatus.NOT_FOUND
         return barcode.to_hash(), HTTPStatus.OK

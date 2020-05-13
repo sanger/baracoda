@@ -22,6 +22,7 @@ sqlalchemy = "*"
 pgcopy = "*"
 alembic = "*"
 autoenv = "*"
+flask-sqlalchemy = "*"
 
 [requires]
 python_version = "3.8"

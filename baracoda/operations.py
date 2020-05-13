@@ -3,7 +3,8 @@ import re
 from datetime import datetime
 from typing import Optional, List
 
-from baracoda.db import get_db
+from flask import g
+from baracoda.db import db
 from baracoda.exceptions import InvalidPrefixError
 from baracoda.formats import HeronFormatter
 
@@ -23,6 +24,8 @@ class BarcodeOperations:
 
         self.formatter = HeronFormatter(prefix=self.prefix)
 
+        self.__session = db.session
+
     def create_barcode_group(self, count) -> BarcodesGroup:
         """Creates a new barcode group and the associated barcodes.
 
@@ -32,9 +35,6 @@ class BarcodeOperations:
         Returns:
             BarcodeGroup -- the barcode group created
         """
-        db = get_db()
-
-        self.__session = db.session()
 
         try:
             next_values = self.__get_next_values(self.sequence_name, count)
@@ -61,13 +61,10 @@ class BarcodeOperations:
         Returns:
             str -- the generated barcode in the Heron format
         """
-        db = get_db()
-
-        self.__session = db.session()
-
         try:
             next_value = self.__get_next_value(self.sequence_name)
             barcode = self.__build_barcode(self.prefix, next_value)
+
             self.__session.add(barcode)
 
             self.__session.commit()
@@ -86,9 +83,6 @@ class BarcodeOperations:
         Returns:
             Optional[str] -- last barcode generated for prefix or None
         """
-        db = get_db()
-        self.__session = db.session()
-
         return self.__get_last_barcode()
 
     def __check_prefix(self) -> None:
@@ -122,18 +116,23 @@ class BarcodeOperations:
         """
         self.__session.add_all(barcodes)
 
-    def __get_last_barcode(self) -> Optional[str]:
+    def __get_last_barcode(self) -> str:
         """Query the database for the last barcode created for the prefix.
 
         Returns:
             Optional[str] -- last barcode generated for prefix or None
         """
-        return (
+        results = (
             self.__session.query(Barcode, Barcode.barcode)
             .filter_by(prefix=self.prefix)
             .order_by(Barcode.id.desc())
             .first()
         )
+
+        if results is None:
+            return results
+
+        return results[0]
 
     def __get_next_values(self, sequence_name: str, count: int) -> List[str]:
         """Get the next count values from the sequence.
