@@ -18,11 +18,9 @@ class Barcode(Base):
     created_at = Column(DateTime, nullable=False)
 
     def __repr__(self):
-        return "<Barcode(id='%s', barcode='%s', prefix='%s', created_at='%s')>" % (
-            self.id,
-            self.barcode,
-            self.prefix,
-            self.created_at,
+        return (
+            "<Barcode(id='%s', barcode='%s', prefix='%s', created_at='%s', barcodes_group='%s')>"
+            % (self.id, self.barcode, self.prefix, self.created_at, self.barcodes_group)
         )
 
     def to_hash(self):

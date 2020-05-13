@@ -20,7 +20,7 @@ class BarcodesGroup(Base):
 
     def to_hash(self):
         return {
-            "barcode_group": {
+            "barcodes_group": {
                 "id": self.id,
                 "barcodes": [barcode.barcode for barcode in self.barcodes],
             }

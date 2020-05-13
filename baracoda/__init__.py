@@ -3,7 +3,8 @@ import logging.config
 
 from flask import Flask
 
-from baracoda import barcodes, db
+from baracoda import barcodes
+from baracoda.db import db
 from baracoda.logging_conf import LOGGING_CONF
 
 logger = logging.getLogger(__name__)

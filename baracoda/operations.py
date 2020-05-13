@@ -24,8 +24,6 @@ class BarcodeOperations:
 
         self.formatter = HeronFormatter(prefix=self.prefix)
 
-        self.__session = db.session
-
     def create_barcode_group(self, count) -> BarcodesGroup:
         """Creates a new barcode group and the associated barcodes.
 
@@ -40,19 +38,19 @@ class BarcodeOperations:
             next_values = self.__get_next_values(self.sequence_name, count)
 
             barcodes_group = self.__build_barcodes_group()
-            self.__session.add(barcodes_group)
+            db.session.add(barcodes_group)
 
             barcodes = [
-                self.__build_barcode(self.prefix, next_value, barcodes_group_id=barcodes_group.id)
+                self.__build_barcode(self.prefix, next_value, barcodes_group=barcodes_group)
                 for next_value in next_values
             ]
-            self.__session.add_all(barcodes)
+            db.session.add_all(barcodes)
 
-            self.__session.commit()
+            db.session.commit()
 
             return barcodes_group
         except Exception as e:
-            self.__session.rollback()
+            db.session.rollback()
             raise e
 
     def create_barcode(self) -> Barcode:
@@ -63,15 +61,15 @@ class BarcodeOperations:
         """
         try:
             next_value = self.__get_next_value(self.sequence_name)
-            barcode = self.__build_barcode(self.prefix, next_value)
+            barcode = self.__build_barcode(self.prefix, next_value, barcodes_group=None)
 
-            self.__session.add(barcode)
+            db.session.add(barcode)
 
-            self.__session.commit()
+            db.session.commit()
 
             return barcode
         except Exception as e:
-            self.__session.rollback()
+            db.session.rollback()
             raise e
 
     def get_last_barcode(self, prefix: str) -> Barcode:
@@ -114,7 +112,7 @@ class BarcodeOperations:
         Arguments:
             barcodes {List[str]} -- barcodes to store
         """
-        self.__session.add_all(barcodes)
+        db.session.add_all(barcodes)
 
     def __get_last_barcode(self) -> str:
         """Query the database for the last barcode created for the prefix.
@@ -123,7 +121,7 @@ class BarcodeOperations:
             Optional[str] -- last barcode generated for prefix or None
         """
         results = (
-            self.__session.query(Barcode, Barcode.barcode)
+            db.session.query(Barcode, Barcode.barcode)
             .filter_by(prefix=self.prefix)
             .order_by(Barcode.id.desc())
             .first()
@@ -146,21 +144,20 @@ class BarcodeOperations:
         """
         return [
             int(val[0])
-            for val in self.__session.execute(
+            for val in db.session.execute(
                 f"SELECT nextval('{sequence_name.lower()}') FROM    generate_series(1, {count}) l;"
             ).fetchall()
         ]
 
-    def __build_barcode(self, prefix: str, next_value: int, barcodes_group_id: int = None):
+    def __build_barcode(self, prefix: str, next_value: int, barcodes_group: BarcodesGroup):
         #  convert the next value to hexidecimal
         hex_str = format(next_value, "X")
         barcode = self.formatter.barcode(hex_str)
-
         return Barcode(
             prefix=prefix,
             barcode=barcode,
             created_at=datetime.now(),
-            barcodes_group_id=barcodes_group_id,
+            barcodes_group=barcodes_group,
         )
 
     def __build_barcodes_group(self):
@@ -175,6 +172,4 @@ class BarcodeOperations:
         Returns:
             str -- next value in sequence
         """
-        return int(
-            self.__session.execute(f"SELECT nextval('{sequence_name.lower()}');").fetchone()[0]
-        )
+        return int(db.session.execute(f"SELECT nextval('{sequence_name.lower()}');").fetchone()[0])

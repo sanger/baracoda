@@ -17,6 +17,14 @@ def test_get_new_barcode(client):
     assert response.status_code == HTTPStatus.CREATED
 
 
+def test_get_new_barcodes_group(client):
+    response = client.post("/barcodes_group/SANG/new?count=3")
+    assert response.json == {
+        "barcodes_group": {"barcodes": ["SANG-30D404", "SANG-30D413", "SANG-30D422"], "id": 1}
+    }
+    assert response.status_code == HTTPStatus.CREATED
+
+
 def test_get_last_barcode(client):
     # with no barcode present
     response = client.get("/barcodes/SANG/last")

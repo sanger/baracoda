@@ -11,7 +11,7 @@ import sys
 
 sys.path = ["", ".."] + sys.path[1:]
 
-from baracoda.config import DB_URI
+from baracoda.config import SQLALCHEMY_DATABASE_URI
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -49,7 +49,7 @@ def run_migrations_offline():
     """
     # config.get_main_option("sqlalchemy.url")
     context.configure(
-        url=DB_URI,
+        url=SQLALCHEMY_DATABASE_URI,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
@@ -66,7 +66,7 @@ def run_migrations_online():
     and associate a connection with the context.
 
     """
-    connectable = create_engine(DB_URI, poolclass=pool.NullPool)
+    connectable = create_engine(SQLALCHEMY_DATABASE_URI, poolclass=pool.NullPool)
     # connectable = engine_from_config(
     #    config.get_section(config.config_ini_section),
     #    prefix="sqlalchemy.",
