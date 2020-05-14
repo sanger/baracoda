@@ -74,11 +74,29 @@ The following routes are available from this service:
 ## Running the tests
 
 Run the following command inside a pipenv shell:
-
-    python -m pytest
+```bash
+python -m pytest
+```
 
 ## Running linting checks
 
 To run mypy:
+```bash
+python -m mypy .
+```
 
-    python -m mypy .
+## Development
+
+To run migrations:
+```bash
+alembic upgrade head
+```
+
+### Autogenerating migrations
+
+- Make sure your local database is up to date with last schema available (orm/sql/schema.sql)
+- Perform any change in the models files located in ```baracoda/orm``` folder
+- Run alembic and provide a comment to autogenerate the migration comparing with current database: 
+```bash
+alembic revision --autogenerate -m "Added account table"
+```
