@@ -1,13 +1,23 @@
 import logging
 import logging.config
 
-from flask import Flask
+from flask import Flask, current_app
+
+import click
+from flask.cli import with_appcontext
 
 from baracoda import barcodes
-from baracoda.db import db
+from baracoda.db import db, reset_db
 from baracoda.logging_conf import LOGGING_CONF
 
 logger = logging.getLogger(__name__)
+
+
+@click.command("init-db")
+@with_appcontext
+def init_db_command():
+    reset_db()
+    click.echo("Reseting the database")
 
 
 def create_app(test_config=None):
@@ -21,9 +31,13 @@ def create_app(test_config=None):
         # load the test config if passed in
         app.config.from_mapping(test_config)
 
-    logging.config.dictConfig(LOGGING_CONF)
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     db.init_app(app)
+
+    logging.config.dictConfig(LOGGING_CONF)
+
+    app.cli.add_command(init_db_command)
 
     app.register_blueprint(barcodes.bp)
 

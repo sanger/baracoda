@@ -29,7 +29,7 @@ Generate barcodes on demand
         GRANT
 
 1. Create a `.env` file with the database and environment configuration for the environment we want
-to run. For example, for a development environment we could use:
+to run (see the example file .env.example). For example, for a development environment we could use:
 
         FLASK_APP=baracoda
         FLASK_ENV=development
@@ -38,10 +38,11 @@ to run. For example, for a development environment we could use:
         DB_USER=postgres
         DB_PASSWORD=postgres
         DB_DBNAME=baracoda_dev
+        SQLALCHEMY_DATABASE_URI="postgresql+psycopg2://postgres:postgres@localhost:5432/baracoda_dev"
 
 1. Install the python libraries with pipenv:
 
-        pipenv install
+        pipenv install --dev
 
     If running into trouble with the  package, try: `export LDFLAGS="-L/usr/local/opt/openssl@1.1/lib"`
     and running `pipenv install` again.
@@ -50,9 +51,13 @@ to run. For example, for a development environment we could use:
 
         pipenv shell
 
-1. Initialize the database and create required sequences (only needed when we change the config/settings.py):
+1. **OPTIONAL** To create a new database, and create required sequences:
 
         flask init-db
+
+1. Run migrations (if any):
+
+        alembic upgrade head
 
 1. Start the app:
 
@@ -86,11 +91,6 @@ python -m mypy .
 ```
 
 ## Development
-
-To run migrations:
-```bash
-alembic upgrade head
-```
 
 ### Autogenerating migrations
 
