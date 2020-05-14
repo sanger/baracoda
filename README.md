@@ -64,14 +64,21 @@ The following routes are available from this service:
 
     flask routes
 
-    Endpoint                           Methods  Rule
-    ---------------------------------  -------  -----------------------
-    barcode_creation.get_last_barcode  GET      /barcodes/<prefix>/last
-    barcode_creation.get_next_barcode  POST     /barcodes/<prefix>/new
-    static                             GET      /static/<path:filename>
+    Endpoint                                Methods  Rule
+    ---------------------------------       -------  -----------------------
+    barcode_creation.get_last_barcode       GET      /barcodes/<prefix>/last
+    barcode_creation.get_new_barcode        POST     /barcodes/<prefix>/new
+    barcode_creation.get_new_barcode_group  POST     /barcodes_group/<prefix>/new?count=<number>
+    static                                  GET      /static/<path:filename>
 
 ## Running the tests
 
 Run the following command inside a pipenv shell:
 
     python -m pytest
+
+## Running linting checks
+
+To run mypy:
+
+    python -m mypy .
