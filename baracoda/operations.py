@@ -72,16 +72,26 @@ class BarcodeOperations:
             db.session.rollback()
             raise e
 
-    def get_last_barcode(self, prefix: str) -> Barcode:
+    def get_last_barcode(self, prefix: str) -> Optional[Barcode]:
         """Get the last barcode generated for the specified sequence.
 
         Arguments:
             prefix {str} -- prefix to use query for the last barcode
 
         Returns:
-            Optional[str] -- last barcode generated for prefix or None
+            Barcode -- last barcode generated for prefix or None
         """
-        return self.__get_last_barcode()
+        results = (
+            db.session.query(Barcode, Barcode.barcode)
+            .filter_by(prefix=self.prefix)
+            .order_by(Barcode.id.desc())
+            .first()
+        )
+
+        if results is None:
+            return results
+
+        return results[0]
 
     def __check_prefix(self) -> None:
         """Checks the provided prefix.
@@ -106,33 +116,34 @@ class BarcodeOperations:
 
         return bool(pattern.match(self.prefix))
 
-    def __store_barcodes(self, barcodes: List[str]) -> None:
-        """Store the barcodes in database
-
-        Arguments:
-            barcodes {List[str]} -- barcodes to store
-        """
-        db.session.add_all(barcodes)
-
-    def __get_last_barcode(self) -> str:
-        """Query the database for the last barcode created for the prefix.
-
-        Returns:
-            Optional[str] -- last barcode generated for prefix or None
-        """
-        results = (
-            db.session.query(Barcode, Barcode.barcode)
-            .filter_by(prefix=self.prefix)
-            .order_by(Barcode.id.desc())
-            .first()
+    def __build_barcode(
+        self, prefix: str, next_value: int, barcodes_group: Optional[BarcodesGroup]
+    ) -> Barcode:
+        #  convert the next value to hexidecimal
+        hex_str = format(next_value, "X")
+        barcode = self.formatter.barcode(hex_str)
+        return Barcode(
+            prefix=prefix,
+            barcode=barcode,
+            created_at=datetime.now(),
+            barcodes_group=barcodes_group,
         )
 
-        if results is None:
-            return results
+    def __build_barcodes_group(self) -> BarcodesGroup:
+        return BarcodesGroup(created_at=datetime.now())
 
-        return results[0]
+    def __get_next_value(self, sequence_name: str) -> int:
+        """Get the next value from the sequence.
 
-    def __get_next_values(self, sequence_name: str, count: int) -> List[str]:
+        Arguments:
+            sequence_name {str} -- name of the sequence to query
+
+        Returns:
+            str -- next value in sequence
+        """
+        return int(db.session.execute(f"SELECT nextval('{sequence_name.lower()}');").fetchone()[0])
+
+    def __get_next_values(self, sequence_name: str, count: int) -> List[int]:
         """Get the next count values from the sequence.
 
         Arguments:
@@ -148,28 +159,3 @@ class BarcodeOperations:
                 f"SELECT nextval('{sequence_name.lower()}') FROM    generate_series(1, {count}) l;"
             ).fetchall()
         ]
-
-    def __build_barcode(self, prefix: str, next_value: int, barcodes_group: BarcodesGroup):
-        #  convert the next value to hexidecimal
-        hex_str = format(next_value, "X")
-        barcode = self.formatter.barcode(hex_str)
-        return Barcode(
-            prefix=prefix,
-            barcode=barcode,
-            created_at=datetime.now(),
-            barcodes_group=barcodes_group,
-        )
-
-    def __build_barcodes_group(self):
-        return BarcodesGroup(created_at=datetime.now())
-
-    def __get_next_value(self, sequence_name: str) -> str:
-        """Get the next value from the sequence.
-
-        Arguments:
-            sequence_name {str} -- name of the sequence to query
-
-        Returns:
-            str -- next value in sequence
-        """
-        return int(db.session.execute(f"SELECT nextval('{sequence_name.lower()}');").fetchone()[0])

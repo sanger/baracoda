@@ -13,7 +13,7 @@ class Barcode(Base):
     barcodes_group_id = Column(
         Integer, ForeignKey("barcodes_groups.id"), nullable=True, default=None
     )
-    barcodes_group = relationship("BarcodesGroup", back_populates="barcodes")
+    barcodes_group = relationship("BarcodesGroup", back_populates="barcodes")  # type: ignore
 
     created_at = Column(DateTime, nullable=False)
 

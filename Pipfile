@@ -11,6 +11,7 @@ pytest = "*"
 black = "*"
 pytest-cov = "*"
 mypy = "*"
+sqlalchemy-stubs = "*"
 
 [packages]
 flask = "*"

@@ -2,11 +2,10 @@ import logging
 from collections import namedtuple
 
 import click
-import psycopg2  # type: ignore
 from flask import current_app, g
 from flask.cli import with_appcontext
 
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy  # type: ignore
 
 
 SCHEMA_FILE = "baracoda/sql/schema.sql"
