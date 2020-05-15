@@ -33,7 +33,6 @@ class BarcodeOperations:
         Returns:
             BarcodeGroup -- the barcode group created
         """
-
         try:
             next_values = self.__get_next_values(self.sequence_name, count)
 

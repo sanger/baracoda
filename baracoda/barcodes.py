@@ -68,5 +68,7 @@ def get_last_barcode(prefix: str) -> Tuple[Any, int]:
 
 
 def get_count_param():
-    value = int(request.values["count"])
-    return value
+    if "count" in request.values:
+        return int(request.values["count"])
+    else:
+        return int(request.json["count"])
