@@ -1,4 +1,9 @@
-# baracoda
+# Baracoda
+
+![CI python](https://github.com/sanger/baracoda/workflows/CI%20python/badge.svg)
+![CI docker](https://github.com/sanger/baracoda/workflows/CI%20docker/badge.svg)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![codecov](https://codecov.io/gh/sanger/baracoda/branch/develop/graph/badge.svg)](https://codecov.io/gh/sanger/baracoda)
 
 Generate barcodes on demand
 
@@ -79,24 +84,21 @@ The following routes are available from this service:
 ## Running the tests
 
 Run the following command inside a pipenv shell:
-```bash
-python -m pytest
-```
+
+    python -m pytest
 
 ## Running linting checks
 
 To run mypy:
-```bash
-python -m mypy .
-```
+
+    mypy .
 
 ## Development
 
 ### Autogenerating migrations
 
 - Make sure your local database is up to date with last schema available (orm/sql/schema.sql)
-- Perform any change in the models files located in ```baracoda/orm``` folder
-- Run alembic and provide a comment to autogenerate the migration comparing with current database: 
-```bash
-alembic revision --autogenerate -m "Added account table"
-```
+- Perform any change in the models files located in `baracoda/orm` folder
+- Run alembic and provide a comment to autogenerate the migration comparing with current database:
+
+    alembic revision --autogenerate -m "Added account table"
