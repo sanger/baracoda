@@ -23,5 +23,5 @@ class Barcode(Base):
             % (self.id, self.barcode, self.prefix, self.created_at, self.barcodes_group)
         )
 
-    def to_hash(self):
+    def to_dict(self):
         return {"barcode": self.barcode}

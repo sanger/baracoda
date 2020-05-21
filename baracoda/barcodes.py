@@ -4,7 +4,7 @@ from typing import Any, Tuple
 
 from flask import Blueprint, current_app, request, g
 
-from baracoda.exceptions import InvalidPrefixError
+from baracoda.exceptions import InvalidPrefixError, InvalidCountError
 from baracoda.operations import BarcodeOperations
 
 bp = Blueprint("barcode_creation", __name__)
@@ -20,15 +20,16 @@ def get_new_barcode_group(prefix: str) -> Tuple[Any, int]:
         operator = BarcodeOperations(
             prefix=prefix, sequence_name=current_app.config["SEQUENCE_NAME"]
         )
-        # count = 1
         barcode_group = operator.create_barcode_group(count)
         return (
-            barcode_group.to_hash(),
+            barcode_group.to_dict(),
             HTTPStatus.CREATED,
         )
 
     except InvalidPrefixError as e:
         return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.BAD_REQUEST
+    except InvalidCountError as e:
+        return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.UNPROCESSABLE_ENTITY
     except Exception as e:
         return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.INTERNAL_SERVER_ERROR
 
@@ -41,7 +42,7 @@ def get_new_barcode(prefix: str) -> Tuple[Any, int]:
         )
         barcode = operator.create_barcode()
 
-        return barcode.to_hash(), HTTPStatus.CREATED
+        return barcode.to_dict(), HTTPStatus.CREATED
 
     except InvalidPrefixError as e:
         return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.BAD_REQUEST
@@ -59,7 +60,7 @@ def get_last_barcode(prefix: str) -> Tuple[Any, int]:
         barcode = operator.get_last_barcode(prefix)
         if barcode is None:
             return "", HTTPStatus.NOT_FOUND
-        return barcode.to_hash(), HTTPStatus.OK
+        return barcode.to_dict(), HTTPStatus.OK
 
     except InvalidPrefixError as e:
         return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.BAD_REQUEST
@@ -71,4 +72,6 @@ def get_count_param():
     if "count" in request.values:
         return int(request.values["count"])
     else:
-        return int(request.json["count"])
+        if request.json and ("count" in request.json):
+            return int(request.json["count"])
+    raise InvalidCountError()

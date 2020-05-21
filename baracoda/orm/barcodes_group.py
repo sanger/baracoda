@@ -12,13 +12,13 @@ class BarcodesGroup(Base):
     barcodes = relationship("Barcode", back_populates="barcodes_group", uselist=True)  # type: ignore
 
     def __repr__(self):
-        return "<BarcodesGroup(id='%s', barcodesCount='%s', created_at='%s')>" % (
+        return "<BarcodesGroup(id='%s', barcodes_count='%s', created_at='%s')>" % (
             self.id,
             len(self.barcodes),
             self.created_at,
         )
 
-    def to_hash(self):
+    def to_dict(self):
         return {
             "barcodes_group": {
                 "id": self.id,

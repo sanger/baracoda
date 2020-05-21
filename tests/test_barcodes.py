@@ -25,6 +25,11 @@ def test_get_new_barcodes_group_as_url_param(client):
     assert response.status_code == HTTPStatus.CREATED
 
 
+def test_get_new_barcodes_group_without_count(client):
+    response = client.post("/barcodes_group/SANG/new")
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+
+
 def test_get_new_barcodes_group_as_json_param(client):
     response = client.post("/barcodes_group/SANG/new", data={"count": 2})
     assert response.json == {
