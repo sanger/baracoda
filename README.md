@@ -85,7 +85,7 @@ The following routes are available from this service:
 
 Run the following command inside a pipenv shell:
 
-    python -m pytest
+    python -m pytest -vsx
 
 ## Running linting checks
 
@@ -101,4 +101,4 @@ To run mypy:
 - Perform any change in the models files located in `baracoda/orm` folder
 - Run alembic and provide a comment to autogenerate the migration comparing with current database:
 
-    alembic revision --autogenerate -m "Added account table"
+        alembic revision --autogenerate -m "Added account table"
