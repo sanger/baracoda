@@ -1,19 +1,21 @@
-import sys
+# flake8: noqa
+###
+# NB: Do not allow 'format on save' for this file as it requires imports in a specific order. On
+#   mac: CMD+K S
+###
 from logging.config import fileConfig
 
+from sqlalchemy import create_engine
+
+from sqlalchemy import pool
+
 from alembic import context
-from sqlalchemy import create_engine, pool
 
-from baracoda.config import SQLALCHEMY_DATABASE_URI
-
-# add your model's MetaData object here
-# for 'autogenerate' support
-# from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
-from baracoda.orm.base import Base
+import sys
 
 sys.path = ["", ".."] + sys.path[1:]
 
+from baracoda.config import SQLALCHEMY_DATABASE_URI
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -23,6 +25,11 @@ config = context.config
 # This line sets up loggers basically.
 fileConfig(config.config_file_name)
 
+# add your model's MetaData object here
+# for 'autogenerate' support
+# from myapp import mymodel
+# target_metadata = mymodel.Base.metadata
+from baracoda.orm.base import Base
 
 target_metadata = Base.metadata
 
