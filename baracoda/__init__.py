@@ -1,9 +1,8 @@
 import logging
 import logging.config
 
-from flask import Flask, current_app
-
 import click
+from flask import Flask
 from flask.cli import with_appcontext
 
 from baracoda import barcodes

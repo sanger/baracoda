@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, Sequence
+from sqlalchemy import Column, DateTime, Integer, Sequence
 from sqlalchemy.orm import relationship
 
 from baracoda.orm.base import Base

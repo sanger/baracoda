@@ -1,13 +1,12 @@
 """create barcodes_groups table
 
 Revision ID: 0898a303eb2a
-Revises: 
+Revises:
 Create Date: 2020-05-12 17:25:45.224290
 
 """
-from alembic import op
 import sqlalchemy as sa
-
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = "0898a303eb2a"
@@ -24,12 +23,8 @@ def upgrade():
         sa.Column("created_at", sa.DateTime(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
     )
-    op.add_column(
-        "barcodes", sa.Column("barcodes_group_id", sa.Integer(), nullable=True)
-    )
-    op.create_foreign_key(
-        None, "barcodes", "barcodes_groups", ["barcodes_group_id"], ["id"]
-    )
+    op.add_column("barcodes", sa.Column("barcodes_group_id", sa.Integer(), nullable=True))
+    op.create_foreign_key(None, "barcodes", "barcodes_groups", ["barcodes_group_id"], ["id"])
     # ### end Alembic commands ###
 
 

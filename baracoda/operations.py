@@ -1,13 +1,11 @@
 import logging
 import re
 from datetime import datetime
-from typing import Optional, List
+from typing import List, Optional
 
-from flask import g
 from baracoda.db import db
 from baracoda.exceptions import InvalidPrefixError
 from baracoda.formats import HeronFormatter
-
 from baracoda.orm.barcode import Barcode
 from baracoda.orm.barcodes_group import BarcodesGroup
 

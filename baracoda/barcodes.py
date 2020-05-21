@@ -2,9 +2,9 @@ import logging
 from http import HTTPStatus
 from typing import Any, Tuple
 
-from flask import Blueprint, current_app, request, g
+from flask import Blueprint, current_app, request
 
-from baracoda.exceptions import InvalidPrefixError, InvalidCountError
+from baracoda.exceptions import InvalidCountError, InvalidPrefixError
 from baracoda.operations import BarcodeOperations
 
 bp = Blueprint("barcode_creation", __name__)
