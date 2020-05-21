@@ -1,7 +1,7 @@
 import pytest
 
 from baracoda import create_app
-from baracoda.db import init_db
+from baracoda.db import db, reset_db
 from baracoda.formats import HeronFormatter
 
 
@@ -19,11 +19,13 @@ def app():
             "SEQUENCE_RESET": True,
             "SLACK_API_TOKEN": "",
             "SLACK_CHANNEL_ID": "",
+            "SQLALCHEMY_DATABASE_URI": "postgresql+psycopg2://postgres:postgres@localhost:5432/baracoda_test",
         }
     )
 
     with app.app_context():
-        init_db()  # Create the test schema
+        db.init_app(app)  # Create the test schema
+        reset_db()
 
     yield app
 

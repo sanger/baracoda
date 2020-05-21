@@ -1,4 +1,9 @@
-# baracoda
+# Baracoda
+
+![CI python](https://github.com/sanger/baracoda/workflows/CI%20python/badge.svg)
+![CI docker](https://github.com/sanger/baracoda/workflows/CI%20docker/badge.svg)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![codecov](https://codecov.io/gh/sanger/baracoda/branch/develop/graph/badge.svg)](https://codecov.io/gh/sanger/baracoda)
 
 Generate barcodes on demand
 
@@ -29,7 +34,7 @@ Generate barcodes on demand
         GRANT
 
 1. Create a `.env` file with the database and environment configuration for the environment we want
-to run. For example, for a development environment we could use:
+to run (see the example file .env.example). For example, for a development environment we could use:
 
         FLASK_APP=baracoda
         FLASK_ENV=development
@@ -38,10 +43,11 @@ to run. For example, for a development environment we could use:
         DB_USER=postgres
         DB_PASSWORD=postgres
         DB_DBNAME=baracoda_dev
+        SQLALCHEMY_DATABASE_URI="postgresql+psycopg2://postgres:postgres@localhost:5432/baracoda_dev"
 
 1. Install the python libraries with pipenv:
 
-        pipenv install
+        pipenv install --dev
 
     If running into trouble with the  package, try: `export LDFLAGS="-L/usr/local/opt/openssl@1.1/lib"`
     and running `pipenv install` again.
@@ -50,9 +56,13 @@ to run. For example, for a development environment we could use:
 
         pipenv shell
 
-1. Initialize the database and create required sequences (only needed when we change the config/settings.py):
+1. **OPTIONAL** To create a new database, and create required sequences:
 
         flask init-db
+
+1. Run migrations (if any):
+
+        alembic upgrade head
 
 1. Start the app:
 
@@ -64,14 +74,31 @@ The following routes are available from this service:
 
     flask routes
 
-    Endpoint                           Methods  Rule
-    ---------------------------------  -------  -----------------------
-    barcode_creation.get_last_barcode  GET      /barcodes/<prefix>/last
-    barcode_creation.get_next_barcode  POST     /barcodes/<prefix>/new
-    static                             GET      /static/<path:filename>
+        Endpoint                                Methods  Rule
+        --------------------------------------  -------  ----------------------------
+        barcode_creation.get_last_barcode       GET      /barcodes/<prefix>/last
+        barcode_creation.get_new_barcode        POST     /barcodes/<prefix>/new
+        barcode_creation.get_new_barcode_group  POST     /barcodes_group/<prefix>/new
+        static                                  GET      /static/<path:filename>
 
 ## Running the tests
 
 Run the following command inside a pipenv shell:
 
-    python -m pytest
+    python -m pytest -vsx
+
+## Running linting checks
+
+To run mypy:
+
+    mypy .
+
+## Development
+
+### Autogenerating migrations
+
+- Make sure your local database is up to date with last schema available (orm/sql/schema.sql)
+- Perform any change in the models files located in `baracoda/orm` folder
+- Run alembic and provide a comment to autogenerate the migration comparing with current database:
+
+        alembic revision --autogenerate -m "Added account table"

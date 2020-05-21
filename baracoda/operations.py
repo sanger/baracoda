@@ -1,11 +1,13 @@
 import logging
 import re
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
 
-from baracoda.db import get_db
+from baracoda.db import db
 from baracoda.exceptions import InvalidPrefixError
 from baracoda.formats import HeronFormatter
+from baracoda.orm.barcode import Barcode
+from baracoda.orm.barcodes_group import BarcodesGroup
 
 logger = logging.getLogger(__name__)
 
@@ -20,42 +22,73 @@ class BarcodeOperations:
 
         self.formatter = HeronFormatter(prefix=self.prefix)
 
-    def generate_barcode(self) -> str:
+    def create_barcode_group(self, count) -> BarcodesGroup:
+        """Creates a new barcode group and the associated barcodes.
+
+        Arguments:
+            count {int} -- number of barcodes to create in the group
+
+        Returns:
+            BarcodeGroup -- the barcode group created
+        """
+        try:
+            next_values = self.__get_next_values(self.sequence_name, count)
+
+            barcodes_group = self.__build_barcodes_group()
+            db.session.add(barcodes_group)
+
+            barcodes = [
+                self.__build_barcode(self.prefix, next_value, barcodes_group=barcodes_group)
+                for next_value in next_values
+            ]
+            db.session.add_all(barcodes)
+
+            db.session.commit()
+
+            return barcodes_group
+        except Exception as e:
+            db.session.rollback()
+            raise e
+
+    def create_barcode(self) -> Barcode:
         """Generate and store a barcode using the Heron formatter.
 
         Returns:
             str -- the generated barcode in the Heron format
         """
-        db = get_db()
+        try:
+            next_value = self.__get_next_value(self.sequence_name)
+            barcode = self.__build_barcode(self.prefix, next_value, barcodes_group=None)
 
-        with db.connection:
-            with db.cursor as self.__cursor:
-                next_value = self.__get_next_value(self.sequence_name)
+            db.session.add(barcode)
 
-                #  convert the next value to hexidecimal
-                hex_str = format(next_value, "X")
-                barcode = self.formatter.barcode(hex_str)
+            db.session.commit()
 
-                self.__store_barcode(barcode)
+            return barcode
+        except Exception as e:
+            db.session.rollback()
+            raise e
 
-        return barcode
-
-    def get_last_barcode(self, prefix: str) -> Optional[str]:
+    def get_last_barcode(self, prefix: str) -> Optional[Barcode]:
         """Get the last barcode generated for the specified sequence.
 
         Arguments:
             prefix {str} -- prefix to use query for the last barcode
 
         Returns:
-            Optional[str] -- last barcode generated for prefix or None
+            Barcode -- last barcode generated for prefix or None
         """
-        db = get_db()
+        results = (
+            db.session.query(Barcode, Barcode.barcode)
+            .filter_by(prefix=self.prefix)
+            .order_by(Barcode.id.desc())
+            .first()
+        )
 
-        with db.connection:
-            with db.cursor as self.__cursor:
-                last_barcode = self.__get_last_barcode()
+        if results is None:
+            return results
 
-        return last_barcode
+        return results[0]
 
     def __check_prefix(self) -> None:
         """Checks the provided prefix.
@@ -80,40 +113,23 @@ class BarcodeOperations:
 
         return bool(pattern.match(self.prefix))
 
-    def __store_barcode(self, barcode: str) -> None:
-        """Store the barcode, prefix and timestamp to the database for later querying.
-
-        Arguments:
-            barcode {str} -- barcode to store
-        """
-        now = datetime.now()
-
-        values = f"('{barcode}', '{self.prefix}', '{now}')"
-
-        command_str = f"INSERT INTO barcodes (barcode, prefix, created_at) VALUES {values};"
-
-        self.__cursor.execute(command_str)
-
-    def __get_last_barcode(self) -> Optional[str]:
-        """Query the database for the last barcode created for the prefix.
-
-        Returns:
-            Optional[str] -- last barcode generated for prefix or None
-        """
-
-        self.__cursor.execute(
-            f"SELECT barcode FROM barcodes "
-            f"WHERE barcodes.prefix='{self.prefix}' "
-            "ORDER BY id DESC "
-            "LIMIT 1;"
+    def __build_barcode(
+        self, prefix: str, next_value: int, barcodes_group: Optional[BarcodesGroup]
+    ) -> Barcode:
+        #  convert the next value to hexidecimal
+        hex_str = format(next_value, "X")
+        barcode = self.formatter.barcode(hex_str)
+        return Barcode(
+            prefix=prefix,
+            barcode=barcode,
+            created_at=datetime.now(),
+            barcodes_group=barcodes_group,
         )
 
-        if result := self.__cursor.fetchone():
-            return result[0]
-        else:
-            return None
+    def __build_barcodes_group(self) -> BarcodesGroup:
+        return BarcodesGroup(created_at=datetime.now())
 
-    def __get_next_value(self, sequence_name: str) -> str:
+    def __get_next_value(self, sequence_name: str) -> int:
         """Get the next value from the sequence.
 
         Arguments:
@@ -122,8 +138,21 @@ class BarcodeOperations:
         Returns:
             str -- next value in sequence
         """
-        self.__cursor.execute(f"SELECT nextval('{sequence_name.lower()}');")
+        return int(db.session.execute(f"SELECT nextval('{sequence_name.lower()}');").fetchone()[0])
 
-        result = self.__cursor.fetchone()
+    def __get_next_values(self, sequence_name: str, count: int) -> List[int]:
+        """Get the next count values from the sequence.
 
-        return result[0]
+        Arguments:
+            sequence_name {str} -- name of the sequence to query
+            count {int} -- number of values from the sequence to generate
+
+        Returns:
+            str -- next value in sequence
+        """
+        return [
+            int(val[0])
+            for val in db.session.execute(
+                f"SELECT nextval('{sequence_name.lower()}') FROM    generate_series(1, {count}) l;"
+            ).fetchall()
+        ]
