@@ -16,4 +16,4 @@ RUN pipenv install --dev --ignore-pipfile --system --deploy
 
 ADD . /code/
 
-CMD ["gunicorn", "-b", "0.0.0.0:8000", "baracoda:create_app()"]
+CMD ["gunicorn", "-b", "0.0.0.0:8000", "--workers=2", "--threads=4", "--worker-class=gthread", "--timeout", "0", "--log-level", "DEBUG", "--worker-tmp-dir", "/dev/shm", "baracoda:create_app()"]
