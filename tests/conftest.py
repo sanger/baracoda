@@ -38,3 +38,7 @@ def client(app):
 @pytest.fixture
 def heron_formatter():
     return HeronFormatter(prefix="SANG")
+
+@pytest.fixture
+def heron_formatter_ht():
+    return HeronFormatter(prefix="HT")
