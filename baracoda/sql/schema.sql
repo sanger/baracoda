@@ -2,6 +2,10 @@ DROP SEQUENCE IF EXISTS heron;
 CREATE SEQUENCE heron
 START 200000;
 
+DROP SEQUENCE IF EXISTS ht;
+CREATE SEQUENCE ht
+START 111111;
+
 DROP TABLE IF EXISTS barcodes;
 
 CREATE TABLE barcodes
@@ -33,4 +37,4 @@ CREATE TABLE alembic_version
 INSERT INTO alembic_version
     (version_num)
 VALUES
-    ('0898a303eb2a');
+    ('a32c725ae353');

@@ -8,11 +8,11 @@ from baracoda.exceptions import InvalidPrefixError
 from baracoda.formats import HeronFormatter
 from baracoda.orm.barcode import Barcode
 from baracoda.orm.barcodes_group import BarcodesGroup
+from baracoda.helpers import get_prefix_item
 
 from flask import current_app
 
 logger = logging.getLogger(__name__)
-
 
 class BarcodeOperations:
     def __init__(self, prefix: str):
@@ -22,9 +22,15 @@ class BarcodeOperations:
 
         self.__check_prefix()
 
-        self.__set_sequence_name()
+        self.__set_prefix_item()
 
-        self.formatter = HeronFormatter(prefix=self.prefix)
+        if not self.prefix_item:
+            raise InvalidPrefixError()
+        
+        # saves pulling it out of object every time
+        self.sequence_name = self.prefix_item["sequence_name"]
+
+        self.formatter = HeronFormatter(prefix=self.prefix, convert=self.prefix_item["convert"])
 
     def create_barcode_group(self, count) -> BarcodesGroup:
         """Creates a new barcode group and the associated barcodes.
@@ -120,9 +126,7 @@ class BarcodeOperations:
     def __build_barcode(
         self, prefix: str, next_value: int, barcodes_group: Optional[BarcodesGroup]
     ) -> Barcode:
-        #  convert the next value to hexidecimal
-        hex_str = format(next_value, "X")
-        barcode = self.formatter.barcode(hex_str)
+        barcode = self.formatter.barcode(next_value)
         return Barcode(
             prefix=prefix,
             barcode=barcode,
@@ -157,13 +161,13 @@ class BarcodeOperations:
         return [
             int(val[0])
             for val in db.session.execute(
-                f"SELECT nextval('{sequence_name.lower()}') FROM    generate_series(1, {count}) l;"
+                f"SELECT nextval('{self.sequence_name.lower()}') FROM    generate_series(1, {count}) l;"
             ).fetchall()
         ]
 
     def __set_sequence_name(self):
-        prefix = next((item for item in current_app.config["PREFIXES"] if item["prefix"] == self.prefix), None)
-        if not prefix:
-            raise InvalidPrefixError()
-
+        prefix = get_prefix_item(self.prefix)
         self.sequence_name = prefix["sequence_name"]
+
+    def __set_prefix_item(self):
+        self.prefix_item = get_prefix_item(self.prefix)

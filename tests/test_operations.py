@@ -1,6 +1,12 @@
 from baracoda.operations import BarcodeOperations
 from baracoda.exceptions import InvalidPrefixError
+from baracoda.helpers import get_prefix_item
 import pytest
+
+def test_correct_prefix_obj_is_created(app, prefixes):
+  with app.app_context():
+    barcode_operations = BarcodeOperations(prefix="LEED")
+    assert barcode_operations.prefix_item == get_prefix_item("LEED")
 
 def test_sequence_is_correct_for_centres(app):
   with app.app_context():

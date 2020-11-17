@@ -1,5 +1,8 @@
 from http import HTTPStatus
 
+# sequences
+# starts at 2000000 for heron
+# starts at 111111 for ht
 
 def test_param_empty_prefix_value(client):
     response = client.post("/barcodes/new")
@@ -16,6 +19,10 @@ def test_get_new_barcode(client):
     assert response.json == {"barcode": "SANG-30D404"}
     assert response.status_code == HTTPStatus.CREATED
 
+def test_get_new_barcode_for_ht(client):
+    response = client.post("/barcodes/HT/new")
+    assert response.json == {"barcode": "HT-111111"}
+    assert response.status_code == HTTPStatus.CREATED
 
 def test_get_new_barcodes_group_as_url_param(client):
     response = client.post("/barcodes_group/SANG/new?count=3")
