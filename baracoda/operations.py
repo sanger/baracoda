@@ -9,16 +9,20 @@ from baracoda.formats import HeronFormatter
 from baracoda.orm.barcode import Barcode
 from baracoda.orm.barcodes_group import BarcodesGroup
 
+from flask import current_app
+
 logger = logging.getLogger(__name__)
 
 
 class BarcodeOperations:
-    def __init__(self, sequence_name: str, prefix: str):
+    def __init__(self, prefix: str):
         logger.debug("Instantiate....")
-        self.sequence_name = sequence_name
+        
         self.prefix = prefix
 
         self.__check_prefix()
+
+        self.__set_sequence_name()
 
         self.formatter = HeronFormatter(prefix=self.prefix)
 
@@ -156,3 +160,10 @@ class BarcodeOperations:
                 f"SELECT nextval('{sequence_name.lower()}') FROM    generate_series(1, {count}) l;"
             ).fetchall()
         ]
+
+    def __set_sequence_name(self):
+        prefix = next((item for item in current_app.config["PREFIXES"] if item["prefix"] == self.prefix), None)
+        if not prefix:
+            raise InvalidPrefixError()
+
+        self.sequence_name = prefix["sequence_name"]
