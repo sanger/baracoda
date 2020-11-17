@@ -1,5 +1,5 @@
 from os import getenv
-from typing import List, Dict
+from typing import List, Dict, Any
 
 DB_DBNAME = getenv("DB_DBNAME")
 DB_HOST = getenv("DB_HOST")
@@ -29,7 +29,7 @@ for config in REQUIRED_CONFIG:
     if not eval(config):
         raise ValueError(f"{config} required for Flask application")
 
-PREFIXES: List[Dict[str, str]] = [
+PREFIXES: List[Dict[str, Any]] = [
     {"prefix": "PHEC", "sequence_name": "heron", "convert": True},
     {"prefix": "PHWC", "sequence_name": "heron", "convert": True},
     {"prefix": "GCVR", "sequence_name": "heron", "convert": True},  

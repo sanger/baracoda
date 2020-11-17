@@ -64,10 +64,9 @@ class HeronFormatter:
             str -- formatted barcode with prefix and checksum
         """
 
-        if self.convert:
-            value = self.format_barcode_number(value)
+        formatted_value = self.format_barcode_number(value) if self.convert else value
 
-        return f"{self.prefix}-{value}"
+        return f"{self.prefix}-{formatted_value}"
 
     def format_barcode_number(self, value: int) -> str:
         """Method which returns a barcode with the prefix and checksum.
