@@ -161,13 +161,9 @@ class BarcodeOperations:
         return [
             int(val[0])
             for val in db.session.execute(
-                f"SELECT nextval('{self.sequence_name.lower()}') FROM    generate_series(1, {count}) l;"
+                f"SELECT nextval('{sequence_name.lower()}') FROM    generate_series(1, {count}) l;"
             ).fetchall()
         ]
-
-    def __set_sequence_name(self):
-        prefix = get_prefix_item(self.prefix)
-        self.sequence_name = prefix["sequence_name"]
 
     def __set_prefix_item(self):
         self.prefix_item = get_prefix_item(self.prefix)
