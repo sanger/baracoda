@@ -7,6 +7,8 @@ class HeronFormatter:
         logger.debug(f"Instantiate formatter with {prefix}")
 
         self.prefix = prefix
+
+        # tells the formatter whether barcode needs to be mashed up
         self.convert = convert
 
     def hex_to_int(self, hex_str: str) -> int:

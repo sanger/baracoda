@@ -24,6 +24,7 @@ class BarcodeOperations:
 
         self.__set_prefix_item()
 
+        # if the prefix item does not exist the prefix is not valid
         if not self.prefix_item:
             raise InvalidPrefixError()
         
@@ -166,4 +167,9 @@ class BarcodeOperations:
         ]
 
     def __set_prefix_item(self):
+        """Get the prefix details.
+
+        Returns:
+            prefix item or None if prefix does not exist
+        """
         self.prefix_item = get_prefix_item(self.prefix)
