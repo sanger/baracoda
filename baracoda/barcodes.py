@@ -3,11 +3,13 @@ from http import HTTPStatus
 from typing import Any, Tuple
 
 from flask import Blueprint, current_app, request
+from flask_cors import CORS  # type: ignore
 
 from baracoda.exceptions import InvalidCountError, InvalidPrefixError
 from baracoda.operations import BarcodeOperations
 
 bp = Blueprint("barcode_creation", __name__)
+CORS(bp)
 
 logger = logging.getLogger(__name__)
 
