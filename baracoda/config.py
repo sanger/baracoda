@@ -11,23 +11,7 @@ SEQUENCE_START = getenv("SEQUENCE_START")
 SLACK_API_TOKEN = getenv("SLACK_API_TOKEN", "")
 SLACK_CHANNEL_ID = getenv("SLACK_CHANNEL_ID", "")
 SQLALCHEMY_DATABASE_URI = getenv("SQLALCHEMY_DATABASE_URI", "")
-
-REQUIRED_CONFIG = (
-    "DB_DBNAME",
-    "DB_HOST",
-    "DB_PASSWORD",
-    "DB_PORT",
-    "DB_USER",
-    "SEQUENCE_NAME",
-    "SEQUENCE_START",
-    "SLACK_API_TOKEN",
-    "SLACK_CHANNEL_ID",
-    "SQLALCHEMY_DATABASE_URI",
-)
-
-for config in REQUIRED_CONFIG:
-    if not eval(config):
-        raise ValueError(f"{config} required for Flask application")
+X_DOMAINS = "*"
 
 PREFIXES: List[Dict[str, Any]] = [
     {"prefix": "PHEC", "sequence_name": "heron", "convert": True},
@@ -72,3 +56,24 @@ PREFIXES: List[Dict[str, Any]] = [
     {"prefix": "CAMC", "sequence_name": "heron", "convert": True},
     {"prefix": "QEUH", "sequence_name": "heron", "convert": True},
     {"prefix": "HT", "sequence_name": "ht", "convert": False}]
+
+
+REQUIRED_CONFIG = (
+    "DB_DBNAME",
+    "DB_HOST",
+    "DB_PASSWORD",
+    "DB_PORT",
+    "DB_USER",
+    "SEQUENCE_NAME",
+    "SEQUENCE_START",
+    "SLACK_API_TOKEN",
+    "SLACK_CHANNEL_ID",
+    "SQLALCHEMY_DATABASE_URI",
+    "X_DOMAINS",
+    "PREFIXES"
+)
+
+for config in REQUIRED_CONFIG:
+    if not eval(config):
+        raise ValueError(f"{config} required for Flask application")
+
