@@ -55,7 +55,8 @@ PREFIXES: List[Dict[str, Any]] = [
     {"prefix": "TFCI", "sequence_name": "heron", "convert": True},
     {"prefix": "CAMC", "sequence_name": "heron", "convert": True},
     {"prefix": "QEUH", "sequence_name": "heron", "convert": True},
-    {"prefix": "HT", "sequence_name": "ht", "convert": False}]
+    {"prefix": "HT", "sequence_name": "ht", "convert": False},
+    ]
 
 
 REQUIRED_CONFIG = (
@@ -76,4 +77,12 @@ REQUIRED_CONFIG = (
 for config in REQUIRED_CONFIG:
     if not eval(config):
         raise ValueError(f"{config} required for Flask application")
+
+for prefix_item in PREFIXES:
+    for key in ['prefix', 'sequence_name', 'convert']:
+        if not(key in prefix_item):
+            raise KeyError("PREFIXES must all contain a prefix, sequence_name and convert key.")
+
+
+
 
