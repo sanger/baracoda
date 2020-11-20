@@ -8,19 +8,30 @@ from baracoda.exceptions import InvalidPrefixError
 from baracoda.formats import HeronFormatter
 from baracoda.orm.barcode import Barcode
 from baracoda.orm.barcodes_group import BarcodesGroup
+from baracoda.helpers import get_prefix_item
+
+from flask import current_app
 
 logger = logging.getLogger(__name__)
 
-
 class BarcodeOperations:
-    def __init__(self, sequence_name: str, prefix: str):
+    def __init__(self, prefix: str):
         logger.debug("Instantiate....")
-        self.sequence_name = sequence_name
+        
         self.prefix = prefix
 
         self.__check_prefix()
 
-        self.formatter = HeronFormatter(prefix=self.prefix)
+        self.__set_prefix_item()
+
+        # if the prefix item does not exist the prefix is not valid
+        if not self.prefix_item:
+            raise InvalidPrefixError()
+        
+        # saves pulling it out of object every time
+        self.sequence_name = self.prefix_item["sequence_name"]
+
+        self.formatter = HeronFormatter(prefix=self.prefix, convert=self.prefix_item["convert"])
 
     def create_barcode_group(self, count) -> BarcodesGroup:
         """Creates a new barcode group and the associated barcodes.
@@ -116,9 +127,7 @@ class BarcodeOperations:
     def __build_barcode(
         self, prefix: str, next_value: int, barcodes_group: Optional[BarcodesGroup]
     ) -> Barcode:
-        #  convert the next value to hexidecimal
-        hex_str = format(next_value, "X")
-        barcode = self.formatter.barcode(hex_str)
+        barcode = self.formatter.barcode(next_value)
         return Barcode(
             prefix=prefix,
             barcode=barcode,
@@ -156,3 +165,11 @@ class BarcodeOperations:
                 f"SELECT nextval('{sequence_name.lower()}') FROM    generate_series(1, {count}) l;"
             ).fetchall()
         ]
+
+    def __set_prefix_item(self):
+        """Get the prefix details.
+
+        Returns:
+            prefix item or None if prefix does not exist
+        """
+        self.prefix_item = get_prefix_item(self.prefix)

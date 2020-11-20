@@ -4,6 +4,7 @@ from baracoda import create_app
 from baracoda.db import db, reset_db
 from baracoda.formats import HeronFormatter
 
+from tests.data.fixture_data import PREFIXES
 
 @pytest.fixture
 def app():
@@ -20,6 +21,7 @@ def app():
             "SLACK_API_TOKEN": "",
             "SLACK_CHANNEL_ID": "",
             "SQLALCHEMY_DATABASE_URI": "postgresql+psycopg2://postgres:postgres@localhost:5432/baracoda_test",
+            "PREFIXES": PREFIXES
         }
     )
 
@@ -38,3 +40,7 @@ def client(app):
 @pytest.fixture
 def heron_formatter():
     return HeronFormatter(prefix="SANG")
+
+@pytest.fixture
+def prefixes():
+    return PREFIXES
