@@ -15,7 +15,7 @@ import sys
 
 sys.path = ["", ".."] + sys.path[1:]
 
-from baracoda.config import SQLALCHEMY_DATABASE_URI
+from baracoda.config.defaults import SQLALCHEMY_DATABASE_URI
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

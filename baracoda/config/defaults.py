@@ -1,6 +1,8 @@
 from os import getenv
 from typing import List, Dict, Any
 
+FLASK_APP = "baracoda"
+FLASK_ENV = "development"
 DB_DBNAME = "baracoda_dev"
 DB_HOST = "localhost"
 DB_PASSWORD = "postgres"
