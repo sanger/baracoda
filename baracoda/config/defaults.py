@@ -1,26 +1,28 @@
 from os import getenv
 from typing import List, Dict, Any
 
-DB_DBNAME = getenv("DB_DBNAME")
-DB_HOST = getenv("DB_HOST")
-DB_PASSWORD = getenv("DB_PASSWORD")
-DB_PORT = getenv("DB_PORT")
-DB_USER = getenv("DB_USER")
-SEQUENCE_NAME = getenv("SEQUENCE_NAME")
-SEQUENCE_START = getenv("SEQUENCE_START")
-SLACK_API_TOKEN = getenv("SLACK_API_TOKEN", "")
-SLACK_CHANNEL_ID = getenv("SLACK_CHANNEL_ID", "")
-SQLALCHEMY_DATABASE_URI = getenv("SQLALCHEMY_DATABASE_URI", "")
+FLASK_APP = "baracoda"
+FLASK_ENV = "development"
+DB_DBNAME = "baracoda_dev"
+DB_HOST = "localhost"
+DB_PASSWORD = "postgres"
+DB_PORT = "5432"
+DB_USER = "postgres"
+SEQUENCE_NAME = "heron"
+SEQUENCE_START = "200000"
+SLACK_API_TOKEN = "xoxb-123"
+SLACK_CHANNEL_ID = "Cxxx"
+SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://postgres:postgres@localhost:5432/baracoda_dev"
 X_DOMAINS = "*"
 
 PREFIXES: List[Dict[str, Any]] = [
     {"prefix": "PHEC", "sequence_name": "heron", "convert": True},
     {"prefix": "PHWC", "sequence_name": "heron", "convert": True},
-    {"prefix": "GCVR", "sequence_name": "heron", "convert": True},  
+    {"prefix": "GCVR", "sequence_name": "heron", "convert": True},
     {"prefix": "SANG", "sequence_name": "heron", "convert": True},
     {"prefix": "BIRM", "sequence_name": "heron", "convert": True},
     {"prefix": "CAMB", "sequence_name": "heron", "convert": True},
-    {"prefix": "EDIN", "sequence_name": "heron", "convert": True},   
+    {"prefix": "EDIN", "sequence_name": "heron", "convert": True},
     {"prefix": "LIVE", "sequence_name": "heron", "convert": True},
     {"prefix": "OXON", "sequence_name": "heron", "convert": True},
     {"prefix": "SHEF", "sequence_name": "heron", "convert": True},
@@ -58,7 +60,6 @@ PREFIXES: List[Dict[str, Any]] = [
     {"prefix": "HT", "sequence_name": "ht", "convert": False},
     ]
 
-
 REQUIRED_CONFIG = (
     "DB_DBNAME",
     "DB_HOST",
@@ -82,7 +83,3 @@ for prefix_item in PREFIXES:
     for key in ['prefix', 'sequence_name', 'convert']:
         if not(key in prefix_item):
             raise KeyError("PREFIXES must all contain a prefix, sequence_name and convert key.")
-
-
-
-
