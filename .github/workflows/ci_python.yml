@@ -55,6 +55,7 @@ jobs:
         env:
           FLASK_APP: baracoda
           SETTINGS_PATH: config/test.py
+          SQLALCHEMY_DATABASE_URI: postgresql+psycopg2://postgres:postgres@localhost:5432/baracoda_test
       - name: Test with pytest
         run: |
           python -m pytest -vsx
