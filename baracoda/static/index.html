@@ -1,5 +1,9 @@
 <html>
 
+<head>
+  <title>COG-UK barcode creator</title>
+</head>
+
 <body>
   <script>
     function clickButton() {
@@ -100,9 +104,9 @@
     <label for="prefix">Prefix
       <select id="prefix"></select>
     </label>
-    <label for="count">Count
+    <label for="count">Number of barcodes
       <input type="text" name="count" id="count" value="" autocomplete="off" /></label>
-    <input type="button" name="but" onclick="clickButton()" value="Retrieve" />
+    <input type="button" name="but" onclick="clickButton()" value="Create" />
   </form>
 
   <div id="barcodes"></div>
