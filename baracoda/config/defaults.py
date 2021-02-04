@@ -57,8 +57,9 @@ PREFIXES: List[Dict[str, Any]] = [
     {"prefix": "TFCI", "sequence_name": "heron", "convert": True},
     {"prefix": "CAMC", "sequence_name": "heron", "convert": True},
     {"prefix": "QEUH", "sequence_name": "heron", "convert": True},
+    {"prefix": "RAND", "sequence_name": "heron", "convert": True},
     {"prefix": "HT", "sequence_name": "ht", "convert": False},
-    ]
+]
 
 REQUIRED_CONFIG = (
     "DB_DBNAME",
