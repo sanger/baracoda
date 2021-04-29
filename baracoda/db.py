@@ -1,6 +1,6 @@
 import logging
 
-from flask_sqlalchemy import SQLAlchemy  # type: ignore
+from flask_sqlalchemy import SQLAlchemy
 
 SCHEMA_FILE = "baracoda/sql/schema.sql"
 
@@ -12,7 +12,7 @@ db = SQLAlchemy()
 
 def reset_db():
     """
-        Initialise the required database components.
+    Initialise the required database components.
     """
     logger.debug("init_db()")
 

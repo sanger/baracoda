@@ -1,4 +1,4 @@
-LOGGING_CONF = {
+LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
@@ -20,7 +20,5 @@ LOGGING_CONF = {
             "formatter": "verbose",
         },
     },
-    "loggers": {
-        "baracoda": {"handlers": ["colored_stream", "slack"], "level": "DEBUG", "propagate": True}
-    },
+    "loggers": {"baracoda": {"handlers": ["colored_stream", "slack"], "level": "DEBUG", "propagate": True}},
 }

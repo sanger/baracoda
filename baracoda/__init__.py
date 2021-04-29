@@ -1,13 +1,14 @@
 import logging
 import logging.config
+from http import HTTPStatus
 
 import click
 from flask import Flask
 from flask.cli import with_appcontext
 
 from baracoda import barcodes
+from baracoda.config.logging import LOGGING
 from baracoda.db import db, reset_db
-from baracoda.logging_conf import LOGGING_CONF
 
 logger = logging.getLogger(__name__)
 
@@ -35,10 +36,14 @@ def create_app(test_config=None):
 
     db.init_app(app)
 
-    logging.config.dictConfig(LOGGING_CONF)
+    logging.config.dictConfig(LOGGING)
 
     app.cli.add_command(init_db_command)
 
     app.register_blueprint(barcodes.bp)
+
+    @app.route("/health")
+    def health_check():
+        return "Factory working", HTTPStatus.OK
 
     return app
