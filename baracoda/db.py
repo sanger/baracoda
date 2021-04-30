@@ -17,7 +17,6 @@ def reset_db():
     logger.debug("init_db()")
 
     with open(SCHEMA_FILE, "r") as schema_file:
-        # schema_loader = "".join(schema_file.readlines())
         schema_loader = schema_file.read()
 
     db.session.execute(schema_loader)
