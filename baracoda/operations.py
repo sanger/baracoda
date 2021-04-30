@@ -1,23 +1,22 @@
 import logging
 import re
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, cast
 
 from baracoda.db import db
 from baracoda.exceptions import InvalidPrefixError
 from baracoda.formats import HeronFormatter
+from baracoda.helpers import get_prefix_item
 from baracoda.orm.barcode import Barcode
 from baracoda.orm.barcodes_group import BarcodesGroup
-from baracoda.helpers import get_prefix_item
-
-from flask import current_app
 
 logger = logging.getLogger(__name__)
+
 
 class BarcodeOperations:
     def __init__(self, prefix: str):
         logger.debug("Instantiate....")
-        
+
         self.prefix = prefix
 
         self.__check_prefix()
@@ -27,13 +26,13 @@ class BarcodeOperations:
         # if the prefix item does not exist the prefix is not valid
         if not self.prefix_item:
             raise InvalidPrefixError()
-        
+
         # saves pulling it out of object every time
         self.sequence_name = self.prefix_item["sequence_name"]
 
         self.formatter = HeronFormatter(prefix=self.prefix, convert=self.prefix_item["convert"])
 
-    def create_barcode_group(self, count) -> BarcodesGroup:
+    def create_barcode_group(self, count: int) -> BarcodesGroup:
         """Creates a new barcode group and the associated barcodes.
 
         Arguments:
@@ -90,16 +89,13 @@ class BarcodeOperations:
             Barcode -- last barcode generated for prefix or None
         """
         results = (
-            db.session.query(Barcode, Barcode.barcode)
-            .filter_by(prefix=self.prefix)
-            .order_by(Barcode.id.desc())
-            .first()
+            db.session.query(Barcode, Barcode.barcode).filter_by(prefix=self.prefix).order_by(Barcode.id.desc()).first()
         )
 
         if results is None:
             return results
 
-        return results[0]
+        return cast(Barcode, results[0])
 
     def __check_prefix(self) -> None:
         """Checks the provided prefix.
@@ -124,9 +120,7 @@ class BarcodeOperations:
 
         return bool(pattern.match(self.prefix))
 
-    def __build_barcode(
-        self, prefix: str, next_value: int, barcodes_group: Optional[BarcodesGroup]
-    ) -> Barcode:
+    def __build_barcode(self, prefix: str, next_value: int, barcodes_group: Optional[BarcodesGroup]) -> Barcode:
         barcode = self.formatter.barcode(next_value)
         return Barcode(
             prefix=prefix,

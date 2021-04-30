@@ -2,6 +2,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class HeronFormatter:
     def __init__(self, prefix: str, convert: bool = True):
         logger.debug(f"Instantiate formatter with {prefix}")
@@ -79,5 +80,5 @@ class HeronFormatter:
         Returns:
             str -- formatted barcode with prefix and checksum
         """
-        hex_str = format(value, 'X')
+        hex_str = format(value, "X")
         return f"{hex_str}{self.checksum(hex_str)}"

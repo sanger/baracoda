@@ -1,20 +1,30 @@
-from os import getenv
-from typing import List, Dict, Any
+from typing import Any, Dict, List
 
-FLASK_APP = "baracoda"
-FLASK_ENV = "development"
+###
+# database config
+###
 DB_DBNAME = "baracoda_dev"
-DB_HOST = "localhost"
+DB_HOST = "127.0.0.1"
 DB_PASSWORD = "postgres"
 DB_PORT = "5432"
 DB_USER = "postgres"
+SQLALCHEMY_DATABASE_URI = f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_DBNAME}"
+
+###
+# sequence config
+###
 SEQUENCE_NAME = "heron"
 SEQUENCE_START = "200000"
+
+###
+# slack config
+###
 SLACK_API_TOKEN = "xoxb-123"
 SLACK_CHANNEL_ID = "Cxxx"
-SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://postgres:postgres@localhost:5432/baracoda_dev"
-X_DOMAINS = "*"
 
+###
+# prefix for barcodes returned from the respective sequece
+###
 PREFIXES: List[Dict[str, Any]] = [
     {"prefix": "PHEC", "sequence_name": "heron", "convert": True},
     {"prefix": "PHWC", "sequence_name": "heron", "convert": True},
@@ -62,26 +72,7 @@ PREFIXES: List[Dict[str, Any]] = [
     {"prefix": "HT", "sequence_name": "ht", "convert": False},
 ]
 
-REQUIRED_CONFIG = (
-    "DB_DBNAME",
-    "DB_HOST",
-    "DB_PASSWORD",
-    "DB_PORT",
-    "DB_USER",
-    "SEQUENCE_NAME",
-    "SEQUENCE_START",
-    "SLACK_API_TOKEN",
-    "SLACK_CHANNEL_ID",
-    "SQLALCHEMY_DATABASE_URI",
-    "X_DOMAINS",
-    "PREFIXES"
-)
-
-for config in REQUIRED_CONFIG:
-    if not eval(config):
-        raise ValueError(f"{config} required for Flask application")
-
 for prefix_item in PREFIXES:
-    for key in ['prefix', 'sequence_name', 'convert']:
-        if not(key in prefix_item):
+    for key in ["prefix", "sequence_name", "convert"]:
+        if not (key in prefix_item):
             raise KeyError("PREFIXES must all contain a prefix, sequence_name and convert key.")

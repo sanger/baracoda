@@ -5,14 +5,12 @@ on:
     branches:
       - develop
       - master
-    paths-ignore:
-      - "README.md"
-    
+
 env:
   IMAGE_NAME: ${{ github.repository }}/${{ github.event.repository.name }}
 
 jobs:
-  build_and_test_job:
+  build_test_release_push:
     runs-on: ubuntu-18.04
     services:
       postgres:
@@ -30,46 +28,54 @@ jobs:
           --health-retries 5
     steps:
       - uses: actions/checkout@v2
-      - name: Set release tag
-        # Generate a release tag name in the format:
-        # devel/YYYY-MM-DD/HHMMSS
-        # Writes this out to the environment file for use downstream
-        run: |
-          echo "RELEASE_TAG=$([ ${GITHUB_REF##*/} = "develop" ] && printf '%s\n' $(cat .release-version)_develop || printf '%s\n' $(cat .release-version))" >> $GITHUB_ENV
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-        with:
-          tag_name: ${{ env.RELEASE_TAG }}
-          release_name: ${{ env.RELEASE_TAG }}
-          draft: false
-          prerelease: ${{ !(github.ref == 'refs/heads/master') }}
-      - name: Build the Docker image
+
+      - name: Build and tag the image for testing
         run: >-
           docker build .
           --file Dockerfile
-          --tag docker.pkg.github.com/${IMAGE_NAME}:${{ env.RELEASE_TAG }}
-      - name: Run mypy against the image
-        run: >-
-          docker run
-          --network host
-          docker.pkg.github.com/${IMAGE_NAME}:${{ env.RELEASE_TAG }}
-          mypy .
+          --tag docker.pkg.github.com/${IMAGE_NAME}:${GITHUB_REF##*/}
+
       - name: Run tests against the image
         run: >-
           docker run
           --network host
-          docker.pkg.github.com/${IMAGE_NAME}:${{ env.RELEASE_TAG }}
-          python -m  pytest -vsx
-      - name: Login to regitry
+          --env SETTINGS_PATH=config/test.py
+          docker.pkg.github.com/${IMAGE_NAME}:${GITHUB_REF##*/}
+          python -m pytest --no-cov -vx
+
+      - name: Set release tag
+        # https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-environment-variable
+        run: echo "RELEASE_VERSION=$([ ${GITHUB_REF##*/} = "develop" ] && printf '%s\n' $(cat .release-version)-develop || printf '%s\n' $(cat .release-version))" >> $GITHUB_ENV
+
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ env.RELEASE_VERSION }}
+          release_name: ${{ env.RELEASE_VERSION }}
+          draft: false
+          prerelease: ${{ !(github.ref == 'refs/heads/master') }}
+
+      - name: Login to registry
         run: >-
           docker login
           -u ${{ github.actor }}
           -p ${{ secrets.GITHUB_TOKEN }}
           docker.pkg.github.com
-      - name: Publish image with image tag being either develop-timestamp or release-version
+
+      - name: Tag image with release version
         run: >-
-          docker push
-          docker.pkg.github.com/${IMAGE_NAME}:${{ env.RELEASE_TAG }}
+          docker tag
+          docker.pkg.github.com/${IMAGE_NAME}:${GITHUB_REF##*/}
+          docker.pkg.github.com/${IMAGE_NAME}:${{ env.RELEASE_VERSION }}
+
+      - name: Push release tag image to registry
+        run: >-
+          docker push docker.pkg.github.com/${IMAGE_NAME}:${{ env.RELEASE_VERSION }}
+
+      - name: Remove the oldest package
+        uses: actions/delete-package-versions@v1
+        with:
+          package-name: "${{ github.event.repository.name }}"
