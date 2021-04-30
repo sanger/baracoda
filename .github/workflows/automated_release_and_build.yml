@@ -75,6 +75,7 @@ jobs:
         run: >-
           docker push docker.pkg.github.com/${IMAGE_NAME}:${{ env.RELEASE_VERSION }}
 
-      - uses: actions/delete-package-versions@v1
+      - name: Remove the oldest package
+        uses: actions/delete-package-versions@v1
         with:
           package-name: "${{ github.event.repository.name }}"
