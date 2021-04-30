@@ -11,23 +11,23 @@ Barcode generation using postgres sequences and pre-defined prefixes.
 <!-- toc -->
 
 - [Requirements for Development](#requirements-for-development)
-  * [Configuring Environment](#configuring-environment)
-  * [Setup Steps](#setup-steps)
+  - [Configuring Environment](#configuring-environment)
+  - [Setup Steps](#setup-steps)
 - [Running](#running)
 - [Testing](#testing)
-  * [Testing Requirements](#testing-requirements)
-  * [Running Tests](#running-tests)
+  - [Testing Requirements](#testing-requirements)
+  - [Running Tests](#running-tests)
 - [Formatting, Linting and Type Checking](#formatting-linting-and-type-checking)
-  * [Formatting](#formatting)
-  * [Linting](#linting)
-  * [Type Checking](#type-checking)
+  - [Formatting](#formatting)
+  - [Linting](#linting)
+  - [Type Checking](#type-checking)
 - [Deployment](#deployment)
 - [Autogenerating Migrations](#autogenerating-migrations)
 - [Routes](#routes)
 - [Miscellaneous](#miscellaneous)
-  * [Troubleshooting](#troubleshooting)
-    + [Installing psycopg2](#installing-psycopg2)
-  * [Updating the Table of Contents](#updating-the-table-of-contents)
+  - [Troubleshooting](#troubleshooting)
+    - [Installing psycopg2](#installing-psycopg2)
+  - [Updating the Table of Contents](#updating-the-table-of-contents)
 
 <!-- tocstop -->
 
@@ -53,6 +53,14 @@ application), use the `docker-compose.yml` file:
         docker compose up -d
 
     The compose service automatically creates the `baracoda_dev` database and `postgres` user.
+- Git hooks are executed using [lefthook](https://github.com/evilmartians/lefthook), install
+  lefthook using homebrew and add the pre-commit and pre-push hooks as follows:
+
+      lefthook add pre-commit
+      lefthook add pre-push
+- [talisman](https://github.com/thoughtworks/talisman) is used as a credentials checker, to ignore
+  files which it triggers as false positives, follow the instructions in the git commit output by
+  adding the files to be ignore to a `.talismanrc` file and try commit again.
 
 ### Configuring Environment
 
