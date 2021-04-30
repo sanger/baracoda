@@ -6,8 +6,9 @@ ENV PYTHONUNBUFFERED 1
 
 # libpq-dev & gcc: required by psycopg2
 RUN apt-get update && apt-get install -y \
-  libpq-dev \
+  curl \
   gcc \
+  libpq-dev \
   && rm -rf /var/lib/apt/lists/*
 
 # Install the package manager - pipenv
