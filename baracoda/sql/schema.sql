@@ -26,7 +26,6 @@ CREATE TABLE barcodes_groups
     PRIMARY KEY (id)
 );
 
-
 DROP TABLE IF EXISTS alembic_version;
 CREATE TABLE alembic_version
 (

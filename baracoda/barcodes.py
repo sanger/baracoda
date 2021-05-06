@@ -2,8 +2,8 @@ import logging
 from http import HTTPStatus
 from typing import Any, Tuple
 
-from flask import Blueprint, current_app, request
-from flask_cors import CORS  # type: ignore
+from flask import Blueprint, request
+from flask_cors import CORS
 
 from baracoda.exceptions import InvalidCountError, InvalidPrefixError
 from baracoda.operations import BarcodeOperations
@@ -19,9 +19,7 @@ def get_new_barcode_group(prefix: str) -> Tuple[Any, int]:
     try:
         count = get_count_param()
 
-        operator = BarcodeOperations(
-            prefix=prefix
-        )
+        operator = BarcodeOperations(prefix=prefix)
         barcode_group = operator.create_barcode_group(count)
         return (
             barcode_group.to_dict(),
@@ -39,9 +37,7 @@ def get_new_barcode_group(prefix: str) -> Tuple[Any, int]:
 @bp.route("/barcodes/<prefix>/new", methods=["POST"])
 def get_new_barcode(prefix: str) -> Tuple[Any, int]:
     try:
-        operator = BarcodeOperations(
-            prefix=prefix
-        )
+        operator = BarcodeOperations(prefix=prefix)
         barcode = operator.create_barcode()
 
         return barcode.to_dict(), HTTPStatus.CREATED
@@ -55,9 +51,7 @@ def get_new_barcode(prefix: str) -> Tuple[Any, int]:
 @bp.route("/barcodes/<prefix>/last", methods=["GET"])
 def get_last_barcode(prefix: str) -> Tuple[Any, int]:
     try:
-        operator = BarcodeOperations(
-            prefix=prefix
-        )
+        operator = BarcodeOperations(prefix=prefix)
 
         barcode = operator.get_last_barcode(prefix)
         if barcode is None:

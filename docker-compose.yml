@@ -1,0 +1,17 @@
+version: "3.8"
+services:
+  # A Postgresql service as close to production as currently possible
+  # To run it as a standalone container:
+  #   docker run --name postgres-9.6 -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=baracoda_dev -d -p 5432:5432 postgres:9.6
+  postgres-9.6:
+    image: postgres:9.6
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: baracoda_dev
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  postgres-data:

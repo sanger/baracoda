@@ -128,5 +128,5 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# Visual studio
-.vscode/
+# talisman
+.talismanrc

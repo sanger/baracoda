@@ -1,7 +1,7 @@
 [tool.black]
-line-length = 100
+line-length = 120
 
 [tool.coverage.run]
 branch = true
 source = ['baracoda']
-omit = ['baracoda/config.py', 'baracoda/logging_conf.py', 'baracoda/orm/__init__.py']
+omit = ['baracoda/config/*', 'baracoda/orm/__init__.py']

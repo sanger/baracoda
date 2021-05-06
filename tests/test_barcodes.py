@@ -4,6 +4,7 @@ from http import HTTPStatus
 # starts at 2000000 for heron
 # starts at 111111 for ht
 
+
 def test_param_empty_prefix_value(client):
     response = client.post("/barcodes/new")
     assert response.status_code == HTTPStatus.NOT_FOUND
@@ -19,16 +20,16 @@ def test_get_new_barcode(client):
     assert response.json == {"barcode": "SANG-30D404"}
     assert response.status_code == HTTPStatus.CREATED
 
+
 def test_get_new_barcode_for_ht(client):
     response = client.post("/barcodes/HT/new")
     assert response.json == {"barcode": "HT-111111"}
     assert response.status_code == HTTPStatus.CREATED
 
+
 def test_get_new_barcodes_group_as_url_param(client):
     response = client.post("/barcodes_group/SANG/new?count=3")
-    assert response.json == {
-        "barcodes_group": {"barcodes": ["SANG-30D404", "SANG-30D413", "SANG-30D422"], "id": 1}
-    }
+    assert response.json == {"barcodes_group": {"barcodes": ["SANG-30D404", "SANG-30D413", "SANG-30D422"], "id": 1}}
     assert response.status_code == HTTPStatus.CREATED
 
 
@@ -39,9 +40,7 @@ def test_get_new_barcodes_group_without_count(client):
 
 def test_get_new_barcodes_group_as_json_param(client):
     response = client.post("/barcodes_group/SANG/new", data={"count": 2})
-    assert response.json == {
-        "barcodes_group": {"barcodes": ["SANG-30D404", "SANG-30D413"], "id": 1}
-    }
+    assert response.json == {"barcodes_group": {"barcodes": ["SANG-30D404", "SANG-30D413"], "id": 1}}
     assert response.status_code == HTTPStatus.CREATED
 
 

@@ -1,8 +1,8 @@
 import os
 from logging import Handler
 
-from slack import WebClient  # type: ignore
-from slack.errors import SlackApiError  # type: ignore
+from slack import WebClient
+from slack.errors import SlackApiError
 
 client = WebClient(token=os.getenv("SLACK_API_TOKEN", ""))
 
