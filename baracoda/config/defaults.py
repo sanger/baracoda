@@ -69,6 +69,7 @@ PREFIXES: List[Dict[str, Any]] = [
     {"prefix": "QEUH", "sequence_name": "heron", "convert": True},
     {"prefix": "RAND", "sequence_name": "heron", "convert": True},
     {"prefix": "HSLL", "sequence_name": "heron", "convert": True},
+    {"prefix": "PLYM", "sequence_name": "heron", "convert": True},
     {"prefix": "HT", "sequence_name": "ht", "convert": False},
 ]
 
