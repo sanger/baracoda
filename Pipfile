@@ -13,7 +13,7 @@ pytest-cov = "*"
 sqlalchemy-stubs = "*"
 
 [packages]
-alembic = "~=1.4"
+alembic = "~=1.6"
 autoenv = "~=1.0"
 colorlog = "~=5.0"
 flask = "~=1.1"
