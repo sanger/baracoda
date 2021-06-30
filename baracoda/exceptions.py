@@ -7,7 +7,7 @@ class Error(Exception):
 class InvalidPrefixError(Error):
     """Raised when a prefix for a Heron barcode does not pass regex validation."""
 
-    def __init__(self, message=None):
+    def __init__(self, message: str = ""):
         self.message = message
 
     def __str__(self):
@@ -22,7 +22,7 @@ class InvalidPrefixError(Error):
 class InvalidCountError(Error):
     """Raised when a param count for a Heron barcode group is not found."""
 
-    def __init__(self, message=None):
+    def __init__(self, message: str = ""):
         self.message = message
 
     def __str__(self):

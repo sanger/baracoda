@@ -14,7 +14,7 @@ CORS(bp)
 logger = logging.getLogger(__name__)
 
 
-@bp.route("/barcodes_group/<prefix>/new", methods=["POST"])
+@bp.post("/barcodes_group/<prefix>/new")  # type: ignore
 def get_new_barcode_group(prefix: str) -> Tuple[Any, int]:
     try:
         count = get_count_param()
@@ -34,7 +34,7 @@ def get_new_barcode_group(prefix: str) -> Tuple[Any, int]:
         return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.INTERNAL_SERVER_ERROR
 
 
-@bp.route("/barcodes/<prefix>/new", methods=["POST"])
+@bp.post("/barcodes/<prefix>/new")  # type: ignore
 def get_new_barcode(prefix: str) -> Tuple[Any, int]:
     try:
         operator = BarcodeOperations(prefix=prefix)
@@ -48,7 +48,7 @@ def get_new_barcode(prefix: str) -> Tuple[Any, int]:
         return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.INTERNAL_SERVER_ERROR
 
 
-@bp.route("/barcodes/<prefix>/last", methods=["GET"])
+@bp.get("/barcodes/<prefix>/last")  # type: ignore
 def get_last_barcode(prefix: str) -> Tuple[Any, int]:
     try:
         operator = BarcodeOperations(prefix=prefix)

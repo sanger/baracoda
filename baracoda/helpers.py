@@ -1,16 +1,15 @@
 import logging
-from typing import Dict, Optional
+from typing import Dict, Optional, Union
 
 from flask import current_app
 
 logger = logging.getLogger(__name__)
 
 
-def get_prefix_item(prefix: str) -> Optional[Dict]:
+def get_prefix_item(prefix: str) -> Optional[Dict[str, Union[str, bool]]]:
     """
     Method which returns prefix object.
-    This will contain the prefix, the sequence and whether any barcode for that prefix needs
-    to be formatted.
+    This will contain the prefix, the sequence and whether any barcode for that prefix needs to be formatted.
 
     Arguments:
         value {str} -- the actual prefix
