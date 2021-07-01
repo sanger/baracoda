@@ -10,3 +10,6 @@ FLASK_RUN_PORT=8000
 
 # https://flask.palletsprojects.com/en/1.1.x/config/#environment-and-debug-features
 FLASK_ENV=development
+
+# path to the settings file which flask will use
+SETTINGS_PATH=config/development.py
