@@ -24,13 +24,13 @@ class BarcodeOperations:
         self.__set_prefix_item()
 
         # if the prefix item does not exist the prefix is not valid
-        if not self.prefix_item:
+        if self.prefix_item is None:
             raise InvalidPrefixError()
 
         # saves pulling it out of object every time
         self.sequence_name = self.prefix_item["sequence_name"]
 
-        self.formatter = HeronFormatter(prefix=self.prefix, convert=self.prefix_item["convert"])
+        self.formatter = HeronFormatter(prefix=self.prefix, convert=self.prefix_item["convert"])  # type: ignore
 
     def create_barcode_group(self, count: int) -> BarcodesGroup:
         """Creates a new barcode group and the associated barcodes.
@@ -42,7 +42,7 @@ class BarcodeOperations:
             BarcodeGroup -- the barcode group created
         """
         try:
-            next_values = self.__get_next_values(self.sequence_name, count)
+            next_values = self.__get_next_values(self.sequence_name, count)  # type: ignore
 
             barcodes_group = self.__build_barcodes_group()
             db.session.add(barcodes_group)
@@ -67,7 +67,7 @@ class BarcodeOperations:
             str -- the generated barcode in the Heron format
         """
         try:
-            next_value = self.__get_next_value(self.sequence_name)
+            next_value = self.__get_next_value(self.sequence_name)  # type: ignore
             barcode = self.__build_barcode(self.prefix, next_value, barcodes_group=None)
 
             db.session.add(barcode)

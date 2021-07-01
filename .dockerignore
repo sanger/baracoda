@@ -2,8 +2,6 @@
 .dockerignore
 .DS_Store
 .editorconfig
-.env
-.env.example
 .git
 .github
 .gitignore
