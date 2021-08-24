@@ -16,7 +16,7 @@ types-flask = "*"
 [packages]
 alembic = "~=1.4"
 autoenv = "~=1.0"
-colorlog = "~=5.0"
+colorlog = "~=6.4"
 flask = "~=2.0"
 flask-cors = "~=3.0"
 flask-sqlalchemy = "~=2.4"
