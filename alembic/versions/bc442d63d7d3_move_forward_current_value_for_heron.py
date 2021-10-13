@@ -24,4 +24,4 @@ def upgrade():
 def downgrade():
     # Actual value in Baracoda is 2156143, but if we rollback we can leave a bit of space
     # Please retrieve the last actual value and edit if you plan to downgrade
-    # op.execute("ALTER SEQUENCE serial RESTART WITH 2157200;")
+    pass
