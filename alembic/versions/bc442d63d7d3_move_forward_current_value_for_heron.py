@@ -17,7 +17,7 @@ depends_on = None
 
 def upgrade():
     # Last value in database is 2564197, we want to move forward past this value
-    op.execute("ALTER SEQUENCE serial RESTART WITH 2564300;")
+    op.execute("ALTER SEQUENCE heron RESTART WITH 2564300;")
 
 
 def downgrade():
