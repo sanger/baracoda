@@ -23,4 +23,9 @@ def upgrade():
 def downgrade():
     # Actual value in Baracoda is 2156143, but if we rollback we can leave a bit of space
     # Please retrieve the last actual value and edit if you plan to downgrade
-    pass
+    description = (
+        "\nPlease substitute this exception with a SQL execution with:\n"
+        "ALTER SEQUENCE heron RESTART WITH <newvalue>\n"
+        "where <newvalue> is a SAFE value you estimate.\n"
+    )
+    raise Exception(description)
