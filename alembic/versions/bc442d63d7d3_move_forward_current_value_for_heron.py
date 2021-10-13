@@ -16,7 +16,7 @@ depends_on = None
 
 
 def __DANGER_restart_sequence_with(value):
-    if os.environ.get('CONFIRM_HERON_SEQUENCE_RESTART') is None:
+    if os.environ.get("CONFIRM_HERON_SEQUENCE_RESTART") is None:
         description = (
             "'This migration is potentially destructive. Update the value for RESTART WITH"
             "to a known unused value and set the environment variable "
