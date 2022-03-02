@@ -164,6 +164,15 @@ If errors are experienced while pipenv attempts to install `psycopg2`, try this:
 
     LDFLAGS=`echo $(pg_config --ldflags)` pipenv install --dev
 
+You can also try installing `psycopg2` from the binary, which avoids the need for `pg_config` locally.
+To install `psycopg2` as a binary, change the `psycopg2` entry in the Pipfile to say `psycopg2-binary` instead, and then run:
+
+    pipenv install psycopg2-binary
+
+You can then run `pipenv install --dev` again to get all the other dependencies installed.
+This approach should allow you to install the postgres python driver (psycopg2) locally, without having a local copy of postgres. Use docker to run postgres as described in the 'Requirements for Development' section.
+Don't commit your changes to the Pipfile or Pipfile.lock.
+
 ### Updating the Table of Contents
 
 To update the table of contents after adding things to this README you can use the [markdown-toc](https://github.com/jonschlinkert/markdown-toc)
