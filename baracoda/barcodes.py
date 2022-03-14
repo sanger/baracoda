@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 @bp.post("/barcodes_group/<prefix>/new")  # type: ignore
 def get_new_barcode_group(prefix: str) -> Tuple[Any, int]:
     try:
+        logger.debug(f"Creating a barcode group for '{ prefix }'")
         count = get_count_param()
 
         operator = BarcodeOperations(prefix=prefix)
@@ -37,6 +38,7 @@ def get_new_barcode_group(prefix: str) -> Tuple[Any, int]:
 @bp.post("/barcodes/<prefix>/new")  # type: ignore
 def get_new_barcode(prefix: str) -> Tuple[Any, int]:
     try:
+        logger.debug(f"Creating a barcode for '{ prefix }'")
         operator = BarcodeOperations(prefix=prefix)
         barcode = operator.create_barcode()
 
@@ -51,6 +53,7 @@ def get_new_barcode(prefix: str) -> Tuple[Any, int]:
 @bp.get("/barcodes/<prefix>/last")  # type: ignore
 def get_last_barcode(prefix: str) -> Tuple[Any, int]:
     try:
+        logger.debug(f"Obtaining last from '{ prefix }'")
         operator = BarcodeOperations(prefix=prefix)
 
         barcode = operator.get_last_barcode(prefix)

@@ -37,7 +37,7 @@ LOGGING: Dict[str, Any] = {
             "filters": ["package_path"],
         },
         "console": {
-            "level": "INFO",
+            "level": "DEBUG",
             "class": "logging.StreamHandler",
             "formatter": "verbose",
         },
