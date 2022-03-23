@@ -5,7 +5,6 @@ from typing import List, Optional, cast
 
 from baracoda.db import db
 from baracoda.exceptions import InvalidPrefixError
-from baracoda.formats import HeronFormatter
 from baracoda.helpers import get_prefix_item
 from baracoda.orm.barcode import Barcode
 from baracoda.orm.barcodes_group import BarcodesGroup
@@ -21,6 +20,7 @@ class BarcodeOperations:
 
         self.__check_prefix()
 
+        logger.debug(f"Setting prefix item from prefix {self.prefix}")
         self.__set_prefix_item()
 
         # if the prefix item does not exist the prefix is not valid
@@ -28,9 +28,11 @@ class BarcodeOperations:
             raise InvalidPrefixError()
 
         # saves pulling it out of object every time
+        logger.debug("Accessing sequence_name")
         self.sequence_name = self.prefix_item["sequence_name"]
 
-        self.formatter = HeronFormatter(prefix=self.prefix, convert=self.prefix_item["convert"])  # type: ignore
+    def formatter(self):
+        return self.prefix_item["formatter_class"](self.prefix)
 
     def create_barcode_group(self, count: int) -> BarcodesGroup:
         """Creates a new barcode group and the associated barcodes.
@@ -66,6 +68,7 @@ class BarcodeOperations:
         Returns:
             str -- the generated barcode in the Heron format
         """
+        logger.debug(f"Calling create_barcode for sequence name {self.sequence_name}")
         try:
             next_value = self.__get_next_value(self.sequence_name)  # type: ignore
             barcode = self.__build_barcode(self.prefix, next_value, barcodes_group=None)
@@ -121,7 +124,7 @@ class BarcodeOperations:
         return bool(pattern.match(self.prefix))
 
     def __build_barcode(self, prefix: str, next_value: int, barcodes_group: Optional[BarcodesGroup]) -> Barcode:
-        barcode = self.formatter.barcode(next_value)
+        barcode = self.formatter().barcode(next_value)
         return Barcode(
             prefix=prefix,
             barcode=barcode,

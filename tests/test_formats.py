@@ -1,4 +1,4 @@
-from baracoda.formats import HeronFormatter
+from baracoda.formats import HeronCogUkIdFormatter, HeronPlateCherrypickedFormatter
 
 
 def test_checksum_conversion(heron_formatter):
@@ -19,12 +19,12 @@ def test_barcode_example_1(heron_formatter):
 
 
 def test_barcode_example_2():
-    formatter = HeronFormatter(prefix="NIRE")
+    formatter = HeronCogUkIdFormatter(prefix="NIRE")
     assert formatter.barcode(111111) == "NIRE-1B2075"
 
 
-def test_barcode_example_when_no_conversion_needed():
-    formatter = HeronFormatter(prefix="HT", convert=False)
+def test_barcode_example_plate_cherrypicked():
+    formatter = HeronPlateCherrypickedFormatter(prefix="HT")
     assert formatter.barcode(111111) == "HT-111111"
 
 
@@ -40,7 +40,7 @@ def barcode_for(barcode: str) -> str:
     """
     prefix, number_and_checksum = barcode.split("-")
     number = number_and_checksum[:-1]
-    formatter = HeronFormatter(prefix=prefix)
+    formatter = HeronCogUkIdFormatter(prefix=prefix)
 
     return formatter.barcode(int(number, 16))
 

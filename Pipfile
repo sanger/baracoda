@@ -25,6 +25,7 @@ psycopg2 = "~=2.9"
 python-dotenv = "~=0.19"
 slackclient = "~=2.5"
 sqlalchemy = "~=1.4"
+dicttoxml = "*"
 
 [requires]
 python_version = "3.8"
