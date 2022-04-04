@@ -7,7 +7,6 @@ from flask import Flask
 from flask.cli import with_appcontext
 
 from baracoda import barcodes
-from baracoda import plate_barcodes
 from baracoda.config.logging import LOGGING
 from baracoda.db import db, reset_db
 
@@ -42,7 +41,6 @@ def create_app(test_config=None):
     app.cli.add_command(init_db_command)
 
     app.register_blueprint(barcodes.bp)
-    app.register_blueprint(plate_barcodes.bp)
 
     @app.route("/health")
     def health_check():

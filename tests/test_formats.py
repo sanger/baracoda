@@ -1,4 +1,4 @@
-from baracoda.formats import HeronCogUkIdFormatter, HeronPlateCherrypickedFormatter
+from baracoda.formats import HeronCogUkIdFormatter, GenericBarcodeFormatter
 
 
 def test_checksum_conversion(heron_formatter):
@@ -24,8 +24,13 @@ def test_barcode_example_2():
 
 
 def test_barcode_example_plate_cherrypicked():
-    formatter = HeronPlateCherrypickedFormatter(prefix="HT")
+    formatter = GenericBarcodeFormatter(prefix="HT")
     assert formatter.barcode(111111) == "HT-111111"
+
+
+def test_barcode_example_plate_sequencescape():
+    formatter = GenericBarcodeFormatter(prefix="SQPD")
+    assert formatter.barcode(1) == "SQPD-1"
 
 
 def barcode_for(barcode: str) -> str:

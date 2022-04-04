@@ -8,16 +8,7 @@ class FormatterInterface:
         pass
 
 
-class SequencescapePlateBarcodeFormatter(FormatterInterface):
-    def __init__(self, prefix: str):
-        logger.debug(f"Instantiate formatter PlateBarcodeFormatter")
-        self.prefix = prefix
-
-    def barcode(self, value: int) -> str:
-        return value
-
-
-class HeronPlateCherrypickedFormatter(FormatterInterface):
+class GenericBarcodeFormatter(FormatterInterface):
     def __init__(self, prefix: str):
         logger.debug(f"Instantiate formatter with {prefix}")
 

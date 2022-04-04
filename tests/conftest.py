@@ -11,7 +11,7 @@ from tests.data.fixture_data import PREFIXES
 def app():
     app = create_app(
         {
-            "DB_HOST": "host.docker.internal",
+            "DB_HOST": "localhost",
             "DB_PORT": 5432,
             "DB_USER": "postgres",
             "DB_PASSWORD": "postgres",
@@ -21,7 +21,7 @@ def app():
             "SEQUENCE_RESET": True,
             "SLACK_API_TOKEN": "",
             "SLACK_CHANNEL_ID": "",
-            "SQLALCHEMY_DATABASE_URI": "postgresql+psycopg2://postgres:postgres@host.docker.internal:5432/baracoda_test",
+            "SQLALCHEMY_DATABASE_URI": "postgresql+psycopg2://postgres:postgres@localhost:5432/baracoda_test",
             "PREFIXES": PREFIXES,
         }
     )

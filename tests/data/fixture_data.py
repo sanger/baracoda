@@ -1,5 +1,5 @@
 from typing import Dict, List, Union
-from baracoda.formats import HeronCogUkIdFormatter, HeronPlateCherrypickedFormatter
+from baracoda.formats import HeronCogUkIdFormatter, GenericBarcodeFormatter
 
 PREFIXES: List[Dict[str, Union[str, bool]]] = [
     {
@@ -30,6 +30,11 @@ PREFIXES: List[Dict[str, Union[str, bool]]] = [
     {
         "prefix": "HT",
         "sequence_name": "ht",
-        "formatter_class": HeronPlateCherrypickedFormatter,
+        "formatter_class": GenericBarcodeFormatter,
+    },
+    {
+        "prefix": "SQPD",
+        "sequence_name": "sqp",
+        "formatter_class": GenericBarcodeFormatter,
     },
 ]

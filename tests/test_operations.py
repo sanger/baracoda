@@ -23,6 +23,12 @@ def test_sequence_is_correct_for_ht_plates(app):
         assert barcode_operations.sequence_name == "ht"
 
 
+def test_sequence_is_correct_for_SQPD_plates(app):
+    with app.app_context():
+        barcode_operations = BarcodeOperations(prefix="SQPD")
+        assert barcode_operations.sequence_name == "sqp"
+
+
 def test_error_is_raised_if_prefix_is_not_valid(app):
     with app.app_context():
         with pytest.raises(InvalidPrefixError):

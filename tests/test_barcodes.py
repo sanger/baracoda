@@ -3,6 +3,7 @@ from http import HTTPStatus
 # sequences
 # starts at 2000000 for heron
 # starts at 111111 for ht
+# starts at 1 for sqp
 
 
 def test_param_empty_prefix_value(client):
@@ -24,6 +25,12 @@ def test_get_new_barcode(client):
 def test_get_new_barcode_for_ht(client):
     response = client.post("/barcodes/HT/new")
     assert response.json == {"barcode": "HT-111111"}
+    assert response.status_code == HTTPStatus.CREATED
+
+
+def test_get_new_barcode_for_sqp(client):
+    response = client.post("/barcodes/SQPD/new")
+    assert response.json == {"barcode": "SQPD-1"}
     assert response.status_code == HTTPStatus.CREATED
 
 

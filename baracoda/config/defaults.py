@@ -1,12 +1,12 @@
 from typing import Any, Dict, List
 
-from baracoda.formats import HeronCogUkIdFormatter, HeronPlateCherrypickedFormatter, SequencescapePlateBarcodeFormatter
+from baracoda.formats import HeronCogUkIdFormatter, GenericBarcodeFormatter
 
 ###
 # database config
 ###
 DB_DBNAME = "baracoda_dev"
-DB_HOST = "host.docker.internal"
+DB_HOST = "localhost"
 DB_PASSWORD = "postgres"
 DB_PORT = "5432"
 DB_USER = "postgres"
@@ -76,8 +76,7 @@ PREFIXES: List[Dict[str, Any]] = [
     {"prefix": "TFCI", "sequence_name": "heron", "formatter_class": HeronCogUkIdFormatter},
     {"prefix": "WAHH", "sequence_name": "heron", "formatter_class": HeronCogUkIdFormatter},
     {"prefix": "WSFT", "sequence_name": "heron", "formatter_class": HeronCogUkIdFormatter},
-    {"prefix": "HT", "sequence_name": "ht", "formatter_class": HeronPlateCherrypickedFormatter},
-    {"prefix": "DN", "sequence_name": "SEQ_DNAPLATE", "formatter_class": SequencescapePlateBarcodeFormatter},
+    {"prefix": "HT", "sequence_name": "ht", "formatter_class": GenericBarcodeFormatter},
 ]
 
 for prefix_item in PREFIXES:
