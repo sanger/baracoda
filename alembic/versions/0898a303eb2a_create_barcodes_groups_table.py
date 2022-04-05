@@ -1,3 +1,5 @@
+# type: ignore
+
 """create barcodes_groups table
 
 Revision ID: 0898a303eb2a

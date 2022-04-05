@@ -1,3 +1,5 @@
+# type: ignore
+
 # flake8: noqa
 ###
 # NB: Do not allow 'format on save' for this file as it requires imports in a specific order. On
