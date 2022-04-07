@@ -2,11 +2,12 @@ import logging
 import re
 from datetime import datetime
 from typing import List, Optional, cast
-
+import pdb
 from baracoda.db import db
-from baracoda.exceptions import InvalidPrefixError
+from baracoda.exceptions import InvalidPrefixError, InvalidCountError
 from baracoda.helpers import get_prefix_item
 from baracoda.orm.barcode import Barcode
+from baracoda.orm.child_barcode import ChildBarcode
 from baracoda.orm.barcodes_group import BarcodesGroup
 
 logger = logging.getLogger(__name__)
@@ -170,3 +171,42 @@ class BarcodeOperations:
             prefix item or None if prefix does not exist
         """
         self.prefix_item = get_prefix_item(self.prefix)
+
+class ChildBarcodeOperations:
+    def create_child_barcodes(barcode: str, count: int) -> ChildBarcode:
+        """Retrieve the next child barcodes for a given barcode
+
+        Returns:
+            [str] -- The generated child barcodes
+        """
+
+        try:
+            if count < 1:
+                raise InvalidCountError()
+    
+            # Check barcode exists
+            barcode_record = db.session.query(ChildBarcode).with_for_update().filter_by(barcode=barcode).first()
+
+            # If no record, then create one
+            if barcode_record is None:
+                old_count = 0
+                barcode_record = ChildBarcode(barcode=barcode,child_count=count)
+                db.session.add(barcode_record)
+            else:
+                old_count = barcode_record.child_count
+                barcode_record.child_count = old_count + count
+
+            db.session.commit()
+
+            # We want the new count to start at the next number
+            new_count = old_count + 1
+
+            # Format child barcodes
+            child_barcodes = []
+            for x in range(new_count, barcode_record.child_count + 1):
+                child_barcodes.append(f"{barcode}-{x}")
+
+            return child_barcodes
+        except Exception as e:
+            db.session.rollback()
+            raise e
