@@ -4,7 +4,7 @@ logger = logging.getLogger(__name__)
 
 
 class FormatterInterface:
-    def barcode(self):
+    def barcode(self, value: int) -> str:
         pass
 
 

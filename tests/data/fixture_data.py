@@ -1,7 +1,7 @@
 from typing import Dict, List, Union
 from baracoda.formats import HeronCogUkIdFormatter, GenericBarcodeFormatter
 
-PREFIXES: List[Dict[str, Union[str, bool]]] = [
+PREFIXES: List[Dict[str, Union[str, object]]] = [
     {
         "prefix": "SANG",
         "sequence_name": "heron",

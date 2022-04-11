@@ -1,4 +1,5 @@
 from http import HTTPStatus
+import json
 
 # sequences
 # starts at 2000000 for heron
@@ -41,12 +42,18 @@ def test_get_new_barcodes_group_as_url_param(client):
 
 
 def test_get_new_barcodes_group_without_count(client):
-    response = client.post("/barcodes_group/SANG/new")
+    # Since the count is no longer a param the get_count_param method looks at the json body
+    # this response.json method will internal error unless we pass the correct headers and data
+    response = client.post(
+        "/barcodes_group/SANG/new", data=json.dumps({}), headers={"Content-Type": "application/json"}
+    )
     assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
 
 
 def test_get_new_barcodes_group_as_json_param(client):
-    response = client.post("/barcodes_group/SANG/new", data={"count": 2})
+    response = client.post(
+        "/barcodes_group/SANG/new", data=json.dumps({"count": 2}), headers={"Content-Type": "application/json"}
+    )
     assert response.json == {"barcodes_group": {"barcodes": ["SANG-30D404", "SANG-30D413"], "id": 1}}
     assert response.status_code == HTTPStatus.CREATED
 
