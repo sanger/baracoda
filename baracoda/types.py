@@ -3,11 +3,7 @@ from baracoda.formats import HeronCogUkIdFormatter, GenericBarcodeFormatter, For
 
 FormatterClassType = Union[Type[HeronCogUkIdFormatter], Type[GenericBarcodeFormatter]]
 
-PrefixesType = TypedDict('PrefixesType', {
-    'prefix': str,
-    'sequence_name': str,
-    'formatter_class': FormatterClassType
-})
+PrefixesType = TypedDict("PrefixesType", {"prefix": str, "sequence_name": str, "formatter_class": FormatterClassType})
 
 
 FormatterInterfaceType = List[PrefixesType]
