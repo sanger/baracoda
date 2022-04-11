@@ -16,7 +16,7 @@ def get_prefix_item(prefix: str) -> Optional[PrefixesType]:
         value {str} -- the actual prefix
 
     Returns:
-        Dict -- prefix object e.g. { "prefix": "abc", "sequence_name": "seq", "convert": False} or
+        Dict -- prefix object e.g. { "prefix": "abc", "sequence_name": "seq" } or
         None -- if the prefix item is not available
     """
     return next((item for item in current_app.config["PREFIXES"] if item["prefix"] == prefix), None)
