@@ -1,6 +1,7 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Union, TypedDict, Type
+from baracoda.types import PrefixesType
 
-from baracoda.formats import HeronCogUkIdFormatter, GenericBarcodeFormatter
+from baracoda.formats import HeronCogUkIdFormatter, GenericBarcodeFormatter, FormatterInterface
 
 ###
 # database config
@@ -27,7 +28,8 @@ SLACK_CHANNEL_ID = "Cxxx"
 ###
 # prefix for barcodes returned from the respective sequece
 ###
-PREFIXES: List[Dict[str, Any]] = [
+
+PREFIXES: List[PrefixesType] = [
     {"prefix": "ALDP", "sequence_name": "heron", "formatter_class": HeronCogUkIdFormatter},
     {"prefix": "BHRT", "sequence_name": "heron", "formatter_class": HeronCogUkIdFormatter},
     {"prefix": "BIRM", "sequence_name": "heron", "formatter_class": HeronCogUkIdFormatter},
