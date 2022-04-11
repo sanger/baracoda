@@ -1,5 +1,5 @@
 from typing import List, Union, TypedDict, Type
-from baracoda.formats import HeronCogUkIdFormatter, GenericBarcodeFormatter, FormatterInterface
+from baracoda.formats import HeronCogUkIdFormatter, GenericBarcodeFormatter
 
 FormatterClassType = Union[Type[HeronCogUkIdFormatter], Type[GenericBarcodeFormatter]]
 

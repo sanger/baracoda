@@ -1,7 +1,7 @@
-from typing import Any, Dict, List, Union, TypedDict, Type
+from typing import List
 from baracoda.types import PrefixesType
 
-from baracoda.formats import HeronCogUkIdFormatter, GenericBarcodeFormatter, FormatterInterface
+from baracoda.formats import HeronCogUkIdFormatter, GenericBarcodeFormatter
 
 ###
 # database config

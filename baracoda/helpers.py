@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, Optional, Union
+from typing import Optional
 from baracoda.types import PrefixesType
 
 from flask import current_app

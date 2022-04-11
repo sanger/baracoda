@@ -1,7 +1,7 @@
 import logging
 import re
 from datetime import datetime
-from typing import List, Optional, cast, Dict, Union
+from typing import List, Optional, cast
 from baracoda.db import db
 from baracoda.exceptions import InvalidPrefixError
 from baracoda.helpers import get_prefix_item
