@@ -175,39 +175,40 @@ class BarcodeOperations:
         self.prefix_item = get_prefix_item(self.prefix)
 
 
-class ChildBarcodeOperations:
-    @staticmethod
-    def create_child_barcodes(barcode: str, count: int) -> List[str]:
-        """Retrieve the next child barcodes for a given barcode
+# Child barcode operations
 
-        Returns:
-            [str] -- The generated child barcodes
-        """
 
-        try:
-            # Check barcode exists
-            barcode_record = db.session.query(ChildBarcode).with_for_update().filter_by(barcode=barcode).first()
+def create_child_barcodes(barcode: str, count: int) -> List[str]:
+    """Retrieve the next child barcodes for a given barcode
 
-            # If no record, then create one
-            if barcode_record is None:
-                old_count = 0
-                barcode_record = ChildBarcode(barcode=barcode, child_count=count)
-                db.session.add(barcode_record)
-            else:
-                old_count = barcode_record.child_count
-                barcode_record.child_count = old_count + count
+    Returns:
+        [str] -- The generated child barcodes
+    """
 
-            db.session.commit()
+    try:
+        # Check barcode exists
+        barcode_record = db.session.query(ChildBarcode).with_for_update().filter_by(barcode=barcode).first()
 
-            # We want the new count to start at the next number
-            new_count = old_count + 1
+        # If no record, then create one
+        if barcode_record is None:
+            old_count = 0
+            barcode_record = ChildBarcode(barcode=barcode, child_count=count)
+            db.session.add(barcode_record)
+        else:
+            old_count = barcode_record.child_count
+            barcode_record.child_count = old_count + count
 
-            # Format child barcodes
-            child_barcodes = []
-            for x in range(new_count, barcode_record.child_count + 1):
-                child_barcodes.append(f"{barcode}-{x}")
+        db.session.commit()
 
-            return child_barcodes
-        except Exception as e:
-            db.session.rollback()
-            raise e
+        # We want the new count to start at the next number
+        new_count = old_count + 1
+
+        # Format child barcodes
+        child_barcodes = []
+        for x in range(new_count, barcode_record.child_count + 1):
+            child_barcodes.append(f"{barcode}-{x}")
+
+        return child_barcodes
+    except Exception as e:
+        db.session.rollback()
+        raise e

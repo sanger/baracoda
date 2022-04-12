@@ -2,7 +2,7 @@ import pytest
 
 from baracoda.exceptions import InvalidPrefixError
 from baracoda.helpers import get_prefix_item
-from baracoda.operations import BarcodeOperations, ChildBarcodeOperations
+from baracoda.operations import BarcodeOperations, create_child_barcodes
 
 
 # BarcodeOperations
@@ -38,25 +38,25 @@ def test_error_is_raised_if_prefix_is_not_valid(app):
             _ = BarcodeOperations(prefix="MOON")
 
 
-# ChildBarcodeOperations
+# Child barcode operations
 
 
 def test_child_barcodes_are_created_when_new_barcode(app):
     with app.app_context():
         expected_child_barcodes = ["test-1"]
-        assert ChildBarcodeOperations.create_child_barcodes("test", 1) == expected_child_barcodes
+        assert create_child_barcodes("test", 1) == expected_child_barcodes
 
 
 def test_child_barcodes_are_created_when_existing_barcode(app):
     with app.app_context():
         # Create a barcode record in the database
-        ChildBarcodeOperations.create_child_barcodes("test", 5)
+        create_child_barcodes("test", 5)
         # Expect child barcode to have correct when suffix when same barcode is used
         expected_child_barcodes = ["test-6"]
-        assert ChildBarcodeOperations.create_child_barcodes("test", 1) == expected_child_barcodes
+        assert create_child_barcodes("test", 1) == expected_child_barcodes
 
 
 def test_correct_number_of_child_barcodes_are_created(app):
     with app.app_context():
         expected_child_barcodes = ["test-1", "test-2", "test-3"]
-        assert ChildBarcodeOperations.create_child_barcodes("test", 3) == expected_child_barcodes
+        assert create_child_barcodes("test", 3) == expected_child_barcodes
