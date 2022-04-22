@@ -23,7 +23,7 @@ flask-sqlalchemy = "~=2.4"
 gunicorn = "~=20.0"
 psycopg2 = "~=2.9"
 python-dotenv = "~=0.19"
-slackclient = "~=2.5"
+slackclient = "~=2.9"
 sqlalchemy = "~=1.4"
 
 [requires]
