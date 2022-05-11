@@ -1,7 +1,8 @@
 import logging
 import re
 from datetime import datetime
-from typing import List, Optional, cast
+from typing import List, Optional, cast, Dict
+from xmlrpc.client import Boolean
 from baracoda.db import db
 from baracoda.exceptions import InvalidPrefixError
 from baracoda.helpers import get_prefix_item
@@ -12,6 +13,10 @@ from baracoda.formats import FormatterInterface
 from baracoda.types import PrefixesType
 
 logger = logging.getLogger(__name__)
+
+
+class InvalidParentBarcode(BaseException):
+    pass
 
 
 class BarcodeOperations:
@@ -37,6 +42,10 @@ class BarcodeOperations:
         formatter_class = cast(PrefixesType, self.prefix_item)["formatter_class"]
         return formatter_class(self.prefix)
 
+    def create_barcodes(self, count: int) -> List[str]:
+        next_values = self.__get_next_values(self.sequence_name, count)
+        return [self.formatter().barcode(next_value) for next_value in next_values]
+
     def create_barcode_group(self, count: int) -> BarcodesGroup:
         """Creates a new barcode group and the associated barcodes.
 
@@ -46,24 +55,21 @@ class BarcodeOperations:
         Returns:
             BarcodeGroup -- the barcode group created
         """
-        try:
-            next_values = self.__get_next_values(self.sequence_name, count)
+        next_values = self.__get_next_values(self.sequence_name, count)
+        barcodes = [self.formatter().barcode(next_value) for next_value in next_values]
+        return self.__create_barcode_group(barcodes)
 
-            barcodes_group = self.__build_barcodes_group()
-            db.session.add(barcodes_group)
+    def create_children_barcode_group(self, parent_barcode: str, count: int) -> BarcodesGroup:
+        """Creates a new barcode group and the associated barcodes.
 
-            barcodes = [
-                self.__build_barcode(self.prefix, next_value, barcodes_group=barcodes_group)
-                for next_value in next_values
-            ]
-            db.session.add_all(barcodes)
+        Arguments:
+            count {int} -- number of barcodes to create in the group
 
-            db.session.commit()
-
-            return barcodes_group
-        except Exception as e:
-            db.session.rollback()
-            raise e
+        Returns:
+            BarcodeGroup -- the barcode group created
+        """
+        barcodes = self.create_child_barcodes(parent_barcode, count)
+        return self.__create_barcode_group(barcodes)
 
     def create_barcode(self) -> Barcode:
         """Generate and store a barcode using the Heron formatter.
@@ -74,7 +80,9 @@ class BarcodeOperations:
         logger.debug(f"Calling create_barcode for sequence name {self.sequence_name}")
         try:
             next_value = self.__get_next_value(self.sequence_name)
-            barcode = self.__build_barcode(self.prefix, next_value, barcodes_group=None)
+            barcode = self.__build_barcode(
+                prefix=self.prefix, barcode=self.formatter().barcode(next_value), barcodes_group=None
+            )
 
             db.session.add(barcode)
 
@@ -126,14 +134,39 @@ class BarcodeOperations:
 
         return bool(pattern.match(self.prefix))
 
-    def __build_barcode(self, prefix: str, next_value: int, barcodes_group: Optional[BarcodesGroup]) -> Barcode:
-        barcode = self.formatter().barcode(next_value)
+    def __build_barcode(self, prefix: str, barcode: str, barcodes_group: Optional[BarcodesGroup]) -> Barcode:
         return Barcode(
             prefix=prefix,
             barcode=barcode,
             created_at=datetime.now(),
             barcodes_group=barcodes_group,
         )
+
+    def __create_barcode_group(self, barcodes: List[str]) -> BarcodesGroup:
+        """Creates a new barcode group and the associated barcodes.
+
+        Arguments:
+            count {int} -- number of barcodes to create in the group
+
+        Returns:
+            BarcodeGroup -- the barcode group created
+        """
+        try:
+            barcodes_group = self.__build_barcodes_group()
+            db.session.add(barcodes_group)
+
+            barcodes_instances = [
+                self.__build_barcode(prefix=self.prefix, barcode=barcode, barcodes_group=barcodes_group)
+                for barcode in barcodes
+            ]
+            db.session.add_all(barcodes_instances)
+
+            db.session.commit()
+
+            return barcodes_group
+        except Exception as e:
+            db.session.rollback()
+            raise e
 
     def __build_barcodes_group(self) -> BarcodesGroup:
         return BarcodesGroup(created_at=datetime.now())
@@ -174,41 +207,68 @@ class BarcodeOperations:
         """
         self.prefix_item = get_prefix_item(self.prefix)
 
+    # Child barcode operations
+    def is_valid_parent_barcode(self, barcode: str) -> Boolean:
+        return not self.extract_barcode_parent_information(barcode) is None
 
-# Child barcode operations
+    def extract_barcode_parent_information(self, barcode):
+        pattern = re.compile(f"^(?P<parent_barcode>{self.prefix}-\\d+)(?:-(?P<child>\\d+))?$")
+        found = pattern.search(barcode)
+        if not found:
+            return None
+        return {
+            "parent_barcode": found.group("parent_barcode"),
+            "child": found.group("child"),
+        }
 
+    def validate_barcode_parent_information(self, info: Dict[str, str]) -> None:
+        if not info:
+            raise InvalidParentBarcode("The barcode provided is not valid for generating child barcodes")
 
-def create_child_barcodes(barcode: str, count: int) -> List[str]:
-    """Retrieve the next child barcodes for a given barcode
+        barcode_record = db.session.query(ChildBarcode).filter_by(barcode=info["parent_barcode"]).first()
 
-    Returns:
-        [str] -- The generated child barcodes
-    """
-
-    try:
-        # Check barcode exists
-        barcode_record = db.session.query(ChildBarcode).with_for_update().filter_by(barcode=barcode).first()
-
-        # If no record, then create one
         if barcode_record is None:
-            old_count = 0
-            barcode_record = ChildBarcode(barcode=barcode, child_count=count)
-            db.session.add(barcode_record)
-        else:
-            old_count = barcode_record.child_count
-            barcode_record.child_count = old_count + count
+            if info["child"]:
+                raise InvalidParentBarcode("The barcode provided is an impostor barcode. It has no parent.")
+            return
 
-        db.session.commit()
+        if info["child"]:
+            child_position = int(info["child"])
+            if barcode_record.child_count < child_position:
+                raise InvalidParentBarcode(
+                    "The barcode provided is an impostor barcode. Its parent has not generated this position yet."
+                )
 
-        # We want the new count to start at the next number
-        new_count = old_count + 1
+    def create_child_barcodes(self, parent_barcode: str, count: int) -> List[str]:
+        """Retrieve the next child barcodes for a given barcode
 
-        # Format child barcodes
-        child_barcodes = []
-        for x in range(new_count, barcode_record.child_count + 1):
-            child_barcodes.append(f"{barcode}-{x}")
+        Returns:
+            [str] -- The generated child barcodes
+        """
+        try:
+            # Check barcode exists
+            barcode_record = db.session.query(ChildBarcode).with_for_update().filter_by(barcode=parent_barcode).first()
 
-        return child_barcodes
-    except Exception as e:
-        db.session.rollback()
-        raise e
+            # If no record, then create one
+            if barcode_record is None:
+                old_count = 0
+                barcode_record = ChildBarcode(barcode=parent_barcode, child_count=count)
+                db.session.add(barcode_record)
+            else:
+                old_count = barcode_record.child_count
+                barcode_record.child_count = old_count + count
+
+            db.session.commit()
+
+            # We want the new count to start at the next number
+            new_count = old_count + 1
+
+            # Format child barcodes
+            child_barcodes = []
+            for x in range(new_count, barcode_record.child_count + 1):
+                child_barcodes.append(f"{parent_barcode}-{x}")
+
+            return child_barcodes
+        except Exception as e:
+            db.session.rollback()
+            raise e

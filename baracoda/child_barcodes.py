@@ -4,7 +4,9 @@ from typing import Any, Tuple
 from flask import Blueprint, request
 from sqlalchemy import exc
 from flask_cors import CORS
-from baracoda.operations import create_child_barcodes
+
+# from baracoda.operations import create_child_barcodes
+from baracoda.operations import BarcodeOperations, InvalidParentBarcode
 from baracoda.exceptions import InvalidCountError, InvalidBarcodeError
 
 bp = Blueprint("child_barcode_creation", __name__)
@@ -13,17 +15,24 @@ CORS(bp)
 logger = logging.getLogger(__name__)
 
 
-@bp.post("/child-barcodes/new")  # type: ignore
-def new_child_barcodes() -> Tuple[Any, int]:
+@bp.post("/child-barcodes/<prefix>/new")  # type: ignore
+def new_child_barcodes(prefix: str) -> Tuple[Any, int]:
     try:
         count = get_count_param()
         barcode = get_barcode_param()
 
         logger.debug(f"Creating child barcode(s) for '{barcode}'")
-        child_barcodes = create_child_barcodes(barcode, count)
 
+        operator = BarcodeOperations(prefix=prefix)
+
+        if not operator.is_valid_parent_barcode(barcode):
+            barcode_group = operator.create_barcode_group(count)
+        else:
+            info = operator.extract_barcode_parent_information(barcode)
+            operator.validate_barcode_parent_information(info)
+            barcode_group = operator.create_children_barcode_group(info["parent_barcode"], count)
         return (
-            {"barcodes": child_barcodes},
+            barcode_group.to_dict(),
             HTTPStatus.CREATED,
         )
     except InvalidCountError as e:
@@ -32,6 +41,8 @@ def new_child_barcodes() -> Tuple[Any, int]:
         return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.UNPROCESSABLE_ENTITY
     except exc.IntegrityError as e:
         logger.error(f"{type(e).__name__}: Two creation requests recieved for the same barcode")
+        return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.INTERNAL_SERVER_ERROR
+    except InvalidParentBarcode as e:
         return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.INTERNAL_SERVER_ERROR
     except Exception as e:
         return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.INTERNAL_SERVER_ERROR

@@ -2,7 +2,7 @@ import pytest
 
 from baracoda.exceptions import InvalidPrefixError
 from baracoda.helpers import get_prefix_item
-from baracoda.operations import BarcodeOperations, create_child_barcodes
+from baracoda.operations import BarcodeOperations, InvalidParentBarcode
 
 
 # BarcodeOperations
@@ -43,20 +43,63 @@ def test_error_is_raised_if_prefix_is_not_valid(app):
 
 def test_child_barcodes_are_created_when_new_barcode(app):
     with app.app_context():
-        expected_child_barcodes = ["test-1"]
-        assert create_child_barcodes("test", 1) == expected_child_barcodes
+        barcode_operations = BarcodeOperations(prefix="SQPD")
+        expected_child_barcodes = ["SQPD-1"]
+        assert barcode_operations.create_child_barcodes("SQPD", 1) == expected_child_barcodes
 
 
 def test_child_barcodes_are_created_when_existing_barcode(app):
     with app.app_context():
         # Create a barcode record in the database
-        create_child_barcodes("test", 5)
+        barcode_operations = BarcodeOperations(prefix="SQPD")
+        barcode_operations.create_child_barcodes("SQPD", 5)
         # Expect child barcode to have correct when suffix when same barcode is used
-        expected_child_barcodes = ["test-6"]
-        assert create_child_barcodes("test", 1) == expected_child_barcodes
+        expected_child_barcodes = ["SQPD-6"]
+        assert barcode_operations.create_child_barcodes("SQPD", 1) == expected_child_barcodes
 
 
 def test_correct_number_of_child_barcodes_are_created(app):
     with app.app_context():
-        expected_child_barcodes = ["test-1", "test-2", "test-3"]
-        assert create_child_barcodes("test", 3) == expected_child_barcodes
+        barcode_operations = BarcodeOperations(prefix="SQPD")
+        expected_child_barcodes = ["SQPD-1", "SQPD-2", "SQPD-3"]
+        assert barcode_operations.create_child_barcodes("SQPD", 3) == expected_child_barcodes
+
+
+def test_is_valid_parent_barcode(app):
+    with app.app_context():
+        barcode_operations = BarcodeOperations(prefix="HT")
+        assert barcode_operations.is_valid_parent_barcode("HT-1234") == True
+        assert barcode_operations.is_valid_parent_barcode("SQPD-1234") == False
+        assert barcode_operations.is_valid_parent_barcode("HT-1234-1") == True
+        assert barcode_operations.is_valid_parent_barcode("HT-1234-1-1") == False
+        assert barcode_operations.is_valid_parent_barcode("HT-1234-1-1-1") == False
+        assert barcode_operations.is_valid_parent_barcode("HT1234") == False
+        assert barcode_operations.is_valid_parent_barcode("HT") == False
+        assert barcode_operations.is_valid_parent_barcode("HT-") == False
+        assert barcode_operations.is_valid_parent_barcode("") == False
+
+
+def test_validate_barcode_parent_information(app):
+    with app.app_context():
+        barcode_operations = BarcodeOperations(prefix="SQPD")
+        with pytest.raises(InvalidParentBarcode):
+            barcode_operations.validate_barcode_parent_information({"parent_barcode": "SQPD-1", "child": "1"})
+
+
+def test_extract_barcode_parent_information(app):
+    with app.app_context():
+        barcode_operations = BarcodeOperations(prefix="SQPD")
+
+        assert barcode_operations.extract_barcode_parent_information("SQPD-1") == {
+            "parent_barcode": "SQPD-1",
+            "child": None,
+        }
+
+        assert barcode_operations.extract_barcode_parent_information("SQPD-11-22") == {
+            "parent_barcode": "SQPD-11",
+            "child": "22",
+        }
+
+        assert barcode_operations.extract_barcode_parent_information("SQPD-11-22-33") == None
+
+        assert barcode_operations.extract_barcode_parent_information("DN-11-22") == None
