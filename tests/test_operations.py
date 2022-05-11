@@ -68,15 +68,15 @@ def test_correct_number_of_child_barcodes_are_created(app):
 def test_is_valid_parent_barcode(app):
     with app.app_context():
         barcode_operations = BarcodeOperations(prefix="HT")
-        assert barcode_operations.is_valid_parent_barcode("HT-1234") == True
-        assert barcode_operations.is_valid_parent_barcode("SQPD-1234") == False
-        assert barcode_operations.is_valid_parent_barcode("HT-1234-1") == True
-        assert barcode_operations.is_valid_parent_barcode("HT-1234-1-1") == False
-        assert barcode_operations.is_valid_parent_barcode("HT-1234-1-1-1") == False
-        assert barcode_operations.is_valid_parent_barcode("HT1234") == False
-        assert barcode_operations.is_valid_parent_barcode("HT") == False
-        assert barcode_operations.is_valid_parent_barcode("HT-") == False
-        assert barcode_operations.is_valid_parent_barcode("") == False
+        assert barcode_operations.is_valid_parent_barcode("HT-1234") is True
+        assert barcode_operations.is_valid_parent_barcode("SQPD-1234") is False
+        assert barcode_operations.is_valid_parent_barcode("HT-1234-1") is True
+        assert barcode_operations.is_valid_parent_barcode("HT-1234-1-1") is False
+        assert barcode_operations.is_valid_parent_barcode("HT-1234-1-1-1") is False
+        assert barcode_operations.is_valid_parent_barcode("HT1234") is False
+        assert barcode_operations.is_valid_parent_barcode("HT") is False
+        assert barcode_operations.is_valid_parent_barcode("HT-") is False
+        assert barcode_operations.is_valid_parent_barcode("") is False
 
 
 def test_validate_barcode_parent_information(app):
@@ -100,6 +100,6 @@ def test_extract_barcode_parent_information(app):
             "child": "22",
         }
 
-        assert barcode_operations.extract_barcode_parent_information("SQPD-11-22-33") == None
+        assert barcode_operations.extract_barcode_parent_information("SQPD-11-22-33") is None
 
-        assert barcode_operations.extract_barcode_parent_information("DN-11-22") == None
+        assert barcode_operations.extract_barcode_parent_information("DN-11-22") is None
