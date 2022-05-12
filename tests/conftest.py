@@ -3,11 +3,8 @@ import pytest
 from baracoda import create_app
 from baracoda.db import db, reset_db
 from baracoda.formats import HeronCogUkIdFormatter
-from baracoda.helpers import get_prefix_item
-from baracoda.constants import ENABLE_CHILDREN_CREATION
 
 from tests.data.fixture_data import PREFIXES
-from unittest.mock import patch
 
 
 @pytest.fixture
@@ -49,12 +46,3 @@ def heron_formatter():
 @pytest.fixture
 def prefixes():
     return PREFIXES
-
-
-@pytest.fixture
-def enable_children_for_prefix(app, prefix):
-    with app.app_context():
-        item = get_prefix_item(prefix)
-        item[ENABLE_CHILDREN_CREATION] = True
-        with patch("baracoda.operations.get_prefix_item", return_value=item):
-            yield
