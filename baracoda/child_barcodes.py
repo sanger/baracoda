@@ -6,7 +6,7 @@ from sqlalchemy import exc
 from flask_cors import CORS
 
 # from baracoda.operations import create_child_barcodes
-from baracoda.operations import BarcodeOperations, InvalidParentBarcode
+from baracoda.operations import BarcodeOperations, InvalidParentBarcode, InvalidPrefixForChildrenCreation
 from baracoda.exceptions import InvalidCountError, InvalidBarcodeError
 
 bp = Blueprint("child_barcode_creation", __name__)
@@ -28,6 +28,7 @@ def new_child_barcodes(prefix: str) -> Tuple[Any, int]:
         if not operator.is_valid_parent_barcode(barcode):
             barcode_group = operator.create_barcode_group(count)
         else:
+            operator.validate_prefix_for_child_creation()
             info = operator.extract_barcode_parent_information(barcode)
             operator.validate_barcode_parent_information(info)
             barcode_group = operator.create_children_barcode_group(info["parent_barcode"], count)
@@ -43,6 +44,8 @@ def new_child_barcodes(prefix: str) -> Tuple[Any, int]:
         logger.error(f"{type(e).__name__}: Two creation requests recieved for the same barcode")
         return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.INTERNAL_SERVER_ERROR
     except InvalidParentBarcode as e:
+        return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.INTERNAL_SERVER_ERROR
+    except InvalidPrefixForChildrenCreation as e:
         return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.INTERNAL_SERVER_ERROR
     except Exception as e:
         return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.INTERNAL_SERVER_ERROR

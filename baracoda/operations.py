@@ -3,6 +3,7 @@ import re
 from datetime import datetime
 from typing import List, Optional, cast, Dict
 from xmlrpc.client import Boolean
+from baracoda.constants import CONFIG_ENABLE_CHILDREN_CREATION, CONFIG_SEQUENCE_NAME
 from baracoda.db import db
 from baracoda.exceptions import InvalidPrefixError
 from baracoda.helpers import get_prefix_item
@@ -16,6 +17,10 @@ logger = logging.getLogger(__name__)
 
 
 class InvalidParentBarcode(BaseException):
+    pass
+
+
+class InvalidPrefixForChildrenCreation(BaseException):
     pass
 
 
@@ -36,10 +41,10 @@ class BarcodeOperations:
 
         # saves pulling it out of object every time
         logger.debug("Accessing sequence_name")
-        self.sequence_name = self.prefix_item["sequence_name"]
+        self.sequence_name = self.prefix_item[CONFIG_SEQUENCE_NAME]
 
     def formatter(self) -> FormatterInterface:
-        formatter_class = cast(PrefixesType, self.prefix_item)["formatter_class"]
+        formatter_class = cast(PrefixesType, self.prefix_item)[CONFIG_FORMATTER_CLASS]
         return formatter_class(self.prefix)
 
     def create_barcodes(self, count: int) -> List[str]:
@@ -220,6 +225,10 @@ class BarcodeOperations:
             "parent_barcode": found.group("parent_barcode"),
             "child": found.group("child"),
         }
+
+    def validate_prefix_for_child_creation(self) -> None:
+        if not self.prefix_item.get(CONFIG_ENABLE_CHILDREN_CREATION):
+            raise InvalidPrefixForChildrenCreation()
 
     def validate_barcode_parent_information(self, info: Dict[str, str]) -> None:
         if not info:
