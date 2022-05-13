@@ -188,7 +188,7 @@ These are the allowed keywords that we can specify to configure a prefix:
 
 - ```prefix```: This is the string that represents the prefix we are configuring for
 supporting new barcodes.
-- ```sequence_name```: This is the sequence name in the PostgreSQL database with will
+- ```sequence_name```: This is the sequence name in the PostgreSQL database which will
 keep record of the last index created for a barcode. Prefixes can share the same
 sequence.
 - ```formatter_class```: Defines the class that will generate the string that represents
@@ -209,12 +209,12 @@ endpoint with a JSON body:
 The inputs for this request will be:
 
 - *Prefix* : prefix where we want to create the children under. This argument will be
-extracted from the URL ```/child-barcodes/<PREFIX/new```
+extracted from the URL ```/child-barcodes/<PREFIX>/new```
 All barcodes for the children will have this prefix (example, prefix HT will generate children
 like HT-11111-1, HT-11111-2, etc)
 - *Parent Barcode* : barcode that will act as parent of the children. This argument will be
 extracted from the Body of the request, eg: ```{'barcode': 'HT-1-1', 'count': 2}```.
-To be considered valid, the barcode needs to follow the format <PREFIX>-<NUMBER>(-<NUMBER>)?
+To be considered valid, the barcode needs to follow the format ```<PREFIX>-<NUMBER>(-<NUMBER>)?```
 where the last number part is optional (it represents if the barcode was a child).
 For example, valid barcodes would be ```HT-11111-13``` (normal parent) and ```HT-11112-24```
 (parent that was a child) but not ```HT-1-1-1``` or ```HT12341-1```.
