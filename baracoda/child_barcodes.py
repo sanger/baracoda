@@ -17,6 +17,25 @@ logger = logging.getLogger(__name__)
 
 @bp.post("/child-barcodes/<prefix>/new")  # type: ignore
 def new_child_barcodes(prefix: str) -> Tuple[Any, int]:
+    """Endpoint that creates a new group of child barcodes from a parent barcode
+       provided, all in one single request.
+
+    Arguments:
+        - prefix : str - URL extracted argument, that defines the Prefix to use for
+          the barcodes generated. It has to be one of the prefixes defined in
+          baracoda.config PREFIXES variable
+        - count : str - URL or BODY extracted argument. It represents the number of
+          barcodes we want to create inside the group.
+          If specified in URL it can be defined as url parameter:
+            Eg: /barcodes_group/TEST/new?count=14
+          If specified in BODY it has to be defined as jSON:
+            Eg: { "count": 14 }
+    Result:
+        - Success: HTTP 201 with JSON representation of BarcodeGroup instance
+        - InvalidPrefixError: HTTP 400 with JSON representation of error.
+        - InvalidCountError: HTTP 422 with JSON representation of error.
+        - OtherError: HTTP 500 with JSON representation of error.
+    """
     try:
         count = get_count_param()
         barcode = get_barcode_param()

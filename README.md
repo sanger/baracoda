@@ -6,6 +6,20 @@
 
 Barcode generation using postgres sequences and pre-defined prefixes.
 
+## Features
+
+Baracoda is a JSON-based microservice written in Python and backed in a
+PostgreSQL database, with the purpose of handling the creation
+of new barcodes for the LIMS application supported currently in PSD.
+
+These are some of the key features currently supported:
+
+* Creation of single barcodes
+* Creation of group of barcodes
+* Support for children barcodes creation
+* Retrieval of the last barcode created for a prefix
+* Support for different barcode formats
+
 ## Table of Contents
 
 <!-- toc -->
@@ -13,6 +27,7 @@ Barcode generation using postgres sequences and pre-defined prefixes.
 - [Requirements for Development](#requirements-for-development)
   * [Setup Steps](#setup-steps)
 - [Running](#running)
+- [Configuration](#configuration)
 - [Testing](#testing)
   * [Testing Requirements](#testing-requirements)
   * [Running Tests](#running-tests)
@@ -155,6 +170,33 @@ The following routes are available from this service:
     static                                  GET      /static/<path:filename>
 
 ## Miscellaneous
+
+### Configuration
+
+The default configuration of the currently supported prefixes is specified in the
+```baracoda/config/defaults.py``` module. For example:
+```json
+    {
+        "prefix": "HT",
+        "sequence_name": "ht",
+        "formatter_class": GenericBarcodeFormatter,
+        "enableChildrenCreation": False,
+    }
+```
+These are the allowed keywords that we can specify to configure a prefix:
+
+- ```prefix```: This is the string that represents the prefix we are configuring for
+supporting new barcodes.
+- ```sequence_name```: This is the sequence name in the PostgreSQL database with will
+keep record of the last index created for a barcode. Prefixes can share the same
+sequence.
+- ```formatter_class```: Defines the class that will generate the string that represents
+a new barcode by using the prefix and the new value obtained from the sequence.
+If we want to support a new formatter class we have to provide a class that implements
+the interface ```baracoda.formats.FormatterInterface```.
+- ```enableChildrenCreation```: Defines if the prefix has enabled the children creation.
+If true, the prefix will support creating barcodes based on a parent barcode
+If it is False, the prefix will reject any children creation request for that prefix.
 
 ### Troubleshooting
 
