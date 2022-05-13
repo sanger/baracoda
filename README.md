@@ -27,7 +27,6 @@ These are some of the key features currently supported:
 - [Requirements for Development](#requirements-for-development)
   * [Setup Steps](#setup-steps)
 - [Running](#running)
-- [Configuration](#configuration)
 - [Testing](#testing)
   * [Testing Requirements](#testing-requirements)
   * [Running Tests](#running-tests)
@@ -39,6 +38,8 @@ These are some of the key features currently supported:
 - [Autogenerating Migrations](#autogenerating-migrations)
 - [Routes](#routes)
 - [Miscellaneous](#miscellaneous)
+  * [Configuration](#configuration)
+  * [Children barcode creation](#children-barcode-creation)
   * [Troubleshooting](#troubleshooting)
     + [Installing psycopg2](#installing-psycopg2)
   * [Updating the Table of Contents](#updating-the-table-of-contents)
@@ -198,7 +199,7 @@ the interface ```baracoda.formats.FormatterInterface```.
 If true, the prefix will support creating barcodes based on a parent barcode
 If it is False, the prefix will reject any children creation request for that prefix.
 
-### About Children barcode creation
+### Children barcode creation
 
 Children barcodes from a parent barcode can be created with a POST request to the
 endpoint with a JSON body:
