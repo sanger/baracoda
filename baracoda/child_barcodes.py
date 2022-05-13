@@ -74,6 +74,13 @@ def new_child_barcodes(prefix: str) -> Tuple[Any, int]:
 
 
 def get_count_param():
+    """Extracts the count param from the Body of the request. If count
+    was not defined it will return 1.
+
+    Returns:
+        int with the count value or
+        InvalidCountError if it could not be extracted
+    """
     count = 1  # Default count
     if request.json and ("count" in request.json):
         count = int(request.json["count"])
@@ -83,6 +90,13 @@ def get_count_param():
 
 
 def get_barcode_param():
+    """Extracts the barcode param from the Body of the request. If barcode
+    was not defined it will raise InvalidBarcodeError.
+
+    Returns:
+        str with the barcode value or
+        InvalidBarcodeError if it was not present
+    """
     barcode = ""
     if request.json and ("barcode" in request.json):
         barcode = str(request.json["barcode"])
