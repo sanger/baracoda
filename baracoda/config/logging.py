@@ -50,7 +50,7 @@ LOGGING: Dict[str, Any] = {
     "loggers": {
         "baracoda": {
             "handlers": ["console", "slack"],
-            "level": "DEBUG",
+            "level": "ERROR",
             "propagate": True,
         },
     },
