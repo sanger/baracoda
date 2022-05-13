@@ -167,6 +167,7 @@ The following routes are available from this service:
     barcode_creation.get_last_barcode       GET      /barcodes/<prefix>/last
     barcode_creation.get_new_barcode        POST     /barcodes/<prefix>/new
     barcode_creation.get_new_barcode_group  POST     /barcodes_group/<prefix>/new
+    child_barcodes.new_child_barcodes       POST     /child-barcodes/<prefix>/new
     health_check                            GET      /health
     static                                  GET      /static/<path:filename>
 
