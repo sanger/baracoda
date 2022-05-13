@@ -16,10 +16,19 @@ logger = logging.getLogger(__name__)
 
 
 class InvalidParentBarcode(BaseException):
+    """The barcode provided did not match the right format, or
+    it was an impostor barcode (created outside of Baracoda but
+    using the same format).
+    """
+
     pass
 
 
 class InvalidPrefixForChildrenCreation(BaseException):
+    """The prefix provided is not currently enabled for children
+    creation.
+    """
+
     pass
 
 
@@ -43,10 +52,28 @@ class BarcodeOperations:
         self.sequence_name = self.prefix_item["sequence_name"]
 
     def formatter(self) -> FormatterInterface:
+        """Factory method that will create a new formatter instance
+        from the prefix declared.
+
+        Returns:
+            FormatterInterface instance that can be used to format a new
+            barcode string
+        """
         formatter_class = cast(PrefixesType, self.prefix_item)["formatter_class"]
         return formatter_class(self.prefix)
 
     def create_barcodes(self, count: int) -> List[str]:
+        """Create a list of barcodes, not inside a group.
+        It requests a new list of ids from the sequence associated with the current prefix
+        and formats those ids into new barcode strings. The sequence is incremented with this
+        request.
+
+        Arguments:
+            count - int : number of barcodes to create
+
+        Returns:
+            List[str] - List with the string of barcodes created
+        """
         next_values = self.__get_next_values(self.sequence_name, count)
         return [self.formatter().barcode(next_value) for next_value in next_values]
 
@@ -139,6 +166,17 @@ class BarcodeOperations:
         return bool(pattern.match(self.prefix))
 
     def __build_barcode(self, prefix: str, barcode: str, barcodes_group: Optional[BarcodesGroup]) -> Barcode:
+        """Creates a new instance for Barcode with the arguments received, relating them to a
+        BarcodeGroup if provided, and setting a created_at timestamp.
+
+        Arguments:
+            prefix : str - prefix of the barcode
+            barcode : str - string with the barcode value
+            barcodes_group : Optional[BarcodesGroup] - instance of BarcodesGroup or None if not needed
+
+        Returns:
+            Barcode instance with the arguments set and a created_at timestamp attached
+        """
         return Barcode(
             prefix=prefix,
             barcode=barcode,
@@ -173,6 +211,14 @@ class BarcodeOperations:
             raise e
 
     def __build_barcodes_group(self) -> BarcodesGroup:
+        """Creates a new instance for BarcodesGroup, and sets
+         a created_at timestamp.
+
+        Arguments: None
+
+        Returns:
+            BarcodesGroup instance with a created_at timestamp attached
+        """
         return BarcodesGroup(created_at=datetime.now())
 
     def __get_next_value(self, sequence_name: str) -> int:
