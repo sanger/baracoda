@@ -1,7 +1,7 @@
 import logging
 import re
 from datetime import datetime
-from typing import List, Optional, cast, Dict
+from typing import List, Optional, cast
 from xmlrpc.client import Boolean
 from baracoda.db import db
 from baracoda.exceptions import InvalidPrefixError
@@ -10,7 +10,7 @@ from baracoda.orm.barcode import Barcode
 from baracoda.orm.child_barcode import ChildBarcode
 from baracoda.orm.barcodes_group import BarcodesGroup
 from baracoda.formats import FormatterInterface
-from baracoda.types import PrefixesType
+from baracoda.types import PrefixesType, BarcodeParentInfoType
 
 logger = logging.getLogger(__name__)
 
@@ -213,9 +213,31 @@ class BarcodeOperations:
 
     # Child barcode operations
     def is_valid_parent_barcode(self, barcode: str) -> Boolean:
+        """Boolean function that identifies if a barcode can act as a parent barcode.
+        It checks that the barcode matches the format of the regexp declared in the
+        #extract_barcode_parent_information method.
+
+        Arguments:
+            barcode - str : Barcode that we want to check if it is valid parent
+
+        Returns:
+            bool indicating if the barcode was a valid parent
+        """
         return not self.extract_barcode_parent_information(barcode) is None
 
-    def extract_barcode_parent_information(self, barcode):
+    def extract_barcode_parent_information(self, barcode: str) -> Optional[BarcodeParentInfoType]:
+        """Extracts the parent and child information from a barcode string by following the regexp
+        defined. If the input does not match it will return None.
+        Eg:  barcode HT-1111-23 it will extract parent: HT-1111 and child: 23
+             barcode HT-1111 it will extract parent: HT-1111 and child: None
+
+        Arguments:
+            barcode - str : Barcode string where we want to extract data from
+
+        Returns:
+            BarcodeParentInfoType object with the fields parent_barcode and child, or
+            None if the barcode string from input did not match the regexp.
+        """
         pattern = re.compile(f"^(?P<parent_barcode>{self.prefix}-\\d+)(?:-(?P<child>\\d+))?$")
         found = pattern.search(barcode)
         if not found:
@@ -226,10 +248,28 @@ class BarcodeOperations:
         }
 
     def validate_prefix_for_child_creation(self) -> None:
+        """Validates if self.prefix is declared as children creation enabled and if not
+        it will raise an exception.
+
+        Returns:
+            None if prefix has children creation enabled
+            Raise InvalidPrefixForChildrenCreation if not enabled
+        """
         if not cast(PrefixesType, self.prefix_item)["enableChildrenCreation"]:
             raise InvalidPrefixForChildrenCreation()
 
-    def validate_barcode_parent_information(self, info: Dict[str, str]) -> None:
+    def validate_barcode_parent_information(self, info: Optional[BarcodeParentInfoType]) -> None:
+        """Validates if barcode has all the correct information to generate children barcodes.
+        It will check that:
+          - The barcode was correctly parsed in the object as input, otherwise it will raise
+          InvalidParentBarcode
+          - The parent barcode, if is a child barcode, it was generated as a child before by Baracoda
+          otherwise it will be rejected and raise InvalidParentBarcode
+
+        Returns:
+            None if checks were ok
+            Raise InvalidParentBarcode if not correct
+        """
         if not info:
             raise InvalidParentBarcode("The barcode provided is not valid for generating child barcodes")
 

@@ -8,6 +8,8 @@ from flask_cors import CORS
 # from baracoda.operations import create_child_barcodes
 from baracoda.operations import BarcodeOperations, InvalidParentBarcode, InvalidPrefixForChildrenCreation
 from baracoda.exceptions import InvalidCountError, InvalidBarcodeError
+from baracoda.types import BarcodeParentInfoType
+from typing import cast
 
 bp = Blueprint("child_barcode_creation", __name__)
 CORS(bp)
@@ -50,7 +52,9 @@ def new_child_barcodes(prefix: str) -> Tuple[Any, int]:
             operator.validate_prefix_for_child_creation()
             info = operator.extract_barcode_parent_information(barcode)
             operator.validate_barcode_parent_information(info)
-            barcode_group = operator.create_children_barcode_group(info["parent_barcode"], count)
+            barcode_group = operator.create_children_barcode_group(
+                cast(BarcodeParentInfoType, info)["parent_barcode"], count
+            )
         return (
             barcode_group.to_dict(),
             HTTPStatus.CREATED,
