@@ -198,27 +198,36 @@ the interface ```baracoda.formats.FormatterInterface```.
 If true, the prefix will support creating barcodes based on a parent barcode
 If it is False, the prefix will reject any children creation request for that prefix.
 
-### Child barcode creation logic
+### About Children barcode creation
 
-New children barcodes for a barcode can be created after receiving a POST request to:
+Children barcodes from a parent barcode can be created with a POST request to the
+endpoint with a JSON body:
 
 ```/child-barcodes/<PREFIX/new```
 
-These are the inputs for this request:
+The inputs for this request will be:
 
-- Prefix : prefix where we want to create the children under. This argument will be
+- *Prefix* : prefix where we want to create the children under. This argument will be
 extracted from the URL ```/child-barcodes/<PREFIX/new```
 All barcodes for the children will have this prefix (example, prefix HT will generate children
 like HT-11111-1, HT-11111-2, etc)
-- Parent Barcode: barcode that will act as parent of the children. This argument will be
-extracted from the Body of the request, eg: {'barcode': 'HT-1-1'}.
+- *Parent Barcode* : barcode that will act as parent of the children. This argument will be
+extracted from the Body of the request, eg: ```{'barcode': 'HT-1-1', 'count': 2}```.
 To be considered valid, the barcode needs to follow the format <PREFIX>-<NUMBER>(-<NUMBER>)?
-where the last number part is optional. Valid barcodes would be HT-11111-13 and HT-11112-24
-but not HT-1-1-1 or HT12341-1, for example.
-- Child: this is the part of the Parent barcode string that would identify if the parent was
-a child before (the last number). For example for the parent barcode HT-11111-14, Child
-would be 14; but for the parent barcode HT-11111, child would have no value defined.
-- Count`: number of children barcodes to create.
+where the last number part is optional (it represents if the barcode was a child).
+For example, valid barcodes would be ```HT-11111-13``` (normal parent) and ```HT-11112-24```
+(parent that was a child) but not ```HT-1-1-1``` or ```HT12341-1```.
+- *Child* : part of the Parent barcode string that would identify if the parent was
+a child before (the last number). For example for the *Parent barcode* ```HT-11111-14```,
+*Child* would be 14; but for the *Parent barcode* ```HT-11111```, *Child* would have no
+value defined.
+- *Count* : number of children barcodes to create.
+
+There is the possibility that the parent barcode received is in the wrong format, in
+which case this endpoint will generate a normal barcode.
+There is the possibility that the parent barcode receied has a children barcode format
+that is logically incorrect from database perspective, in that case the request
+will be rejected as 'Impostor' barcode.
 
 The following diagram describes the workflow of how this endpoint will behave depending on
 the inputs declared before:
