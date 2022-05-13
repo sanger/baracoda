@@ -5,7 +5,6 @@ from flask import Blueprint, request
 from sqlalchemy import exc
 from flask_cors import CORS
 
-# from baracoda.operations import create_child_barcodes
 from baracoda.operations import BarcodeOperations, InvalidParentBarcode, InvalidPrefixForChildrenCreation
 from baracoda.exceptions import InvalidCountError, InvalidBarcodeError
 from baracoda.types import BarcodeParentInfoType
