@@ -110,15 +110,15 @@ def get_last_barcode(prefix: str) -> Tuple[Any, int]:
 
 def get_count_param():
     """Extracts the count argument from the HTTP request received.
-        If specified in URL it can be defined as url parameter:
-        Eg: /barcodes_group/TEST/new?count=14
-        If specified in BODY it has to be defined as jSON:
-        Eg: { "count": 14 }
+    If specified in URL it can be defined as url parameter:
+    Eg: /barcodes_group/TEST/new?count=14
+    If specified in BODY it has to be defined as jSON:
+    Eg: { "count": 14 }
 
-        Arguments: No
-        Returns one of this:
-            int - value of the 'count' argument extracted
-            InvalidCountError - Exception raised when argument could not be extracted
+    Arguments: No
+    Returns one of this:
+        int - value of the 'count' argument extracted
+        InvalidCountError - Exception raised when argument could not be extracted
 
     """
     if "count" in request.values:
