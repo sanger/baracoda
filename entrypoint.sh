@@ -6,7 +6,7 @@ set -o nounset
 
 if [ "${SKIP_MIGRATIONS:-true}" != "true" ]; then
   echo "Running migrations..."
-  alembic upgrade head
+  flask db upgrade
   echo "Database migrated"
 fi
 

@@ -79,7 +79,7 @@ application), use the `docker-compose.yml` file:
 
 1. Run the migrations:
 
-        alembic upgrade head
+        flask db upgrade
 
 ## Running
 
@@ -138,7 +138,7 @@ corresponding change according to [semver](https://semver.org/).
 - Perform any change in the models files located in the `baracoda/orm` folder
 - Run alembic and provide a comment to autogenerate the migration comparing with current database:
 
-      alembic revision --autogenerate -m "Added account table"
+      flask db revision --autogenerate -m "Added account table"
 
 ## Routes
 
