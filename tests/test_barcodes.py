@@ -35,6 +35,11 @@ def test_get_new_barcodes_group_as_url_param(client):
 
 def test_get_new_barcodes_group_without_count(client):
     response = client.post("/barcodes_group/SANG/new")
+    assert response.status_code == HTTPStatus.BAD_REQUEST
+
+
+def test_get_new_barcodes_group_with_wrong_count(client):
+    response = client.post("/barcodes_group/SANG/new?count=-24")
     assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
 
 

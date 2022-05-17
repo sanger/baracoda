@@ -6,6 +6,7 @@ from flask import Blueprint, request
 from flask_cors import CORS
 
 from baracoda.exceptions import InvalidCountError, InvalidPrefixError
+from werkzeug.exceptions import BadRequest
 from baracoda.operations import BarcodeOperations
 
 bp = Blueprint("barcode_creation", __name__)
@@ -30,6 +31,8 @@ def get_new_barcode_group(prefix: str) -> Tuple[Any, int]:
         return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.BAD_REQUEST
     except InvalidCountError as e:
         return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.UNPROCESSABLE_ENTITY
+    except BadRequest as e:
+        return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.BAD_REQUEST
     except Exception as e:
         return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.INTERNAL_SERVER_ERROR
 
@@ -64,10 +67,28 @@ def get_last_barcode(prefix: str) -> Tuple[Any, int]:
         return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.INTERNAL_SERVER_ERROR
 
 
+def positive_value(value: int) -> int:
+    """Returns the value passed as argument if is a positive higher than zero
+    or raise exception if not.
+    Arguments:
+        value : int - Value to check
+
+    Returns:
+        value : same value passed as input or
+        InvalidCountError exception if not
+    """
+    if value > 0:
+        return value
+    raise InvalidCountError()
+
+
 def get_count_param():
     if "count" in request.values:
-        return int(request.values["count"])
+        return positive_value(int(request.values["count"]))
     else:
-        if request.json and ("count" in request.json):
-            return int(request.json["count"])
+        try:
+            if request.json and ("count" in request.json):
+                return positive_value(int(request.json["count"]))
+        except BadRequest as e:
+            raise e
     raise InvalidCountError()
