@@ -36,8 +36,7 @@ def create_app(test_config=None):
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     db.init_app(app)
-    migrate = Migrate(app, db)
-
+    Migrate(app, db)
 
     logging.config.dictConfig(LOGGING)
 
