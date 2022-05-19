@@ -11,4 +11,4 @@ if [ "${SKIP_MIGRATIONS:-true}" != "true" ]; then
 fi
 
 echo "Starting service"
-gunicorn baracoda:create_app()
+gunicorn "baracoda:create_app()"
