@@ -42,6 +42,21 @@ def test_get_new_barcodes_group_as_url_param(client):
 
 
 def test_get_new_barcodes_group_without_count(client):
+    response = client.post("/barcodes_group/SANG/new")
+    assert response.status_code == HTTPStatus.BAD_REQUEST
+
+
+def test_get_new_barcodes_group_with_wrong_value_count(client):
+    response = client.post("/barcodes_group/SANG/new?count=WRONG")
+    assert response.status_code == HTTPStatus.INTERNAL_SERVER_ERROR
+
+
+def test_get_new_barcodes_group_with_wrong_value_negative(client):
+    response = client.post("/barcodes_group/SANG/new?count=-124")
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+
+
+def test_get_new_barcodes_group_with_wrong_count(client):
     # Since the count is no longer a param the get_count_param method looks at the json body
     # this response.json method will internal error unless we pass the correct headers and data
     response = client.post(
