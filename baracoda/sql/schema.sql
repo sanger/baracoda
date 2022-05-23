@@ -6,8 +6,11 @@ DROP SEQUENCE IF EXISTS ht;
 CREATE SEQUENCE ht
 START 111111;
 
-DROP TABLE IF EXISTS barcodes;
+DROP SEQUENCE IF EXISTS sqp;
+CREATE SEQUENCE sqp
+START 1;
 
+DROP TABLE IF EXISTS barcodes;
 CREATE TABLE barcodes
 (
     id SERIAL,
@@ -24,6 +27,14 @@ CREATE TABLE barcodes_groups
     id SERIAL,
     created_at timestamp,
     PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS child_barcode_counter;
+CREATE TABLE child_barcode_counter
+(
+    barcode VARCHAR(50) NOT NULL,
+    child_count integer,
+    PRIMARY KEY (barcode)
 );
 
 DROP TABLE IF EXISTS alembic_version;
