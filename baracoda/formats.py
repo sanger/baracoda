@@ -3,14 +3,39 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class HeronFormatter:
-    def __init__(self, prefix: str, convert: bool = True):
+class FormatterInterface:
+    def barcode(self, value: int) -> str:
+        pass
+
+
+class GenericBarcodeFormatter(FormatterInterface):
+    def __init__(self, prefix: str):
         logger.debug(f"Instantiate formatter with {prefix}")
 
         self.prefix = prefix
 
-        # tells the formatter whether barcode needs to be mashed up
-        self.convert = convert
+    def barcode(self, value: int) -> str:
+        """
+        Method which returns a barcode with a prefix.
+        If the barcode needs to be converted it is formatted otherwise it is returned as is
+
+        Arguments:
+            value {str} -- the value of the barcode from the sequence
+
+        Returns:
+            str -- formatted barcode with prefix and checksum
+        """
+
+        formatted_value = value
+
+        return f"{self.prefix}-{formatted_value}"
+
+
+class HeronCogUkIdFormatter(FormatterInterface):
+    def __init__(self, prefix: str):
+        logger.debug(f"Instantiate formatter with {prefix}")
+
+        self.prefix = prefix
 
     def hex_to_int(self, hex_str: str) -> int:
         """Convert a hex string to integer.
@@ -67,7 +92,7 @@ class HeronFormatter:
             str -- formatted barcode with prefix and checksum
         """
 
-        formatted_value = self.format_barcode_number(value) if self.convert else value
+        formatted_value = self.format_barcode_number(value)
 
         return f"{self.prefix}-{formatted_value}"
 
