@@ -1,4 +1,4 @@
-version: "3.8"
+version: "3.3"
 services:
   # A Postgresql service as close to production as currently possible
   # To run it as a standalone container:

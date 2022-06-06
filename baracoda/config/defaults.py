@@ -1,10 +1,13 @@
-from typing import Any, Dict, List
+from typing import List
+from baracoda.types import PrefixesType
+
+from baracoda.formats import HeronCogUkIdFormatter, GenericBarcodeFormatter
 
 ###
 # database config
 ###
 DB_DBNAME = "baracoda_dev"
-DB_HOST = "127.0.0.1"
+DB_HOST = "localhost"
 DB_PASSWORD = "postgres"
 DB_PORT = "5432"
 DB_USER = "postgres"
@@ -25,59 +28,305 @@ SLACK_CHANNEL_ID = "Cxxx"
 ###
 # prefix for barcodes returned from the respective sequece
 ###
-PREFIXES: List[Dict[str, Any]] = [
-    {"prefix": "ALDP", "sequence_name": "heron", "convert": True},
-    {"prefix": "BHRT", "sequence_name": "heron", "convert": True},
-    {"prefix": "BIRM", "sequence_name": "heron", "convert": True},
-    {"prefix": "BRBR", "sequence_name": "heron", "convert": True},
-    {"prefix": "BRIG", "sequence_name": "heron", "convert": True},
-    {"prefix": "BRIS", "sequence_name": "heron", "convert": True},
-    {"prefix": "CAMB", "sequence_name": "heron", "convert": True},
-    {"prefix": "CAMC", "sequence_name": "heron", "convert": True},
-    {"prefix": "CPTD", "sequence_name": "heron", "convert": True},
-    {"prefix": "CWAR", "sequence_name": "heron", "convert": True},
-    {"prefix": "EDIN", "sequence_name": "heron", "convert": True},
-    {"prefix": "EKHU", "sequence_name": "heron", "convert": True},
-    {"prefix": "EXET", "sequence_name": "heron", "convert": True},
-    {"prefix": "GCVR", "sequence_name": "heron", "convert": True},
-    {"prefix": "GLOU", "sequence_name": "heron", "convert": True},
-    {"prefix": "GSTT", "sequence_name": "heron", "convert": True},
-    {"prefix": "HECH", "sequence_name": "heron", "convert": True},
-    {"prefix": "HSLL", "sequence_name": "heron", "convert": True},
-    {"prefix": "KGHT", "sequence_name": "heron", "convert": True},
-    {"prefix": "LCST", "sequence_name": "heron", "convert": True},
-    {"prefix": "LEED", "sequence_name": "heron", "convert": True},
-    {"prefix": "LIVE", "sequence_name": "heron", "convert": True},
-    {"prefix": "LOND", "sequence_name": "heron", "convert": True},
-    {"prefix": "LSPA", "sequence_name": "heron", "convert": True},
-    {"prefix": "MILK", "sequence_name": "heron", "convert": True},
-    {"prefix": "MTUN", "sequence_name": "heron", "convert": True},
-    {"prefix": "NEWC", "sequence_name": "heron", "convert": True},
-    {"prefix": "NIRE", "sequence_name": "heron", "convert": True},
-    {"prefix": "NORT", "sequence_name": "heron", "convert": True},
-    {"prefix": "NORW", "sequence_name": "heron", "convert": True},
-    {"prefix": "NOTT", "sequence_name": "heron", "convert": True},
-    {"prefix": "NWGH", "sequence_name": "heron", "convert": True},
-    {"prefix": "OXON", "sequence_name": "heron", "convert": True},
-    {"prefix": "PAHT", "sequence_name": "heron", "convert": True},
-    {"prefix": "PHEC", "sequence_name": "heron", "convert": True},
-    {"prefix": "PHWC", "sequence_name": "heron", "convert": True},
-    {"prefix": "PLYM", "sequence_name": "heron", "convert": True},
-    {"prefix": "PORT", "sequence_name": "heron", "convert": True},
-    {"prefix": "PRIN", "sequence_name": "heron", "convert": True},
-    {"prefix": "QEUH", "sequence_name": "heron", "convert": True},
-    {"prefix": "RAND", "sequence_name": "heron", "convert": True},
-    {"prefix": "RSCH", "sequence_name": "heron", "convert": True},
-    {"prefix": "SANG", "sequence_name": "heron", "convert": True},
-    {"prefix": "SHEF", "sequence_name": "heron", "convert": True},
-    {"prefix": "TBSD", "sequence_name": "heron", "convert": True},
-    {"prefix": "TFCI", "sequence_name": "heron", "convert": True},
-    {"prefix": "WAHH", "sequence_name": "heron", "convert": True},
-    {"prefix": "WSFT", "sequence_name": "heron", "convert": True},
-    {"prefix": "HT", "sequence_name": "ht", "convert": False},
+
+PREFIXES: List[PrefixesType] = [
+    {
+        "prefix": "ALDP",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "BHRT",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "BIRM",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "BRBR",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "BRIG",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "BRIS",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "CAMB",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "CAMC",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "CPTD",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "CWAR",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "EDIN",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "EKHU",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "EXET",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "GCVR",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "GLOU",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "GSTT",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "HECH",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "HSLL",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "KGHT",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "LCST",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "LEED",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "LIVE",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "LOND",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "LSPA",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "MILK",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "MTUN",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "NEWC",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "NIRE",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "NORT",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "NORW",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "NOTT",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "NWGH",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "OXON",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "PAHT",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "PHEC",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "PHWC",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "PLYM",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "PORT",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "PRIN",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "QEUH",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "RAND",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "RSCH",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "SANG",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "SHEF",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "TBSD",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "TFCI",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "WAHH",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "WSFT",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "HT",
+        "sequence_name": "ht",
+        "formatter_class": GenericBarcodeFormatter,
+        "enableChildrenCreation": False,
+    },
 ]
 
 for prefix_item in PREFIXES:
-    for key in ["prefix", "sequence_name", "convert"]:
+    for key in ["prefix", "sequence_name", "formatter_class"]:
         if not (key in prefix_item):
-            raise KeyError("PREFIXES must all contain a prefix, sequence_name and convert key.")
+            raise KeyError("PREFIXES must all contain a prefix, sequence_name and formatter_class key.")
