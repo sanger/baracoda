@@ -9,7 +9,7 @@ from baracoda.helpers import get_prefix_item
 from baracoda.orm.barcode import Barcode
 from baracoda.orm.child_barcode import ChildBarcode
 from baracoda.orm.barcodes_group import BarcodesGroup
-from baracoda.formats import FormatterInterface
+from baracoda.formats.interfaces import FormatterInterface
 from baracoda.types import PrefixesType, BarcodeParentInfoType
 
 logger = logging.getLogger(__name__)
@@ -359,8 +359,9 @@ class BarcodeOperations:
 
             # Format child barcodes
             child_barcodes = []
-            for x in range(new_count, barcode_record.child_count + 1):
-                child_barcodes.append(f"{parent_barcode}-{x}")
+            for pos in range(new_count, barcode_record.child_count + 1):
+                barcode = self.formatter().child_barcode(parent_barcode, pos)
+                child_barcodes.append(barcode)
 
             return child_barcodes
         except Exception as e:

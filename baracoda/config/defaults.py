@@ -1,7 +1,8 @@
 from typing import List
 from baracoda.types import PrefixesType
 
-from baracoda.formats import HeronCogUkIdFormatter, GenericBarcodeFormatter
+from baracoda.formats.heron import HeronCogUkIdFormatter
+from baracoda.formats.generic import GenericBarcodeFormatter
 
 ###
 # database config

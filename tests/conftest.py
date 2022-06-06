@@ -2,7 +2,7 @@ import pytest
 
 from baracoda import create_app
 from baracoda.db import db, reset_db
-from baracoda.formats import HeronCogUkIdFormatter
+from baracoda.formats.heron import HeronCogUkIdFormatter
 
 from tests.data.fixture_data import PREFIXES
 

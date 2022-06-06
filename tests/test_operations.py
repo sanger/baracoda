@@ -44,7 +44,7 @@ def test_error_is_raised_if_prefix_is_not_valid(app):
 def test_child_barcodes_are_created_when_new_barcode(app):
     with app.app_context():
         barcode_operations = BarcodeOperations(prefix="SQPD")
-        expected_child_barcodes = ["SQPD-1"]
+        expected_child_barcodes = ["SQPD-1-C"]
         assert barcode_operations.create_child_barcodes("SQPD", 1) == expected_child_barcodes
 
 
@@ -54,14 +54,14 @@ def test_child_barcodes_are_created_when_existing_barcode(app):
         barcode_operations = BarcodeOperations(prefix="SQPD")
         barcode_operations.create_child_barcodes("SQPD", 5)
         # Expect child barcode to have correct when suffix when same barcode is used
-        expected_child_barcodes = ["SQPD-6"]
+        expected_child_barcodes = ["SQPD-6-H"]
         assert barcode_operations.create_child_barcodes("SQPD", 1) == expected_child_barcodes
 
 
 def test_correct_number_of_child_barcodes_are_created(app):
     with app.app_context():
         barcode_operations = BarcodeOperations(prefix="SQPD")
-        expected_child_barcodes = ["SQPD-1", "SQPD-2", "SQPD-3"]
+        expected_child_barcodes = ["SQPD-1-C", "SQPD-2-D", "SQPD-3-E"]
         assert barcode_operations.create_child_barcodes("SQPD", 3) == expected_child_barcodes
 
 

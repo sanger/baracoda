@@ -1,4 +1,4 @@
-from baracoda.formats import HeronCogUkIdFormatter
+from baracoda.formats.heron import HeronCogUkIdFormatter
 from baracoda.helpers import get_prefix_item
 
 
