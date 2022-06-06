@@ -284,13 +284,14 @@ class BarcodeOperations:
             BarcodeParentInfoType object with the fields parent_barcode and child, or
             None if the barcode string from input did not match the regexp.
         """
-        pattern = re.compile(f"^(?P<parent_barcode>{self.prefix}-\\d+)(?:-(?P<child>\\d+))?$")
+        pattern = re.compile(f"^(?P<parent_barcode>{self.prefix}-\\d+)(?:-(?P<child>\\d+))?(?:-(?P<suffix>[A-Z]+))?$")
         found = pattern.search(barcode)
         if not found:
             return None
         return {
             "parent_barcode": found.group("parent_barcode"),
             "child": found.group("child"),
+            "suffix": found.group("suffix"),
         }
 
     def validate_prefix_for_child_creation(self) -> None:

@@ -12,7 +12,7 @@ PrefixesType = TypedDict(
 
 BarcodeParentInfoType = TypedDict(
     "BarcodeParentInfoType",
-    {"parent_barcode": str, "child": str},
+    {"parent_barcode": str, "child": str, "suffix": str},
 )
 
 

@@ -83,7 +83,9 @@ def test_validate_barcode_parent_information(app):
     with app.app_context():
         barcode_operations = BarcodeOperations(prefix="SQPD")
         with pytest.raises(InvalidParentBarcode):
-            barcode_operations.validate_barcode_parent_information({"parent_barcode": "SQPD-1", "child": "1"})
+            barcode_operations.validate_barcode_parent_information(
+                {"parent_barcode": "SQPD-1", "child": "1", "suffix": "A"}
+            )
 
 
 def test_extract_barcode_parent_information(app):
@@ -93,11 +95,25 @@ def test_extract_barcode_parent_information(app):
         assert barcode_operations.extract_barcode_parent_information("SQPD-1") == {
             "parent_barcode": "SQPD-1",
             "child": None,
+            "suffix": None,
+        }
+
+        assert barcode_operations.extract_barcode_parent_information("SQPD-1-C") == {
+            "parent_barcode": "SQPD-1",
+            "child": None,
+            "suffix": "C",
         }
 
         assert barcode_operations.extract_barcode_parent_information("SQPD-11-22") == {
             "parent_barcode": "SQPD-11",
             "child": "22",
+            "suffix": None,
+        }
+
+        assert barcode_operations.extract_barcode_parent_information("SQPD-234-56-Z") == {
+            "parent_barcode": "SQPD-234",
+            "child": "56",
+            "suffix": "Z",
         }
 
         assert barcode_operations.extract_barcode_parent_information("SQPD-11-22-33") is None
