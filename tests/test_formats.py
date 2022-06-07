@@ -118,6 +118,9 @@ def test_formatter_breaks_if_not_using_ascii_prefix():
     with pytest.raises(UnsupportedEncodingForPrefix):
         Sequencescape22Formatter(prefix="MADRILEÑO")
 
+    with pytest.raises(UnsupportedEncodingForPrefix):
+        GenericBarcodeFormatter(prefix="MADRILEÑO")
+
 
 def test_sequencescape22_formatter_supports_barcodes_with_suffix():
     instance = Sequencescape22Formatter(prefix="TEST")
