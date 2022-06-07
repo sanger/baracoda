@@ -216,6 +216,8 @@ The current list of supported formatter classes that can be specified for a pref
 
 Implements the Heron COG UK Id generation that corresponds with format: ```<Prefix>-<Hexadecimal><Checksum>```.
 
+With description:
+
 - Prefix is the prefix provided to the formatter.
 - Hexadecimal is the hexadecimal representation for the current index for the id.
 - Checksum is a checksum letter that validates the hexadecimal value.
@@ -223,6 +225,8 @@ Implements the Heron COG UK Id generation that corresponds with format: ```<Pref
 #### GenericBarcodeFormatter
 
 Standard barcode generator that follows the format: ```<Prefix>-<Number>```.
+
+With description:
 
 - Prefix is the prefix provided to the formatter
 - Number is the current index for the id of this barcode.
@@ -232,6 +236,8 @@ Standard barcode generator that follows the format: ```<Prefix>-<Number>```.
 Plate barcode generator which supports children creation and checksum. It follows these 2 formats:
  - For any barcode that is not a children: ```<Prefix>-<Number>-<Checksum>```
  - For any children barcode: ```<Prefix>-<Number>-<ChildIndex>-<Checksum>```
+
+With description:
 
 - Prefix is the prefix provided to the formatter
 - Number is the current index for the id of this barcode.
