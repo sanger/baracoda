@@ -1,7 +1,9 @@
 from typing import List, Union, TypedDict, Type
-from baracoda.formats import HeronCogUkIdFormatter, GenericBarcodeFormatter
+from baracoda.formats.heron import HeronCogUkIdFormatter
+from baracoda.formats.generic import GenericBarcodeFormatter
+from baracoda.formats.sequencescape import Sequencescape22Formatter
 
-FormatterClassType = Union[Type[HeronCogUkIdFormatter], Type[GenericBarcodeFormatter]]
+FormatterClassType = Union[Type[HeronCogUkIdFormatter], Type[GenericBarcodeFormatter], Type[Sequencescape22Formatter]]
 
 PrefixesType = TypedDict(
     "PrefixesType",
@@ -10,7 +12,7 @@ PrefixesType = TypedDict(
 
 BarcodeParentInfoType = TypedDict(
     "BarcodeParentInfoType",
-    {"parent_barcode": str, "child": str},
+    {"parent_barcode": str, "child": str, "suffix": str},
 )
 
 

@@ -9,7 +9,7 @@ from baracoda.helpers import get_prefix_item
 from baracoda.orm.barcode import Barcode
 from baracoda.orm.child_barcode import ChildBarcode
 from baracoda.orm.barcodes_group import BarcodesGroup
-from baracoda.formats import FormatterInterface
+from baracoda.formats.interfaces import FormatterInterface
 from baracoda.types import PrefixesType, BarcodeParentInfoType
 
 logger = logging.getLogger(__name__)
@@ -284,13 +284,14 @@ class BarcodeOperations:
             BarcodeParentInfoType object with the fields parent_barcode and child, or
             None if the barcode string from input did not match the regexp.
         """
-        pattern = re.compile(f"^(?P<parent_barcode>{self.prefix}-\\d+)(?:-(?P<child>\\d+))?$")
+        pattern = re.compile(f"^(?P<parent_barcode>{self.prefix}-\\d+)(?:-(?P<child>\\d+))?(?:-(?P<suffix>[A-Z]+))?$")
         found = pattern.search(barcode)
         if not found:
             return None
         return {
             "parent_barcode": found.group("parent_barcode"),
             "child": found.group("child"),
+            "suffix": found.group("suffix"),
         }
 
     def validate_prefix_for_child_creation(self) -> None:
@@ -359,8 +360,9 @@ class BarcodeOperations:
 
             # Format child barcodes
             child_barcodes = []
-            for x in range(new_count, barcode_record.child_count + 1):
-                child_barcodes.append(f"{parent_barcode}-{x}")
+            for pos in range(new_count, barcode_record.child_count + 1):
+                barcode = self.formatter().child_barcode(parent_barcode, pos)
+                child_barcodes.append(barcode)
 
             return child_barcodes
         except Exception as e:

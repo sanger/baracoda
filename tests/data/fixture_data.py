@@ -1,5 +1,7 @@
 from typing import Dict, List, Union
-from baracoda.formats import HeronCogUkIdFormatter, GenericBarcodeFormatter
+from baracoda.formats.heron import HeronCogUkIdFormatter
+from baracoda.formats.generic import GenericBarcodeFormatter
+from baracoda.formats.sequencescape import Sequencescape22Formatter
 
 PREFIXES: List[Dict[str, Union[str, object]]] = [
     {
@@ -41,7 +43,7 @@ PREFIXES: List[Dict[str, Union[str, object]]] = [
     {
         "prefix": "SQPD",
         "sequence_name": "sqp",
-        "formatter_class": GenericBarcodeFormatter,
+        "formatter_class": Sequencescape22Formatter,
         "enableChildrenCreation": True,
     },
 ]

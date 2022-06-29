@@ -44,7 +44,7 @@ def test_error_is_raised_if_prefix_is_not_valid(app):
 def test_child_barcodes_are_created_when_new_barcode(app):
     with app.app_context():
         barcode_operations = BarcodeOperations(prefix="SQPD")
-        expected_child_barcodes = ["SQPD-1"]
+        expected_child_barcodes = ["SQPD-1-C"]
         assert barcode_operations.create_child_barcodes("SQPD", 1) == expected_child_barcodes
 
 
@@ -54,14 +54,14 @@ def test_child_barcodes_are_created_when_existing_barcode(app):
         barcode_operations = BarcodeOperations(prefix="SQPD")
         barcode_operations.create_child_barcodes("SQPD", 5)
         # Expect child barcode to have correct when suffix when same barcode is used
-        expected_child_barcodes = ["SQPD-6"]
+        expected_child_barcodes = ["SQPD-6-H"]
         assert barcode_operations.create_child_barcodes("SQPD", 1) == expected_child_barcodes
 
 
 def test_correct_number_of_child_barcodes_are_created(app):
     with app.app_context():
         barcode_operations = BarcodeOperations(prefix="SQPD")
-        expected_child_barcodes = ["SQPD-1", "SQPD-2", "SQPD-3"]
+        expected_child_barcodes = ["SQPD-1-C", "SQPD-2-D", "SQPD-3-E"]
         assert barcode_operations.create_child_barcodes("SQPD", 3) == expected_child_barcodes
 
 
@@ -83,7 +83,9 @@ def test_validate_barcode_parent_information(app):
     with app.app_context():
         barcode_operations = BarcodeOperations(prefix="SQPD")
         with pytest.raises(InvalidParentBarcode):
-            barcode_operations.validate_barcode_parent_information({"parent_barcode": "SQPD-1", "child": "1"})
+            barcode_operations.validate_barcode_parent_information(
+                {"parent_barcode": "SQPD-1", "child": "1", "suffix": "A"}
+            )
 
 
 def test_extract_barcode_parent_information(app):
@@ -93,11 +95,25 @@ def test_extract_barcode_parent_information(app):
         assert barcode_operations.extract_barcode_parent_information("SQPD-1") == {
             "parent_barcode": "SQPD-1",
             "child": None,
+            "suffix": None,
+        }
+
+        assert barcode_operations.extract_barcode_parent_information("SQPD-1-C") == {
+            "parent_barcode": "SQPD-1",
+            "child": None,
+            "suffix": "C",
         }
 
         assert barcode_operations.extract_barcode_parent_information("SQPD-11-22") == {
             "parent_barcode": "SQPD-11",
             "child": "22",
+            "suffix": None,
+        }
+
+        assert barcode_operations.extract_barcode_parent_information("SQPD-234-56-Z") == {
+            "parent_barcode": "SQPD-234",
+            "child": "56",
+            "suffix": "Z",
         }
 
         assert barcode_operations.extract_barcode_parent_information("SQPD-11-22-33") is None

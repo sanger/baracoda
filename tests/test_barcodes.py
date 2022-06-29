@@ -31,7 +31,7 @@ def test_get_new_barcode_for_ht(client):
 
 def test_get_new_barcode_for_sqp(client):
     response = client.post("/barcodes/SQPD/new")
-    assert response.json == {"barcode": "SQPD-1"}
+    assert response.json == {"barcode": "SQPD-1-C"}
     assert response.status_code == HTTPStatus.CREATED
 
 
