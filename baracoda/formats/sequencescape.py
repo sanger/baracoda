@@ -54,7 +54,7 @@ class Sequencescape22Formatter(FormatterInterface):
 
         Arguments:
             parent_barcode {str} -- parent barcode we want to generate child barcode from
-            pos -- index of the children to generate
+            pos -- number of children to generate
 
         Returns:
             str -- string representation of the child barcode

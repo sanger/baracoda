@@ -15,8 +15,7 @@ class GenericBarcodeFormatter(FormatterInterface):
 
     def barcode(self, value: int) -> str:
         """
-        Method which returns a barcode with a prefix.
-        If the barcode needs to be converted it is formatted otherwise it is returned as is
+        Method which returns a barcode formatted with a prefix.
 
         Arguments:
             value {str} -- the value of the barcode from the sequence
