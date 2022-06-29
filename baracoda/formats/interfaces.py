@@ -2,6 +2,10 @@ from baracoda.exceptions import UnsupportedChildrenCreation
 
 
 class FormatterInterface:
+    """Interface class that requires to be implemented to support
+    a new barcode format.
+    """
+
     def barcode(self, value: int) -> str:
         pass
 
