@@ -12,7 +12,7 @@ def test_new_child_barcode_can_create_single_barcode(client, prefix):
         data=json.dumps({"barcode": f"{ prefix }-1"}),
         headers={"Content-Type": "application/json"},
     )
-    assert response.json == {"barcodes_group": {"id": 1, "barcodes": [f"{ prefix }-1-1"]}}
+    assert response.json == {"barcodes_group": {"id": 1, "barcodes": [f"{ prefix }-1-1-K"]}}
     assert response.status_code == HTTPStatus.CREATED
 
 
@@ -24,7 +24,7 @@ def test_new_child_barcode_can_create_several_barcodes(client, prefix):
         headers={"Content-Type": "application/json"},
     )
     assert response.json == {
-        "barcodes_group": {"id": 1, "barcodes": [f"{ prefix }-1-1", f"{ prefix }-1-2", f"{ prefix }-1-3"]}
+        "barcodes_group": {"id": 1, "barcodes": [f"{ prefix }-1-1-K", f"{ prefix }-1-2-L", f"{ prefix }-1-3-M"]}
     }
     assert response.status_code == HTTPStatus.CREATED
 
@@ -38,7 +38,7 @@ def test_new_child_barcode_different_parent_keep_their_own_counting_of_children(
         headers={"Content-Type": "application/json"},
     )
     assert response.json == {
-        "barcodes_group": {"id": 1, "barcodes": [f"{ prefix }-1-1", f"{ prefix }-1-2", f"{ prefix }-1-3"]}
+        "barcodes_group": {"id": 1, "barcodes": [f"{ prefix }-1-1-K", f"{ prefix }-1-2-L", f"{ prefix }-1-3-M"]}
     }
     assert response.status_code == HTTPStatus.CREATED
 
@@ -48,7 +48,7 @@ def test_new_child_barcode_different_parent_keep_their_own_counting_of_children(
         data=json.dumps({"barcode": f"{ prefix }-2", "count": 2}),
         headers={"Content-Type": "application/json"},
     )
-    assert response.json == {"barcodes_group": {"id": 2, "barcodes": [f"{ prefix }-2-1", f"{ prefix }-2-2"]}}
+    assert response.json == {"barcodes_group": {"id": 2, "barcodes": [f"{ prefix }-2-1-N", f"{ prefix }-2-2-O"]}}
     assert response.status_code == HTTPStatus.CREATED
 
     # Parent 1 again
@@ -57,7 +57,7 @@ def test_new_child_barcode_different_parent_keep_their_own_counting_of_children(
         data=json.dumps({"barcode": f"{ prefix }-1", "count": 1}),
         headers={"Content-Type": "application/json"},
     )
-    assert response.json == {"barcodes_group": {"id": 3, "barcodes": [f"{ prefix }-1-4"]}}
+    assert response.json == {"barcodes_group": {"id": 3, "barcodes": [f"{ prefix }-1-4-N"]}}
     assert response.status_code == HTTPStatus.CREATED
 
 
@@ -69,7 +69,7 @@ def test_new_child_barcode_incorrect_valid_prefixed_parent_can_create_unattribut
         headers={"Content-Type": "application/json"},
     )
     assert response.json == {
-        "barcodes_group": {"id": 1, "barcodes": [f"{ prefix }-1", f"{ prefix }-2", f"{ prefix }-3"]}
+        "barcodes_group": {"id": 1, "barcodes": [f"{ prefix }-1-C", f"{ prefix }-2-D", f"{ prefix }-3-E"]}
     }
     assert response.status_code == HTTPStatus.CREATED
 
@@ -82,7 +82,7 @@ def test_new_child_barcode_invalid_prefixed_parent_can_create_unattributed_child
         headers={"Content-Type": "application/json"},
     )
     assert response.json == {
-        "barcodes_group": {"barcodes": [f"{ prefix }-1", f"{ prefix }-2", f"{ prefix }-3"], "id": 1}
+        "barcodes_group": {"barcodes": [f"{ prefix }-1-C", f"{ prefix }-2-D", f"{ prefix }-3-E"], "id": 1}
     }
     assert response.status_code == HTTPStatus.CREATED
 
@@ -97,7 +97,7 @@ def test_new_child_barcode_valid_parent_can_create_attributed_children_and_desce
         headers={"Content-Type": "application/json"},
     )
     assert response.json == {
-        "barcodes_group": {"barcodes": [f"{ prefix }-1-1", f"{ prefix }-1-2", f"{ prefix }-1-3"], "id": 1}
+        "barcodes_group": {"barcodes": [f"{ prefix }-1-1-K", f"{ prefix }-1-2-L", f"{ prefix }-1-3-M"], "id": 1}
     }
     assert response.status_code == HTTPStatus.CREATED
 
@@ -107,7 +107,7 @@ def test_new_child_barcode_valid_parent_can_create_attributed_children_and_desce
         headers={"Content-Type": "application/json"},
     )
     assert response.json == {
-        "barcodes_group": {"barcodes": [f"{ prefix }-1-4", f"{ prefix }-1-5", f"{ prefix }-1-6"], "id": 2}
+        "barcodes_group": {"barcodes": [f"{ prefix }-1-4-N", f"{ prefix }-1-5-O", f"{ prefix }-1-6-P"], "id": 2}
     }
     assert response.status_code == HTTPStatus.CREATED
 
@@ -116,7 +116,7 @@ def test_new_child_barcode_valid_parent_can_create_attributed_children_and_desce
         data=json.dumps({"barcode": f"{ prefix }-1-5", "count": 1}),
         headers={"Content-Type": "application/json"},
     )
-    assert response.json == {"barcodes_group": {"barcodes": [f"{ prefix }-1-7"], "id": 3}}
+    assert response.json == {"barcodes_group": {"barcodes": [f"{ prefix }-1-7-Q"], "id": 3}}
     assert response.status_code == HTTPStatus.CREATED
 
 
@@ -131,7 +131,7 @@ def test_new_child_barcode_valid_parent_can_create_attributed_children_and_child
         headers={"Content-Type": "application/json"},
     )
     assert response.json == {
-        "barcodes_group": {"barcodes": [f"{ prefix }-1-1", f"{ prefix }-1-2", f"{ prefix }-1-3"], "id": 1}
+        "barcodes_group": {"barcodes": [f"{ prefix }-1-1-K", f"{ prefix }-1-2-L", f"{ prefix }-1-3-M"], "id": 1}
     }
     assert response.status_code == HTTPStatus.CREATED
 
@@ -142,7 +142,7 @@ def test_new_child_barcode_valid_parent_can_create_attributed_children_and_child
         headers={"Content-Type": "application/json"},
     )
     assert response.json == {
-        "barcodes_group": {"barcodes": [f"{ prefix }-1-4", f"{ prefix }-1-5", f"{ prefix }-1-6"], "id": 2}
+        "barcodes_group": {"barcodes": [f"{ prefix }-1-4-N", f"{ prefix }-1-5-O", f"{ prefix }-1-6-P"], "id": 2}
     }
     assert response.status_code == HTTPStatus.CREATED
 
@@ -152,7 +152,7 @@ def test_new_child_barcode_valid_parent_can_create_attributed_children_and_child
         data=json.dumps({"barcode": f"{ prefix }-1-2", "count": 2}),
         headers={"Content-Type": "application/json"},
     )
-    assert response.json == {"barcodes_group": {"barcodes": [f"{ prefix }-1-7", f"{ prefix }-1-8"], "id": 3}}
+    assert response.json == {"barcodes_group": {"barcodes": [f"{ prefix }-1-7-Q", f"{ prefix }-1-8-R"], "id": 3}}
     assert response.status_code == HTTPStatus.CREATED
 
     # Parent again
@@ -161,7 +161,7 @@ def test_new_child_barcode_valid_parent_can_create_attributed_children_and_child
         data=json.dumps({"barcode": f"{ prefix }-1", "count": 2}),
         headers={"Content-Type": "application/json"},
     )
-    assert response.json == {"barcodes_group": {"barcodes": [f"{ prefix }-1-9", f"{ prefix }-1-10"], "id": 4}}
+    assert response.json == {"barcodes_group": {"barcodes": [f"{ prefix }-1-9-S", f"{ prefix }-1-10-G"], "id": 4}}
     assert response.status_code == HTTPStatus.CREATED
 
 
@@ -173,7 +173,7 @@ def test_new_child_barcode_invalid_parent_can_create_unattributed_children(clien
         headers={"Content-Type": "application/json"},
     )
     assert response.json == {
-        "barcodes_group": {"barcodes": [f"{ prefix }-1", f"{ prefix }-2", f"{ prefix }-3"], "id": 1}
+        "barcodes_group": {"barcodes": [f"{ prefix }-1-C", f"{ prefix }-2-D", f"{ prefix }-3-E"], "id": 1}
     }
     assert response.status_code == HTTPStatus.CREATED
 
@@ -186,7 +186,7 @@ def test_new_child_barcode_invalid_parent_can_create_unattributed_children_sever
         headers={"Content-Type": "application/json"},
     )
     assert response.json == {
-        "barcodes_group": {"barcodes": [f"{ prefix }-1", f"{ prefix }-2", f"{ prefix }-3"], "id": 1}
+        "barcodes_group": {"barcodes": [f"{ prefix }-1-C", f"{ prefix }-2-D", f"{ prefix }-3-E"], "id": 1}
     }
     assert response.status_code == HTTPStatus.CREATED
 
@@ -196,7 +196,7 @@ def test_new_child_barcode_invalid_parent_can_create_unattributed_children_sever
         headers={"Content-Type": "application/json"},
     )
     assert response.json == {
-        "barcodes_group": {"barcodes": [f"{ prefix }-4", f"{ prefix }-5", f"{ prefix }-6"], "id": 2}
+        "barcodes_group": {"barcodes": [f"{ prefix }-4-F", f"{ prefix }-5-G", f"{ prefix }-6-H"], "id": 2}
     }
     assert response.status_code == HTTPStatus.CREATED
 
@@ -210,7 +210,7 @@ def test_new_child_barcode_unattributed_children_of_invalid_parent_can_start_own
         headers={"Content-Type": "application/json"},
     )
     assert response.json == {
-        "barcodes_group": {"barcodes": [f"{ prefix }-1", f"{ prefix }-2", f"{ prefix }-3"], "id": 1}
+        "barcodes_group": {"barcodes": [f"{ prefix }-1-C", f"{ prefix }-2-D", f"{ prefix }-3-E"], "id": 1}
     }
     assert response.status_code == HTTPStatus.CREATED
 
@@ -220,7 +220,7 @@ def test_new_child_barcode_unattributed_children_of_invalid_parent_can_start_own
         data=json.dumps({"barcode": f"{ prefix }-1", "count": 2}),
         headers={"Content-Type": "application/json"},
     )
-    assert response.json == {"barcodes_group": {"barcodes": [f"{ prefix }-1-1", f"{ prefix }-1-2"], "id": 2}}
+    assert response.json == {"barcodes_group": {"barcodes": [f"{ prefix }-1-1-K", f"{ prefix }-1-2-L"], "id": 2}}
     assert response.status_code == HTTPStatus.CREATED
 
     # new lineage
@@ -229,7 +229,7 @@ def test_new_child_barcode_unattributed_children_of_invalid_parent_can_start_own
         data=json.dumps({"barcode": f"{ prefix }-1-2", "count": 2}),
         headers={"Content-Type": "application/json"},
     )
-    assert response.json == {"barcodes_group": {"barcodes": [f"{ prefix }-1-3", f"{ prefix }-1-4"], "id": 3}}
+    assert response.json == {"barcodes_group": {"barcodes": [f"{ prefix }-1-3-M", f"{ prefix }-1-4-N"], "id": 3}}
     assert response.status_code == HTTPStatus.CREATED
 
 
@@ -241,7 +241,7 @@ def test_new_child_barcode_impostor_children_with_possible_parent_can_be_stopped
         data=json.dumps({"barcode": f"{ prefix }-1", "count": 2}),
         headers={"Content-Type": "application/json"},
     )
-    assert response.json == {"barcodes_group": {"barcodes": [f"{ prefix }-1-1", f"{ prefix }-1-2"], "id": 1}}
+    assert response.json == {"barcodes_group": {"barcodes": [f"{ prefix }-1-1-K", f"{ prefix }-1-2-L"], "id": 1}}
     assert response.status_code == HTTPStatus.CREATED
 
     # Hacking children
@@ -274,7 +274,7 @@ def test_new_child_barcode_children_of_invalid_parent_can_create_children(client
         headers={"Content-Type": "application/json"},
     )
     assert response.json == {
-        "barcodes_group": {"barcodes": [f"{ prefix }-1", f"{ prefix }-2", f"{ prefix }-3"], "id": 1}
+        "barcodes_group": {"barcodes": [f"{ prefix }-1-C", f"{ prefix }-2-D", f"{ prefix }-3-E"], "id": 1}
     }
     assert response.status_code == HTTPStatus.CREATED
 
@@ -284,7 +284,7 @@ def test_new_child_barcode_children_of_invalid_parent_can_create_children(client
         headers={"Content-Type": "application/json"},
     )
     assert response.json == {
-        "barcodes_group": {"barcodes": [f"{ prefix }-1-1", f"{ prefix }-1-2", f"{ prefix }-1-3"], "id": 2}
+        "barcodes_group": {"barcodes": [f"{ prefix }-1-1-K", f"{ prefix }-1-2-L", f"{ prefix }-1-3-M"], "id": 2}
     }
     assert response.status_code == HTTPStatus.CREATED
 

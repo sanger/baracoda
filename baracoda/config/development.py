@@ -1,13 +1,15 @@
 # flake8: noqa
+from typing import Sequence
 from baracoda.config.defaults import *
-from baracoda.formats import GenericBarcodeFormatter
+from baracoda.formats.generic import GenericBarcodeFormatter
+from baracoda.formats.sequencescape import Sequencescape22Formatter
 
 # Adds a development prefix for sqp sequence
 PREFIXES.append(
     {
         "prefix": "SQPD",
         "sequence_name": "sqp",
-        "formatter_class": GenericBarcodeFormatter,
+        "formatter_class": Sequencescape22Formatter,
         "enableChildrenCreation": True,
     }
 )
@@ -21,6 +23,6 @@ PREFIXES.append(
         "prefix": "TEST",
         "sequence_name": "ht",
         "formatter_class": GenericBarcodeFormatter,
-        "enableChildrenCreation": True,
+        "enableChildrenCreation": False,
     }
 )

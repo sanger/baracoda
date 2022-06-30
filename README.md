@@ -37,11 +37,11 @@ These are some of the key features currently supported:
 - [Deployment](#deployment)
 - [Autogenerating Migrations](#autogenerating-migrations)
 - [Routes](#routes)
-- [Miscellaneous](#miscellaneous)
-  * [Configuration](#configuration)
+- [Configuration](#configuration)
+  * [Formatter classes](#formatter-classes)
   * [Children barcode creation](#children-barcode-creation)
-  * [Troubleshooting](#troubleshooting)
-    + [Installing psycopg2](#installing-psycopg2)
+- [Troubleshooting](#troubleshooting)
+  * [Installing psycopg2](#installing-psycopg2)
   * [Updating the Table of Contents](#updating-the-table-of-contents)
 
 <!-- tocstop -->
@@ -171,9 +171,7 @@ The following routes are available from this service:
     health_check                            GET      /health
     static                                  GET      /static/<path:filename>
 
-## Miscellaneous
-
-### Configuration
+## Configuration
 
 The default configuration of the currently supported prefixes is specified in the
 ```baracoda/config/defaults.py``` module. For example:
@@ -200,7 +198,60 @@ the interface ```baracoda.formats.FormatterInterface```.
 If true, the prefix will support creating barcodes based on a parent barcode
 If it is False, the prefix will reject any children creation request for that prefix.
 
+
+### Formatter classes
+
+A formatter class is a way of rendering a new barcode created that can be attached to a prefix.
+This can be defined using the configuration (see section [Configuration](#configuration)).
+Any new Formatter class must extend from the abstract class
+```baracoda.formats.FormatterInterface```.
+
+The current list of supported formatter classes that can be specified for a prefix is:
+
+- HeronCogUkIdFormatter
+- GenericBarcodeFormatter
+- Sequencescape22Formatter
+
+
+#### HeronCogUkIdFormatter
+
+Implements the Heron COG UK Id generation that corresponds with format: ```<Prefix>-<Hexadecimal><Checksum>```.
+Examples: ```ASDF-A34ADA```
+
+With description:
+
+- Prefix is the prefix provided to the formatter.
+- Hexadecimal is the hexadecimal representation for the current index for the id.
+- Checksum is a checksum hexadecimal character that validates the hexadecimal value.
+
+#### GenericBarcodeFormatter
+
+Standard barcode generator that follows the format: ```<Prefix>-<Number>```.
+Examples: ```HT-11811```
+
+With description:
+
+- Prefix is the prefix provided to the formatter
+- Number is the current index for the id of this barcode.
+
+#### Sequencescape22Formatter
+
+Plate barcode generator which supports children creation and checksum. It follows these 2 formats:
+ - For any barcode that is not a child: ```<Prefix>-<Number>-<Checksum>```. Examples: ```SQDP-23-L```
+ - For any child barcode: ```<Prefix>-<Number>-<ChildIndex>-<Checksum>```. Examples: ```LAB-89-2-R```
+
+With description:
+
+- Prefix is the prefix provided to the formatter
+- Number is the current index for the id of this barcode.
+- ChildIndex is the current index for the child (if is a children barcode).
+- Checksum is a checksum letter that validates the whole barcode (prefix, number, childIndex).
+
+
 ### Children barcode creation
+
+This section only applies to the barcode formatters that support children barcode creation
+which currently only happens with ```Sequencescape22Formatter```.
 
 Children barcodes from a parent barcode can be created with a POST request to the
 endpoint with a JSON body:
@@ -211,17 +262,17 @@ The inputs for this request will be:
 
 - *Prefix* : prefix where we want to create the children under. This argument will be
 extracted from the URL ```/child-barcodes/<PREFIX>/new```
-All barcodes for the children will have this prefix (example, prefix HT will generate children
-like HT-11111-1, HT-11111-2, etc)
+All barcodes for the children will have this prefix (example, prefix SS will generate children
+like SS-11111-1-L, SS-11111-2-M, etc)
 - *Parent Barcode* : barcode that will act as parent of the children. This argument will be
-extracted from the Body of the request, eg: ```{'barcode': 'HT-1-1', 'count': 2}```.
-To be considered valid, the barcode needs to follow the format ```<PREFIX>-<NUMBER>(-<NUMBER>)?```
-where the last number part is optional (it represents if the barcode was a child).
-For example, valid barcodes would be ```HT-11111-13``` (normal parent) and ```HT-11112-24```
-(parent that was a child) but not ```HT-1-1-1``` or ```HT12341-1```.
+extracted from the Body of the request, eg: ```{'barcode': 'SS-1-1-L', 'count': 2}```.
+To be considered valid, the barcode needs to follow the format ```<PREFIX>-<NUMBER>(-<NUMBER>)?(-<CHECKSUM>)```
+where the second number part is optional and it represents if the barcode was a child.
+For example, valid barcodes would be ```SS-11111-13-M``` (normal parent) and ```SS-11112-24-N```
+(parent that was a child) but not ```SS-1-1-1-L``` (several '-') or ```SS12341-1-L``` (no '-' separation).
 - *Child* : part of the Parent barcode string that would identify if the parent was
-a child before (the last number). For example for the *Parent barcode* ```HT-11111-14```,
-*Child* would be 14; but for the *Parent barcode* ```HT-11111```, *Child* would have no
+a child before (the last number). For example for the *Parent barcode* ```SS-11111-14-R```,
+*Child* would be 14; but for the *Parent barcode* ```SS-11111-W```, *Child* would have no
 value defined.
 - *Count* : number of children barcodes to create.
 
@@ -229,16 +280,16 @@ value defined.
 
 A request with parent barcode that does not follow the format defined like:
 ```
-<PREFIX>-<NUMBER>(-<NUMBER>)?
+<PREFIX>-<NUMBER>(-<NUMBER>)?(-<CHECKSUM>)
 ```
 will create normal barcodes instead of suffixed children barcodes (normal barcode creation).
 
 A request that follows the right format but does not comply with current database will be
-rejected as impostor barcode. For example, if we receive the parent barcode ```HT-1111-14```, but in the
-database the parent ```HT-1111``` has only created 12 child barcodes yet, so ```HT-1111-14``` is
+rejected as an impostor barcode. For example, if we receive the parent barcode ```SS-1111-14-N```, but in the
+database the parent ```SS-1111-R``` has only created 12 child barcodes yet, so ```SS-1111-14-N``` is
 impossible to have been generated by Baracoda.
 
-#### Logic Workflow
+#### Child Barcode Generation Logic Workflow
 
 The following diagram describes the workflow of how this endpoint will behave depending on
 the inputs declared before:

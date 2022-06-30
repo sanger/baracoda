@@ -1,4 +1,10 @@
-from baracoda.formats import HeronCogUkIdFormatter, GenericBarcodeFormatter
+from baracoda.formats.heron import HeronCogUkIdFormatter
+from baracoda.formats.generic import GenericBarcodeFormatter
+from baracoda.formats.interfaces import FormatterInterface
+from baracoda.exceptions import UnsupportedChildrenCreation, UnsupportedEncodingForPrefix
+import pytest
+
+from baracoda.formats.sequencescape import Sequencescape22Formatter
 
 
 def test_checksum_conversion(heron_formatter):
@@ -80,3 +86,68 @@ def test_several_barcodes():
         obtained_barcodes.append(barcode_for(barcode))
 
     assert obtained_barcodes == test_barcodes
+
+
+def test_formatter_interface_raises_error_on_child_creation():
+    instance = FormatterInterface()
+    with pytest.raises(UnsupportedChildrenCreation):
+        instance.child_barcode("TEST-123", 444)
+
+
+def test_generic_formatter_raises_error_on_child_creation():
+    instance = GenericBarcodeFormatter(prefix="SQPD")
+    with pytest.raises(UnsupportedChildrenCreation):
+        instance.child_barcode("TEST-123", 444)
+
+
+def test_heron_formatter_raises_error_on_child_creation():
+    instance = HeronCogUkIdFormatter(prefix="SQPD")
+    with pytest.raises(UnsupportedChildrenCreation):
+        instance.child_barcode("TEST-123", 444)
+
+
+def test_sequencescape22_formatter_does_not_raise_error_on_child_creation():
+    instance = Sequencescape22Formatter(prefix="SQPD")
+    try:
+        instance.child_barcode("TEST-123", 444)
+    except UnsupportedChildrenCreation as exc:
+        assert False, f"'child_barcode raised an exception {exc}"
+
+
+def test_formatter_breaks_if_not_using_ascii_prefix():
+    with pytest.raises(UnsupportedEncodingForPrefix):
+        Sequencescape22Formatter(prefix="MADRILEÑO")
+
+    with pytest.raises(UnsupportedEncodingForPrefix):
+        GenericBarcodeFormatter(prefix="MADRILEÑO")
+
+
+def test_sequencescape22_formatter_supports_barcodes_with_suffix():
+    instance = Sequencescape22Formatter(prefix="TEST")
+    assert instance.barcode(1) == "TEST-1-I"
+    assert instance.barcode(2) == "TEST-2-J"
+
+    instance = Sequencescape22Formatter(prefix="TT")
+    assert instance.barcode(1) == "TT-1-O"
+    assert instance.barcode(2) == "TT-2-P"
+
+    instance = Sequencescape22Formatter(prefix="TEST")
+    assert instance.barcode(123) == "TEST-123-V"
+    assert instance.barcode(124) == "TEST-124-W"
+
+
+def test_sequencescape22_formatter_supports_children_barcodes_with_suffix():
+    instance = Sequencescape22Formatter(prefix="TEST")
+    assert instance.child_barcode("TEST-1", 1) == "TEST-1-1-J"
+    assert instance.child_barcode("TEST-1", 2) == "TEST-1-2-K"
+    assert instance.child_barcode("TEST-2", 1) == "TEST-2-1-M"
+    assert instance.child_barcode("TEST-2", 2) == "TEST-2-2-N"
+    assert instance.child_barcode("TT-1", 1) == "TT-1-1-K"
+    assert instance.child_barcode("TT-1", 2) == "TT-1-2-L"
+    assert instance.child_barcode("TT-2", 1) == "TT-2-1-N"
+    assert instance.child_barcode("TT-2", 2) == "TT-2-2-O"
+
+    assert instance.child_barcode("TEST-123", 444) == "TEST-123-444-U"
+    assert instance.child_barcode("TEST-123", 445) == "TEST-123-445-V"
+    assert instance.child_barcode("TEST-124", 444) == "TEST-124-444-C"
+    assert instance.child_barcode("TEST-124", 445) == "TEST-124-445-D"
