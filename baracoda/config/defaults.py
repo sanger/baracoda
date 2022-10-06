@@ -320,6 +320,12 @@ PREFIXES: List[PrefixesType] = [
         "enableChildrenCreation": False,
     },
     {
+        "prefix": "COS",
+        "sequence_name": "ht",
+        "formatter_class": GenericBarcodeFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
         "prefix": "HT",
         "sequence_name": "ht",
         "formatter_class": GenericBarcodeFormatter,
