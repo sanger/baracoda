@@ -321,7 +321,7 @@ PREFIXES: List[PrefixesType] = [
     },
     {
         "prefix": "COS",
-        "sequence_name": "ht",
+        "sequence_name": "csm",
         "formatter_class": GenericBarcodeFormatter,
         "enableChildrenCreation": False,
     },
