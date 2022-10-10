@@ -1,4 +1,4 @@
-"""create new sequence
+"""add csm sequence
 
 Revision ID: e47fde01cc62
 Revises: e505f2e15499
@@ -6,7 +6,6 @@ Create Date: 2022-10-06 16:24:05.695978
 
 """
 from alembic import op
-import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
@@ -21,4 +20,4 @@ def upgrade():
 
 
 def downgrade():
-   op.execute("DROP SEQUENCE IF EXISTS csm;")
+    op.execute("DROP SEQUENCE IF EXISTS csm;")
