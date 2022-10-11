@@ -54,8 +54,8 @@ The following tools are required for development:
 - postgresql server and `pg_config` library
   - if using homebrew (this will install both the server and library):
 
-        brew install postgresql@9.6
-        brew link postgresql@9.6 --force
+        brew install postgresql
+        brew link postgresql --force
 
     Create the development database and user using a RDBMS GUI or by running this query in a client:
 
