@@ -6,8 +6,6 @@ Create Date: 2022-10-11 15:23:43.608690
 
 """
 from alembic import op
-import sqlalchemy as sa
-from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
 revision = "bcd74f0a02ea"
@@ -17,7 +15,8 @@ depends_on = None
 
 
 def upgrade():
-    op.create_index('barcodes_group_id_index', 'barcodes', ['barcodes_group_id'])
+    op.create_index("barcodes_group_id_index", "barcodes", ["barcodes_group_id"])
+
 
 def downgrade():
-    op.drop_index('barcodes_group_id_index', table_name='barcodes')
+    op.drop_index("barcodes_group_id_index", table_name="barcodes")
