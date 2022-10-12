@@ -10,6 +10,10 @@ DROP SEQUENCE IF EXISTS sqp;
 CREATE SEQUENCE sqp
 START 1;
 
+DROP SEQUENCE IF EXISTS csm;
+CREATE SEQUENCE csm
+    START 111111;
+
 DROP TABLE IF EXISTS barcodes;
 CREATE TABLE barcodes
 (
@@ -47,4 +51,4 @@ CREATE TABLE alembic_version
 INSERT INTO alembic_version
     (version_num)
 VALUES
-    ('a32c725ae353');
+    ('e501839465f6');
