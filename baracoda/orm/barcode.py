@@ -10,7 +10,7 @@ class Barcode(Base):
     id = Column(Integer, Sequence("barcodes_id_seq"), primary_key=True)
     barcode = Column(String(255), nullable=False)
     prefix = Column(String(32), nullable=False)
-    barcodes_group_id = Column(Integer, ForeignKey("barcodes_groups.id"), nullable=True, default=None)
+    barcodes_group_id = Column(Integer, ForeignKey("barcodes_groups.id"), nullable=True, default=None, index=True)
     barcodes_group = relationship("BarcodesGroup", back_populates="barcodes")  # type: ignore
 
     created_at = Column(DateTime, nullable=False)
