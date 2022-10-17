@@ -1,7 +1,7 @@
 """Added index for barcodes_group_id in barcodes tables
 
 Revision ID: bcd74f0a02ea
-Revises: e505f2e15499
+Revises: e47fde01cc62
 Create Date: 2022-10-11 15:23:43.608690
 
 """
