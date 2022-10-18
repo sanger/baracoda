@@ -41,6 +41,9 @@ CREATE TABLE child_barcode_counter
     PRIMARY KEY (barcode)
 );
 
+DROP INDEX IF EXISTS barcodes_group_id_index;
+CREATE INDEX barcodes_group_id_index ON barcodes(barcodes_group_id);
+
 DROP TABLE IF EXISTS alembic_version;
 CREATE TABLE alembic_version
 (
