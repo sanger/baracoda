@@ -76,9 +76,7 @@ def test_new_child_barcode_incorrect_valid_prefixed_parent_can_create_unattribut
     )
     resp = response.json
     resp["barcodes_group"]["barcodes"].sort()
-    assert resp == {
-        "barcodes_group": {"id": 1, "barcodes": [f"{ prefix }-1-C", f"{ prefix }-2-D", f"{ prefix }-3-E"]}
-    }
+    assert resp == {"barcodes_group": {"id": 1, "barcodes": [f"{ prefix }-1-C", f"{ prefix }-2-D", f"{ prefix }-3-E"]}}
     assert response.status_code == HTTPStatus.CREATED
 
 
@@ -91,9 +89,7 @@ def test_new_child_barcode_invalid_prefixed_parent_can_create_unattributed_child
     )
     resp = response.json
     resp["barcodes_group"]["barcodes"].sort()
-    assert resp == {
-        "barcodes_group": {"barcodes": [f"{ prefix }-1-C", f"{ prefix }-2-D", f"{ prefix }-3-E"], "id": 1}
-    }
+    assert resp == {"barcodes_group": {"barcodes": [f"{ prefix }-1-C", f"{ prefix }-2-D", f"{ prefix }-3-E"], "id": 1}}
     assert response.status_code == HTTPStatus.CREATED
 
 
@@ -180,7 +176,7 @@ def test_new_child_barcode_valid_parent_can_create_attributed_children_and_child
         f"/child-barcodes/{ prefix }/new",
         data=json.dumps({"barcode": f"{ prefix }-1", "count": 2}),
         headers={"Content-Type": "application/json"},
-    ) 
+    )
     resp = response.json
     resp["barcodes_group"]["barcodes"].sort()
     assert resp == {"barcodes_group": {"barcodes": [f"{ prefix }-1-10-G", f"{ prefix }-1-9-S"], "id": 4}}
@@ -196,9 +192,7 @@ def test_new_child_barcode_invalid_parent_can_create_unattributed_children(clien
     )
     resp = response.json
     resp["barcodes_group"]["barcodes"].sort()
-    assert resp == {
-        "barcodes_group": {"barcodes": [f"{ prefix }-1-C", f"{ prefix }-2-D", f"{ prefix }-3-E"], "id": 1}
-    }
+    assert resp == {"barcodes_group": {"barcodes": [f"{ prefix }-1-C", f"{ prefix }-2-D", f"{ prefix }-3-E"], "id": 1}}
     assert response.status_code == HTTPStatus.CREATED
 
 
@@ -211,9 +205,7 @@ def test_new_child_barcode_invalid_parent_can_create_unattributed_children_sever
     )
     resp = response.json
     resp["barcodes_group"]["barcodes"].sort()
-    assert resp == {
-        "barcodes_group": {"barcodes": [f"{ prefix }-1-C", f"{ prefix }-2-D", f"{ prefix }-3-E"], "id": 1}
-    }
+    assert resp == {"barcodes_group": {"barcodes": [f"{ prefix }-1-C", f"{ prefix }-2-D", f"{ prefix }-3-E"], "id": 1}}
     assert response.status_code == HTTPStatus.CREATED
 
     response = client.post(
@@ -223,9 +215,7 @@ def test_new_child_barcode_invalid_parent_can_create_unattributed_children_sever
     )
     resp = response.json
     resp["barcodes_group"]["barcodes"].sort()
-    assert resp == {
-        "barcodes_group": {"barcodes": [f"{ prefix }-4-F", f"{ prefix }-5-G", f"{ prefix }-6-H"], "id": 2}
-    }
+    assert resp == {"barcodes_group": {"barcodes": [f"{ prefix }-4-F", f"{ prefix }-5-G", f"{ prefix }-6-H"], "id": 2}}
     assert response.status_code == HTTPStatus.CREATED
 
 
@@ -239,9 +229,7 @@ def test_new_child_barcode_unattributed_children_of_invalid_parent_can_start_own
     )
     resp = response.json
     resp["barcodes_group"]["barcodes"].sort()
-    assert resp == {
-        "barcodes_group": {"barcodes": [f"{ prefix }-1-C", f"{ prefix }-2-D", f"{ prefix }-3-E"], "id": 1}
-    }
+    assert resp == {"barcodes_group": {"barcodes": [f"{ prefix }-1-C", f"{ prefix }-2-D", f"{ prefix }-3-E"], "id": 1}}
     assert response.status_code == HTTPStatus.CREATED
 
     # unattributed_children
@@ -311,9 +299,7 @@ def test_new_child_barcode_children_of_invalid_parent_can_create_children(client
     )
     resp = response.json
     resp["barcodes_group"]["barcodes"].sort()
-    assert resp == {
-        "barcodes_group": {"barcodes": [f"{ prefix }-1-C", f"{ prefix }-2-D", f"{ prefix }-3-E"], "id": 1}
-    }
+    assert resp == {"barcodes_group": {"barcodes": [f"{ prefix }-1-C", f"{ prefix }-2-D", f"{ prefix }-3-E"], "id": 1}}
     assert response.status_code == HTTPStatus.CREATED
 
     response = client.post(
@@ -367,4 +353,3 @@ def test_bad_count(client, prefix):
     )
     assert response.json == {"errors": ["InvalidCountError"]}
     assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
-
