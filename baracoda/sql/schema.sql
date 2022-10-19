@@ -10,6 +10,10 @@ DROP SEQUENCE IF EXISTS sqp;
 CREATE SEQUENCE sqp
 START 1;
 
+DROP SEQUENCE IF EXISTS csm;
+CREATE SEQUENCE csm
+    START 111111;
+
 DROP TABLE IF EXISTS barcodes;
 CREATE TABLE barcodes
 (
@@ -37,6 +41,9 @@ CREATE TABLE child_barcode_counter
     PRIMARY KEY (barcode)
 );
 
+DROP INDEX IF EXISTS barcodes_group_id_index;
+CREATE INDEX barcodes_group_id_index ON barcodes(barcodes_group_id);
+
 DROP TABLE IF EXISTS alembic_version;
 CREATE TABLE alembic_version
 (
@@ -47,4 +54,4 @@ CREATE TABLE alembic_version
 INSERT INTO alembic_version
     (version_num)
 VALUES
-    ('a32c725ae353');
+    ('bcd74f0a02ea');
