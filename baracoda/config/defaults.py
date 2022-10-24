@@ -326,6 +326,12 @@ PREFIXES: List[PrefixesType] = [
         "enableChildrenCreation": False,
     },
     {
+        "prefix": "PAM",
+        "sequence_name": "pam",
+        "formatter_class": GenericBarcodeFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
         "prefix": "HT",
         "sequence_name": "ht",
         "formatter_class": GenericBarcodeFormatter,
