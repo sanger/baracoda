@@ -58,4 +58,4 @@ CREATE TABLE alembic_version
 INSERT INTO alembic_version
     (version_num)
 VALUES
-    ('bcd74f0a02ea');
+    ('db39b037a71d');
