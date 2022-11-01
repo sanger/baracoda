@@ -14,6 +14,10 @@ DROP SEQUENCE IF EXISTS csm;
 CREATE SEQUENCE csm
     START 111111;
 
+DROP SEQUENCE IF EXISTS pam;
+CREATE SEQUENCE pam
+    START 111111;
+
 DROP TABLE IF EXISTS barcodes;
 CREATE TABLE barcodes
 (
@@ -54,4 +58,4 @@ CREATE TABLE alembic_version
 INSERT INTO alembic_version
     (version_num)
 VALUES
-    ('bcd74f0a02ea');
+    ('db39b037a71d');
