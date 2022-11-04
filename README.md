@@ -6,6 +6,20 @@
 
 Barcode generation using postgres sequences and pre-defined prefixes.
 
+## Features
+
+Baracoda is a JSON-based microservice written in Python and backed in a
+PostgreSQL database, with the purpose of handling the creation
+of new barcodes for the LIMS application supported currently in PSD.
+
+These are some of the key features currently supported:
+
+* Creation of single barcodes
+* Creation of group of barcodes
+* Support for children barcodes creation
+* Retrieval of the last barcode created for a prefix
+* Support for different barcode formats
+
 ## Table of Contents
 
 <!-- toc -->
@@ -23,9 +37,11 @@ Barcode generation using postgres sequences and pre-defined prefixes.
 - [Deployment](#deployment)
 - [Autogenerating Migrations](#autogenerating-migrations)
 - [Routes](#routes)
-- [Miscellaneous](#miscellaneous)
-  * [Troubleshooting](#troubleshooting)
-    + [Installing psycopg2](#installing-psycopg2)
+- [Configuration](#configuration)
+  * [Formatter classes](#formatter-classes)
+  * [Children barcode creation](#children-barcode-creation)
+- [Troubleshooting](#troubleshooting)
+  * [Installing psycopg2](#installing-psycopg2)
   * [Updating the Table of Contents](#updating-the-table-of-contents)
 
 <!-- tocstop -->
@@ -38,8 +54,10 @@ The following tools are required for development:
 - postgresql server and `pg_config` library
   - if using homebrew (this will install both the server and library):
 
-        brew install postgresql@9.6
-        brew link postgresql@9.6 --force
+        brew install postgresql
+        brew link postgresql --force
+
+      postgresql@9.6 is used in prod, since it is not supported any more, installing the latest version for development should work.
 
     Create the development database and user using a RDBMS GUI or by running this query in a client:
 
@@ -79,7 +97,7 @@ application), use the `docker-compose.yml` file:
 
 1. Run the migrations:
 
-        alembic upgrade head
+        flask db upgrade
 
 ## Running
 
@@ -138,7 +156,7 @@ corresponding change according to [semver](https://semver.org/).
 - Perform any change in the models files located in the `baracoda/orm` folder
 - Run alembic and provide a comment to autogenerate the migration comparing with current database:
 
-      alembic revision --autogenerate -m "Added account table"
+      flask db revision --autogenerate -m "Added account table"
 
 ## Routes
 
@@ -151,10 +169,155 @@ The following routes are available from this service:
     barcode_creation.get_last_barcode       GET      /barcodes/<prefix>/last
     barcode_creation.get_new_barcode        POST     /barcodes/<prefix>/new
     barcode_creation.get_new_barcode_group  POST     /barcodes_group/<prefix>/new
+    child_barcodes.new_child_barcodes       POST     /child-barcodes/<prefix>/new
     health_check                            GET      /health
     static                                  GET      /static/<path:filename>
 
-## Miscellaneous
+## Configuration
+
+The default configuration of the currently supported prefixes is specified in the
+```baracoda/config/defaults.py``` module. For example:
+```json
+    {
+        "prefix": "HT",
+        "sequence_name": "ht",
+        "formatter_class": GenericBarcodeFormatter,
+        "enableChildrenCreation": False,
+    }
+```
+These are the allowed keywords that we can specify to configure a prefix:
+
+- ```prefix```: This is the string that represents the prefix we are configuring for
+supporting new barcodes.
+- ```sequence_name```: This is the sequence name in the PostgreSQL database which will
+keep record of the last index created for a barcode. Prefixes can share the same
+sequence.
+- ```formatter_class```: Defines the class that will generate the string that represents
+a new barcode by using the prefix and the new value obtained from the sequence.
+If we want to support a new formatter class we have to provide a class that implements
+the interface ```baracoda.formats.FormatterInterface```.
+- ```enableChildrenCreation```: Defines if the prefix has enabled the children creation.
+If true, the prefix will support creating barcodes based on a parent barcode
+If it is False, the prefix will reject any children creation request for that prefix.
+
+
+### Formatter classes
+
+A formatter class is a way of rendering a new barcode created that can be attached to a prefix.
+This can be defined using the configuration (see section [Configuration](#configuration)).
+Any new Formatter class must extend from the abstract class
+```baracoda.formats.FormatterInterface```.
+
+The current list of supported formatter classes that can be specified for a prefix is:
+
+- HeronCogUkIdFormatter
+- GenericBarcodeFormatter
+- Sequencescape22Formatter
+
+
+#### HeronCogUkIdFormatter
+
+Implements the Heron COG UK Id generation that corresponds with format: ```<Prefix>-<Hexadecimal><Checksum>```.
+Examples: ```ASDF-A34ADA```
+
+With description:
+
+- Prefix is the prefix provided to the formatter.
+- Hexadecimal is the hexadecimal representation for the current index for the id.
+- Checksum is a checksum hexadecimal character that validates the hexadecimal value.
+
+#### GenericBarcodeFormatter
+
+Standard barcode generator that follows the format: ```<Prefix>-<Number>```.
+Examples: ```HT-11811```
+
+With description:
+
+- Prefix is the prefix provided to the formatter
+- Number is the current index for the id of this barcode.
+
+#### Sequencescape22Formatter
+
+Plate barcode generator which supports children creation and checksum. It follows these 2 formats:
+ - For any barcode that is not a child: ```<Prefix>-<Number>-<Checksum>```. Examples: ```SQDP-23-L```
+ - For any child barcode: ```<Prefix>-<Number>-<ChildIndex>-<Checksum>```. Examples: ```LAB-89-2-R```
+
+With description:
+
+- Prefix is the prefix provided to the formatter
+- Number is the current index for the id of this barcode.
+- ChildIndex is the current index for the child (if is a children barcode).
+- Checksum is a checksum letter that validates the whole barcode (prefix, number, childIndex).
+
+
+### Children barcode creation
+
+This section only applies to the barcode formatters that support children barcode creation
+which currently only happens with ```Sequencescape22Formatter```.
+
+Children barcodes from a parent barcode can be created with a POST request to the
+endpoint with a JSON body:
+
+```/child-barcodes/<PREFIX/new```
+
+The inputs for this request will be:
+
+- *Prefix* : prefix where we want to create the children under. This argument will be
+extracted from the URL ```/child-barcodes/<PREFIX>/new```
+All barcodes for the children will have this prefix (example, prefix SS will generate children
+like SS-11111-1-L, SS-11111-2-M, etc)
+- *Parent Barcode* : barcode that will act as parent of the children. This argument will be
+extracted from the Body of the request, eg: ```{'barcode': 'SS-1-1-L', 'count': 2}```.
+To be considered valid, the barcode needs to follow the format ```<PREFIX>-<NUMBER>(-<NUMBER>)?(-<CHECKSUM>)```
+where the second number part is optional and it represents if the barcode was a child.
+For example, valid barcodes would be ```SS-11111-13-M``` (normal parent) and ```SS-11112-24-N```
+(parent that was a child) but not ```SS-1-1-1-L``` (several '-') or ```SS12341-1-L``` (no '-' separation).
+- *Child* : part of the Parent barcode string that would identify if the parent was
+a child before (the last number). For example for the *Parent barcode* ```SS-11111-14-R```,
+*Child* would be 14; but for the *Parent barcode* ```SS-11111-W```, *Child* would have no
+value defined.
+- *Count* : number of children barcodes to create.
+
+#### Wrong parent barcodes
+
+A request with parent barcode that does not follow the format defined like:
+```
+<PREFIX>-<NUMBER>(-<NUMBER>)?(-<CHECKSUM>)
+```
+will create normal barcodes instead of suffixed children barcodes (normal barcode creation).
+
+A request that follows the right format but does not comply with current database will be
+rejected as an impostor barcode. For example, if we receive the parent barcode ```SS-1111-14-N```, but in the
+database the parent ```SS-1111-R``` has only created 12 child barcodes yet, so ```SS-1111-14-N``` is
+impossible to have been generated by Baracoda.
+
+#### Child Barcode Generation Logic Workflow
+
+The following diagram describes the workflow of how this endpoint will behave depending on
+the inputs declared before:
+
+
+```mermaid
+graph TD;
+  Prefix(Prefix is extracted from URL) --> PrefixEnabled[[Is 'Prefix' enabled by config to create children]];
+  ParentBarcode(Parent barcode is extracted from URL arg) --> PrefixEnabled[[Is 'Prefix' enabled by config to create children]];
+  Child(Child is extracted from Parent barcode) --> PrefixEnabled[[Is 'Prefix' enabled by config to create children]];
+  PrefixEnabled -->|Yes|ValidBarcode[[Is 'Parent Barcode' a valid parent?]];
+  PrefixEnabled -->|No|Rejected([HTTP 422 - Rejected]);
+  ValidBarcode -->|Yes|ParentPresent[[Is 'Parent barcode' present in database?]];
+  ValidBarcode -->|No|NormalBarcode(Generate normal barcodes for the Prefix);
+  NormalBarcode -->NormalAccept([HTTP 201 - Created])
+  ParentPresent -->|Yes|ChildExist[[Do we have a value for 'Child'?]];
+  ParentPresent -->|No|ChildExist2[[Do we have a value for 'Child'?]];
+  ChildExist -->|Yes|ChildConstraint[[Is 'Child' bigger than the last child generated by the 'Parent barcode' in previous requests?]];
+  ChildConstraint -->|Yes|Impostor([HTTP 500 - Parent barcode is an impostor]);
+  ChildExist2 -->|Yes|Impostor;
+  ChildExist -->|No|ChildrenBarcodes(Generate children barcodes);
+  ChildrenBarcodes --> NormalAccept;
+  ChildConstraint -->|No|ChildrenBarcodes
+  ChildExist2 -->|No|ChildrenBarcodes;
+
+```
 
 ### Troubleshooting
 

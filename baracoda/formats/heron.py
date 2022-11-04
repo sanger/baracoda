@@ -1,16 +1,14 @@
+from baracoda.formats.interfaces import FormatterInterface
 import logging
 
 logger = logging.getLogger(__name__)
 
 
-class HeronFormatter:
-    def __init__(self, prefix: str, convert: bool = True):
+class HeronCogUkIdFormatter(FormatterInterface):
+    def __init__(self, prefix: str):
         logger.debug(f"Instantiate formatter with {prefix}")
 
         self.prefix = prefix
-
-        # tells the formatter whether barcode needs to be mashed up
-        self.convert = convert
 
     def hex_to_int(self, hex_str: str) -> int:
         """Convert a hex string to integer.
@@ -67,7 +65,7 @@ class HeronFormatter:
             str -- formatted barcode with prefix and checksum
         """
 
-        formatted_value = self.format_barcode_number(value) if self.convert else value
+        formatted_value = self.format_barcode_number(value)
 
         return f"{self.prefix}-{formatted_value}"
 
