@@ -6,7 +6,7 @@ FLASK_APP=baracoda
 
 # https://flask.palletsprojects.com/en/2.2.x/cli/#setting-command-options
 FLASK_RUN_HOST=0.0.0.0
-FLASK_RUN_PORT=8000
+FLASK_RUN_PORT=7900
 
 # https://flask.palletsprojects.com/en/2.2.x/config/#DEBUG
 FLASK_DEBUG=true
