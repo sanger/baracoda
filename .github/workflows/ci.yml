@@ -12,7 +12,7 @@ on:
 
 jobs:
   black:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
@@ -36,7 +36,7 @@ jobs:
           # stop the build if there are black formatting errors
           python -m black --check .
   flake8:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
@@ -60,7 +60,7 @@ jobs:
           # stop the build if there are Python syntax errors or undefined names
           flake8
   mypy:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
@@ -83,7 +83,7 @@ jobs:
         run: |
           python -m mypy .
   test:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     services:
       postgres:
         image: postgres:9.6
