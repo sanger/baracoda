@@ -325,6 +325,30 @@ PREFIXES: List[PrefixesType] = [
         "formatter_class": GenericBarcodeFormatter,
         "enableChildrenCreation": False,
     },
+     {
+        "prefix": "CBOX",
+        "sequence_name": "csm",
+        "formatter_class": GenericBarcodeFormatter,
+        "enableChildrenCreation": False,
+    },
+     {
+        "prefix": "CPL",
+        "sequence_name": "csm",
+        "formatter_class": GenericBarcodeFormatter,
+        "enableChildrenCreation": False,
+    },
+     {
+        "prefix": "CBAG",
+        "sequence_name": "csm",
+        "formatter_class": GenericBarcodeFormatter,
+        "enableChildrenCreation": False,
+    },
+     {
+        "prefix": "CFR",
+        "sequence_name": "csm",
+        "formatter_class": GenericBarcodeFormatter,
+        "enableChildrenCreation": False,
+    },
     {
         "prefix": "PAM",
         "sequence_name": "pam",
