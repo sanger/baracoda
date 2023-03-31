@@ -1,8 +1,8 @@
 from typing import List
-from baracoda.types import PrefixesType
 
-from baracoda.formats.heron import HeronCogUkIdFormatter
 from baracoda.formats.generic import GenericBarcodeFormatter
+from baracoda.formats.heron import HeronCogUkIdFormatter
+from baracoda.types import PrefixesType
 
 ###
 # database config
@@ -75,6 +75,12 @@ PREFIXES: List[PrefixesType] = [
     },
     {
         "prefix": "CAMC",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "CCCU",
         "sequence_name": "heron",
         "formatter_class": HeronCogUkIdFormatter,
         "enableChildrenCreation": False,
