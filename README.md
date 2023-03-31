@@ -14,35 +14,40 @@ of new barcodes for the LIMS application supported currently in PSD.
 
 These are some of the key features currently supported:
 
-* Creation of single barcodes
-* Creation of group of barcodes
-* Support for children barcodes creation
-* Retrieval of the last barcode created for a prefix
-* Support for different barcode formats
+- Creation of single barcodes
+- Creation of group of barcodes
+- Support for children barcodes creation
+- Retrieval of the last barcode created for a prefix
+- Support for different barcode formats
 
 ## Table of Contents
 
 <!-- toc -->
 
 - [Requirements for Development](#requirements-for-development)
-  * [Setup Steps](#setup-steps)
+  - [Setup Steps](#setup-steps)
 - [Running](#running)
 - [Testing](#testing)
-  * [Testing Requirements](#testing-requirements)
-  * [Running Tests](#running-tests)
+  - [Testing Requirements](#testing-requirements)
+  - [Running Tests](#running-tests)
 - [Formatting, Linting and Type Checking](#formatting-linting-and-type-checking)
-  * [Formatting](#formatting)
-  * [Linting](#linting)
-  * [Type Checking](#type-checking)
+  - [Formatting](#formatting)
+  - [Linting](#linting)
+  - [Type Checking](#type-checking)
 - [Deployment](#deployment)
 - [Autogenerating Migrations](#autogenerating-migrations)
 - [Routes](#routes)
 - [Configuration](#configuration)
-  * [Formatter classes](#formatter-classes)
-  * [Children barcode creation](#children-barcode-creation)
-- [Troubleshooting](#troubleshooting)
-  * [Installing psycopg2](#installing-psycopg2)
-  * [Updating the Table of Contents](#updating-the-table-of-contents)
+  - [Formatter classes](#formatter-classes)
+    - [HeronCogUkIdFormatter](#heroncogukidformatter)
+    - [GenericBarcodeFormatter](#genericbarcodeformatter)
+    - [Sequencescape22Formatter](#sequencescape22formatter)
+  - [Children barcode creation](#children-barcode-creation)
+    - [Wrong parent barcodes](#wrong-parent-barcodes)
+    - [Child Barcode Generation Logic Workflow](#child-barcode-generation-logic-workflow)
+  - [Troubleshooting](#troubleshooting)
+    - [Installing psycopg2](#installing-psycopg2)
+  - [Updating the Table of Contents](#updating-the-table-of-contents)
 
 <!-- tocstop -->
 
@@ -54,27 +59,37 @@ The following tools are required for development:
 - postgresql server and `pg_config` library
   - if using homebrew (this will install both the server and library):
 
-        brew install postgresql
-        brew link postgresql --force
+    ```shell
+    brew install postgresql
+    brew link postgresql --force
+    ```
 
-      postgresql@9.6 is used in prod, since it is not supported any more, installing the latest version for development should work.
+    postgresql@9.6 is used in prod, since it is not supported any more, installing the latest version for development should work.
 
     Create the development database and user using a RDBMS GUI or by running this query in a client:
 
-        create database baracoda_dev;
-        grant all privileges on database baracoda_dev to postgres;
+    ```sql
+    create database baracoda_dev;
+    grant all privileges on database baracoda_dev to postgres;
+    ```
 
   - to spin up a server using Docker (the `pg_config` library will still be needed by the
 application), use the `docker-compose.yml` file:
 
-        docker compose up -d
+    ```shell
+    docker compose up -d
+    ```
 
     The compose service automatically creates the `baracoda_dev` database and `postgres` user.
+
 - Git hooks are executed using [lefthook](https://github.com/evilmartians/lefthook), install
   lefthook using homebrew and add the pre-commit and pre-push hooks as follows:
 
-      lefthook add pre-commit
-      lefthook add pre-push
+  ```shell
+  lefthook add pre-commit
+  lefthook add pre-push
+  ```
+
 - [talisman](https://github.com/thoughtworks/talisman) is used as a credentials checker, to ignore
   files which it triggers as false positives, follow the instructions in the git commit output by
   adding the files to be ignore to a `.talismanrc` file and try commit again.
@@ -83,27 +98,37 @@ application), use the `docker-compose.yml` file:
 
 1. Create and enter the virtual environment:
 
-        pipenv shell
+   ```shell
+   pipenv shell
+   ```
 
 1. Install the required dependencies:
 
-        pipenv install --dev
+   ```shell
+   pipenv install --dev
+   ```
 
-    See the [Troubleshooting](#troubleshooting) section for any commonly encountered installation issues.
+   See the [Troubleshooting](#troubleshooting) section for any commonly encountered installation issues.
 
 1. Create the required sequences and tables:
 
-        flask init-db
+   ```shell
+   flask init-db
+   ```
 
 1. Run the migrations:
 
-        flask db upgrade
+   ```shell
+   flask db upgrade
+   ```
 
 ## Running
 
 To run the service:
 
-    flask run
+```shell
+flask run
+```
 
 ## Testing
 
@@ -113,14 +138,18 @@ The test suite requires a test database, currently named `baracoda_test`.
 
 Create the database using a RDBMS GUI or by running this query in a client:
 
-    create database baracoda_test;
-    grant all privileges on database baracoda_test to postgres;
+```sql
+create database baracoda_test;
+grant all privileges on database baracoda_test to postgres;
+```
 
 ### Running Tests
 
 To run the test suite:
 
-    python -m pytest -vx
+```shell
+python -m pytest -vx
+```
 
 ## Formatting, Linting and Type Checking
 
@@ -129,20 +158,26 @@ To run the test suite:
 This project is formatted using [black](https://github.com/psf/black). To run formatting checks,
 run:
 
-    pipenv run black .
+```shell
+pipenv run black .
+```
 
 ### Linting
 
 This project is linted using [flake8](https://github.com/pycqa/flake8). To lint the code, run:
 
-    pipenv run flake8
+```shell
+pipenv run flake8
+```
 
 ### Type Checking
 
 This project uses static type checking provided by the [mypy](https://github.com/python/mypy)
 library, to run manually:
 
-    pipenv run mypy .
+```shell
+pipenv run mypy .
+```
 
 ## Deployment
 
@@ -156,35 +191,43 @@ corresponding change according to [semver](https://semver.org/).
 - Perform any change in the models files located in the `baracoda/orm` folder
 - Run alembic and provide a comment to autogenerate the migration comparing with current database:
 
-      flask db revision --autogenerate -m "Added account table"
+  ```shell
+  flask db revision --autogenerate -m "Added account table"
+  ```
 
 ## Routes
 
 The following routes are available from this service:
 
-    flask routes
+```shell
+flask routes
+```
 
-    Endpoint                                Methods  Rule
-    --------------------------------------  -------  ----------------------------
-    barcode_creation.get_last_barcode       GET      /barcodes/<prefix>/last
-    barcode_creation.get_new_barcode        POST     /barcodes/<prefix>/new
-    barcode_creation.get_new_barcode_group  POST     /barcodes_group/<prefix>/new
-    child_barcodes.new_child_barcodes       POST     /child-barcodes/<prefix>/new
-    health_check                            GET      /health
-    static                                  GET      /static/<path:filename>
+```text
+Endpoint                                Methods  Rule
+--------------------------------------  -------  ----------------------------
+barcode_creation.get_last_barcode       GET      /barcodes/<prefix>/last
+barcode_creation.get_new_barcode        POST     /barcodes/<prefix>/new
+barcode_creation.get_new_barcode_group  POST     /barcodes_group/<prefix>/new
+child_barcodes.new_child_barcodes       POST     /child-barcodes/<prefix>/new
+health_check                            GET      /health
+static                                  GET      /static/<path:filename>
+```
 
 ## Configuration
 
 The default configuration of the currently supported prefixes is specified in the
 ```baracoda/config/defaults.py``` module. For example:
-```json
-    {
-        "prefix": "HT",
-        "sequence_name": "ht",
-        "formatter_class": GenericBarcodeFormatter,
-        "enableChildrenCreation": False,
-    }
+
+```python
+{
+    "prefix": "HT",
+    "sequence_name": "ht",
+    "formatter_class": GenericBarcodeFormatter,
+    "enableChildrenCreation": False,
+}
 ```
+
 These are the allowed keywords that we can specify to configure a prefix:
 
 - ```prefix```: This is the string that represents the prefix we are configuring for
@@ -200,7 +243,6 @@ the interface ```baracoda.formats.FormatterInterface```.
 If true, the prefix will support creating barcodes based on a parent barcode
 If it is False, the prefix will reject any children creation request for that prefix.
 
-
 ### Formatter classes
 
 A formatter class is a way of rendering a new barcode created that can be attached to a prefix.
@@ -213,7 +255,6 @@ The current list of supported formatter classes that can be specified for a pref
 - HeronCogUkIdFormatter
 - GenericBarcodeFormatter
 - Sequencescape22Formatter
-
 
 #### HeronCogUkIdFormatter
 
@@ -239,8 +280,9 @@ With description:
 #### Sequencescape22Formatter
 
 Plate barcode generator which supports children creation and checksum. It follows these 2 formats:
- - For any barcode that is not a child: ```<Prefix>-<Number>-<Checksum>```. Examples: ```SQDP-23-L```
- - For any child barcode: ```<Prefix>-<Number>-<ChildIndex>-<Checksum>```. Examples: ```LAB-89-2-R```
+
+- For any barcode that is not a child: ```<Prefix>-<Number>-<Checksum>```. Examples: ```SQDP-23-L```
+- For any child barcode: ```<Prefix>-<Number>-<ChildIndex>-<Checksum>```. Examples: ```LAB-89-2-R```
 
 With description:
 
@@ -248,7 +290,6 @@ With description:
 - Number is the current index for the id of this barcode.
 - ChildIndex is the current index for the child (if is a children barcode).
 - Checksum is a checksum letter that validates the whole barcode (prefix, number, childIndex).
-
 
 ### Children barcode creation
 
@@ -281,9 +322,11 @@ value defined.
 #### Wrong parent barcodes
 
 A request with parent barcode that does not follow the format defined like:
-```
+
+```text
 <PREFIX>-<NUMBER>(-<NUMBER>)?(-<CHECKSUM>)
 ```
+
 will create normal barcodes instead of suffixed children barcodes (normal barcode creation).
 
 A request that follows the right format but does not comply with current database will be
@@ -295,7 +338,6 @@ impossible to have been generated by Baracoda.
 
 The following diagram describes the workflow of how this endpoint will behave depending on
 the inputs declared before:
-
 
 ```mermaid
 graph TD;
@@ -316,7 +358,6 @@ graph TD;
   ChildrenBarcodes --> NormalAccept;
   ChildConstraint -->|No|ChildrenBarcodes
   ChildExist2 -->|No|ChildrenBarcodes;
-
 ```
 
 ### Troubleshooting
@@ -325,12 +366,16 @@ graph TD;
 
 If errors are experienced while pipenv attempts to install `psycopg2`, try this:
 
-    LDFLAGS=`echo $(pg_config --ldflags)` pipenv install --dev
+```shell
+LDFLAGS=`echo $(pg_config --ldflags)` pipenv install --dev
+```
 
 You can also try installing `psycopg2` from the binary, which avoids the need for `pg_config` locally.
 To install `psycopg2` as a binary, change the `psycopg2` entry in the Pipfile to say `psycopg2-binary` instead, and then run:
 
-    pipenv install psycopg2-binary
+```shell
+pipenv install psycopg2-binary
+```
 
 You can then run `pipenv install --dev` again to get all the other dependencies installed.
 This approach should allow you to install the postgres python driver (psycopg2) locally, without having a local copy of postgres. Use docker to run postgres as described in the 'Requirements for Development' section.
@@ -341,4 +386,6 @@ Don't commit your changes to the Pipfile or Pipfile.lock.
 To update the table of contents after adding things to this README you can use the [markdown-toc](https://github.com/jonschlinkert/markdown-toc)
 node module. To run:
 
-    npx markdown-toc -i README.md
+```shell
+npx markdown-toc --bullets="-" -i -- README.md
+```
