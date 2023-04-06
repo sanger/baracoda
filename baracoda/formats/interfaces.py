@@ -7,9 +7,9 @@ class FormatterInterface:
     """
 
     def barcode(self, value: int) -> str:
-        pass
+        raise NotImplementedError("The Barcode formatter class provided does not implement the barcode method.")
 
     def child_barcode(self, parent_barcode: str, pos: int) -> str:
         raise UnsupportedChildrenCreation(
-            "The Barcode formatter class provided does not implement barcode children creation"
+            "The Barcode formatter class provided does not implement barcode children creation."
         )
