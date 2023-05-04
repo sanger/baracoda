@@ -356,6 +356,12 @@ PREFIXES: List[PrefixesType] = [
         "enableChildrenCreation": False,
     },
     {
+        "prefix": "CEPS",
+        "sequence_name": "csm",
+        "formatter_class": GenericBarcodeFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
         "prefix": "PAM",
         "sequence_name": "pam",
         "formatter_class": GenericBarcodeFormatter,
