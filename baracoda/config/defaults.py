@@ -326,7 +326,7 @@ PREFIXES: List[PrefixesType] = [
         "enableChildrenCreation": False,
     },
     {
-        "prefix": "COS",
+        "prefix": "CBAG",
         "sequence_name": "csm",
         "formatter_class": GenericBarcodeFormatter,
         "enableChildrenCreation": False,
@@ -338,13 +338,7 @@ PREFIXES: List[PrefixesType] = [
         "enableChildrenCreation": False,
     },
     {
-        "prefix": "CPL",
-        "sequence_name": "csm",
-        "formatter_class": GenericBarcodeFormatter,
-        "enableChildrenCreation": False,
-    },
-    {
-        "prefix": "CBAG",
+        "prefix": "CEPS",
         "sequence_name": "csm",
         "formatter_class": GenericBarcodeFormatter,
         "enableChildrenCreation": False,
@@ -356,7 +350,13 @@ PREFIXES: List[PrefixesType] = [
         "enableChildrenCreation": False,
     },
     {
-        "prefix": "CEPS",
+        "prefix": "COS",
+        "sequence_name": "csm",
+        "formatter_class": GenericBarcodeFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "CPL",
         "sequence_name": "csm",
         "formatter_class": GenericBarcodeFormatter,
         "enableChildrenCreation": False,
