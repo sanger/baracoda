@@ -326,6 +326,12 @@ PREFIXES: List[PrefixesType] = [
         "enableChildrenCreation": False,
     },
     {
+        "prefix": "WSI",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
         "prefix": "CBAG",
         "sequence_name": "csm",
         "formatter_class": GenericBarcodeFormatter,
