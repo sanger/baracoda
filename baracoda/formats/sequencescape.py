@@ -1,6 +1,7 @@
 from baracoda.formats.interfaces import FormatterInterface
 from baracoda.exceptions import UnsupportedEncodingForPrefix
 import logging
+from typing import Dict
 
 logger = logging.getLogger(__name__)
 
@@ -8,12 +9,11 @@ logger = logging.getLogger(__name__)
 class Sequencescape22Formatter(FormatterInterface):
     CHECKSUM_ASCII_OFFSET = 65
 
-    def __init__(self, prefix: str):
-        logger.debug(f"Instantiate formatter with {prefix}")
-        if not prefix.isascii():
-            raise UnsupportedEncodingForPrefix("The prefix provided {prefix} is not ASCII")
-
-        self.prefix = prefix
+    def __init__(self, options: Dict[str, str]):
+        super().extract_options(options)
+        logger.debug(f"Instantiate formatter with {self.prefix}")
+        if not self.prefix.isascii():
+            raise UnsupportedEncodingForPrefix("The prefix provided {self.prefix} is not ASCII")
 
     def barcode(self, value: int) -> str:
         """
@@ -26,6 +26,8 @@ class Sequencescape22Formatter(FormatterInterface):
         Returns:
             str -- formatted barcode with prefix and checksum
         """
+        if self.text is not None:
+            return self.barcode_with_checksum(f"{self.prefix}-{self.text}-{value}")
 
         return self.barcode_with_checksum(f"{self.prefix}-{value}")
 

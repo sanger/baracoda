@@ -35,6 +35,18 @@ def test_get_new_barcode_for_sqp(client):
     assert response.status_code == HTTPStatus.CREATED
 
 
+def test_get_new_barcode_with_text(client):
+    response = client.post("/barcodes/SQPD/new?text=T12")
+    assert response.json == {"barcode": "SQPD-T12-1-J"}
+    assert response.status_code == HTTPStatus.CREATED
+
+
+def test_get_new_barcode_with_wrong_text(client):
+    response = client.post("/barcodes/SQPD/new?text=T120")
+    assert response.json == {"errors": ["InvalidTextError"]}
+    assert response.status_code == HTTPStatus.INTERNAL_SERVER_ERROR
+
+
 def test_get_new_barcodes_group_as_url_param(client):
     response = client.post("/barcodes_group/SANG/new?count=3")
     resp = response.json

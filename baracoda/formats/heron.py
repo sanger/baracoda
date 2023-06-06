@@ -1,14 +1,14 @@
 from baracoda.formats.interfaces import FormatterInterface
 import logging
+from typing import Dict
 
 logger = logging.getLogger(__name__)
 
 
 class HeronCogUkIdFormatter(FormatterInterface):
-    def __init__(self, prefix: str):
-        logger.debug(f"Instantiate formatter with {prefix}")
-
-        self.prefix = prefix
+    def __init__(self, options: Dict[str, str]):
+        super().extract_options(options)
+        logger.debug(f"Instantiate formatter with {self.prefix}")
 
     def hex_to_int(self, hex_str: str) -> int:
         """Convert a hex string to integer.
