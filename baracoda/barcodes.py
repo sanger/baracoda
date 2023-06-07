@@ -172,6 +172,7 @@ def get_text_param():
         try:
             if request.json and ("text" in request.json):
                 return request.json["text"]
-        except BadRequest as e:
-            raise e
+        except BadRequest:
+            return None
+
     return None
