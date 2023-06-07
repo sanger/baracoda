@@ -168,4 +168,10 @@ def get_text_param():
         if len(request.values["text"]) <= 3:
             return request.values["text"]
         raise InvalidTextError()
+    else:
+        try:
+            if request.json and ("text" in request.json):
+                return request.json["text"]
+        except BadRequest as e:
+            raise e
     return None
