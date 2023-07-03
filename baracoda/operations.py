@@ -33,10 +33,11 @@ class InvalidPrefixForChildrenCreation(BaseException):
 
 
 class BarcodeOperations:
-    def __init__(self, prefix: str):
+    def __init__(self, prefix: str, text: Optional[str] = None):
         logger.debug("Instantiate....")
 
         self.prefix = prefix
+        self.text = text
 
         self.__check_prefix()
 
@@ -51,6 +52,9 @@ class BarcodeOperations:
         logger.debug("Accessing sequence_name")
         self.sequence_name = self.prefix_item["sequence_name"]
 
+    def formatter_options(self):
+        return {"prefix": self.prefix, "text": self.text}
+
     def formatter(self) -> FormatterInterface:
         """Factory method that will create a new formatter instance
         from the prefix declared.
@@ -60,7 +64,7 @@ class BarcodeOperations:
             barcode string
         """
         formatter_class = cast(PrefixesType, self.prefix_item)["formatter_class"]
-        return formatter_class(self.prefix)
+        return formatter_class(self.formatter_options())
 
     def create_barcodes(self, count: int) -> List[str]:
         """Create a list of barcodes, not inside a group.
