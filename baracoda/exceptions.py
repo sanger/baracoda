@@ -66,7 +66,7 @@ class InvalidCountError(Error):
 
 
 class InvalidTextError(Error):
-    """Raised when a param text for a Heron barcode group or child barcode is not found."""
+    """Raised when a param text is not found."""
 
     def __init__(self, message: str = ""):
         self.message = message
