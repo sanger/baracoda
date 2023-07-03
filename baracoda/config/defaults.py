@@ -8,7 +8,7 @@ from baracoda.types import PrefixesType
 # database config
 ###
 DB_DBNAME = "baracoda_dev"
-DB_HOST = "host.docker.internal"
+DB_HOST = "localhost"
 DB_PASSWORD = "postgres"
 DB_PORT = "5432"
 DB_USER = "postgres"
