@@ -1,7 +1,7 @@
 from baracoda.formats.heron import HeronCogUkIdFormatter
 from baracoda.formats.generic import GenericBarcodeFormatter
 from baracoda.formats.interfaces import FormatterInterface
-from baracoda.exceptions import UnsupportedChildrenCreation, UnsupportedEncodingForPrefix
+from baracoda.exceptions import UnsupportedChildrenCreation, UnsupportedEncodingForPrefix, UnsupportedTextCodeValue
 import pytest
 
 from baracoda.formats.sequencescape import Sequencescape22Formatter
@@ -25,17 +25,17 @@ def test_barcode_example_1(heron_formatter):
 
 
 def test_barcode_example_2():
-    formatter = HeronCogUkIdFormatter(prefix="NIRE")
+    formatter = HeronCogUkIdFormatter({"prefix": "NIRE"})
     assert formatter.barcode(111111) == "NIRE-1B2075"
 
 
 def test_barcode_example_plate_cherrypicked():
-    formatter = GenericBarcodeFormatter(prefix="HT")
+    formatter = GenericBarcodeFormatter({"prefix": "HT"})
     assert formatter.barcode(111111) == "HT-111111"
 
 
 def test_barcode_example_plate_sequencescape():
-    formatter = GenericBarcodeFormatter(prefix="SQPD")
+    formatter = GenericBarcodeFormatter({"prefix": "SQPD"})
     assert formatter.barcode(1) == "SQPD-1"
 
 
@@ -51,7 +51,7 @@ def barcode_for(barcode: str) -> str:
     """
     prefix, number_and_checksum = barcode.split("-")
     number = number_and_checksum[:-1]
-    formatter = HeronCogUkIdFormatter(prefix=prefix)
+    formatter = HeronCogUkIdFormatter({"prefix": prefix})
 
     return formatter.barcode(int(number, 16))
 
@@ -95,19 +95,19 @@ def test_formatter_interface_raises_error_on_child_creation():
 
 
 def test_generic_formatter_raises_error_on_child_creation():
-    instance = GenericBarcodeFormatter(prefix="SQPD")
+    instance = GenericBarcodeFormatter({"prefix": "SQPD"})
     with pytest.raises(UnsupportedChildrenCreation):
         instance.child_barcode("TEST-123", 444)
 
 
 def test_heron_formatter_raises_error_on_child_creation():
-    instance = HeronCogUkIdFormatter(prefix="SQPD")
+    instance = HeronCogUkIdFormatter({"prefix": "SQPD"})
     with pytest.raises(UnsupportedChildrenCreation):
         instance.child_barcode("TEST-123", 444)
 
 
 def test_sequencescape22_formatter_does_not_raise_error_on_child_creation():
-    instance = Sequencescape22Formatter(prefix="SQPD")
+    instance = Sequencescape22Formatter({"prefix": "SQPD"})
     try:
         instance.child_barcode("TEST-123", 444)
     except UnsupportedChildrenCreation as exc:
@@ -116,28 +116,47 @@ def test_sequencescape22_formatter_does_not_raise_error_on_child_creation():
 
 def test_formatter_breaks_if_not_using_ascii_prefix():
     with pytest.raises(UnsupportedEncodingForPrefix):
-        Sequencescape22Formatter(prefix="MADRILEÑO")
+        Sequencescape22Formatter({"prefix": "MADRILEÑO"})
 
     with pytest.raises(UnsupportedEncodingForPrefix):
-        GenericBarcodeFormatter(prefix="MADRILEÑO")
+        GenericBarcodeFormatter({"prefix": "MADRILEÑO"})
 
 
 def test_sequencescape22_formatter_supports_barcodes_with_suffix():
-    instance = Sequencescape22Formatter(prefix="TEST")
+    instance = Sequencescape22Formatter({"prefix": "TEST"})
     assert instance.barcode(1) == "TEST-1-I"
     assert instance.barcode(2) == "TEST-2-J"
 
-    instance = Sequencescape22Formatter(prefix="TT")
+    instance = Sequencescape22Formatter({"prefix": "TT"})
     assert instance.barcode(1) == "TT-1-O"
     assert instance.barcode(2) == "TT-2-P"
 
-    instance = Sequencescape22Formatter(prefix="TEST")
+    instance = Sequencescape22Formatter({"prefix": "TEST"})
     assert instance.barcode(123) == "TEST-123-V"
     assert instance.barcode(124) == "TEST-124-W"
 
 
+def test_sequencescape22_formatter_supports_barcodes_with_text_code():
+    instance = Sequencescape22Formatter({"prefix": "TEST", "text": "EDU"})
+    assert instance.barcode(1) == "TEST-EDU-1-P"
+    assert instance.barcode(2) == "TEST-EDU-2-Q"
+
+    instance = Sequencescape22Formatter({"prefix": "TT", "text": "T01"})
+    assert instance.barcode(1) == "TT-T01-1-N"
+    assert instance.barcode(2) == "TT-T01-2-O"
+
+    instance = Sequencescape22Formatter({"prefix": "TEST", "text": "T24"})
+    assert instance.barcode(123) == "TEST-T24-123-D"
+    assert instance.barcode(124) == "TEST-T24-124-E"
+
+
+def test_sequencescape22_formatter_supports_barcodes_with_wrong_text_code():
+    with pytest.raises(UnsupportedTextCodeValue):
+        Sequencescape22Formatter({"prefix": "TEST", "text": "T240"})
+
+
 def test_sequencescape22_formatter_supports_children_barcodes_with_suffix():
-    instance = Sequencescape22Formatter(prefix="TEST")
+    instance = Sequencescape22Formatter({"prefix": "TEST"})
     assert instance.child_barcode("TEST-1", 1) == "TEST-1-1-J"
     assert instance.child_barcode("TEST-1", 2) == "TEST-1-2-K"
     assert instance.child_barcode("TEST-2", 1) == "TEST-2-1-M"

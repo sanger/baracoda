@@ -5,7 +5,7 @@ from typing import Any, Tuple
 from flask import Blueprint, request
 from flask_cors import CORS
 
-from baracoda.exceptions import InvalidCountError, InvalidPrefixError
+from baracoda.exceptions import InvalidCountError, InvalidPrefixError, InvalidTextError
 from werkzeug.exceptions import BadRequest
 from baracoda.operations import BarcodeOperations
 
@@ -71,7 +71,8 @@ def get_new_barcode(prefix: str) -> Tuple[Any, int]:
     """
     try:
         logger.debug(f"Creating a barcode for '{ prefix }'")
-        operator = BarcodeOperations(prefix=prefix)
+        text = get_text_param()
+        operator = BarcodeOperations(prefix=prefix, text=text)
         barcode = operator.create_barcode()
 
         return barcode.to_dict(), HTTPStatus.CREATED
@@ -148,3 +149,30 @@ def get_count_param():
         except BadRequest as e:
             raise e
     raise InvalidCountError()
+
+
+def get_text_param():
+    """Extracts the text argument from the HTTP request received.
+    If specified in URL it can be defined as url parameter:
+    Eg: /barcodes_group/TEST/new?text=T14
+    If specified in BODY it has to be defined as jSON:
+    Eg: { "text": "T14" }
+
+    Arguments: No
+    Returns one of this:
+        str[3] - value of the 'text' argument extracted
+        InvalidTextError - Exception raised when argument could not be extracted
+
+    """
+    if "text" in request.values:
+        if len(request.values["text"]) <= 3:
+            return request.values["text"]
+        raise InvalidTextError()
+    else:
+        try:
+            if request.json and ("text" in request.json):
+                return request.json["text"]
+        except BadRequest:
+            return None
+
+    return None

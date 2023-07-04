@@ -40,7 +40,7 @@ def client(app):
 
 @pytest.fixture
 def heron_formatter():
-    return HeronCogUkIdFormatter(prefix="SANG")
+    return HeronCogUkIdFormatter({"prefix": "SANG"})
 
 
 @pytest.fixture

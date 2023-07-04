@@ -5,6 +5,7 @@ from baracoda.exceptions import (
     InvalidPrefixError,
     InvalidCountError,
     InvalidBarcodeError,
+    UnsupportedTextCodeValue,
 )
 
 EXCEPTIONS = [
@@ -13,6 +14,7 @@ EXCEPTIONS = [
     InvalidPrefixError,
     InvalidCountError,
     InvalidBarcodeError,
+    UnsupportedTextCodeValue,
 ]
 
 
@@ -20,3 +22,4 @@ EXCEPTIONS = [
 def test_exception_str(exception_class):
     msg = "testing message"
     assert msg in str(exception_class(msg))
+    assert len(str(exception_class())) > 0
