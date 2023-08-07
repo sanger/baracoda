@@ -72,10 +72,10 @@ def test_get_new_barcodes_group_with_wrong_value_negative(client):
 
 
 def test_get_new_barcodes_group_with_wrong_count(client):
-    # We don't need headers and empty body for this test. The code now checks
-    # if post data is available. If there is no post data, there is nothing to
-    # decode; hence we return 422 as expected rather than 500.
-    response = client.post("/barcodes_group/SANG/new")
+    # The code now checks if post data is available and returns 422 rather than 500.
+    response = client.post(
+        "/barcodes_group/SANG/new", data=json.dumps({}), headers={"Content-Type": "application/json"}
+    )
     assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
 
 
