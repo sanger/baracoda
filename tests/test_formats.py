@@ -94,6 +94,12 @@ def test_formatter_interface_raises_error_on_child_creation():
         instance.child_barcode("TEST-123", 444)
 
 
+def test_formatter_interface_raises_error_on_barcode_creation():
+    instance = FormatterInterface()
+    with pytest.raises(NotImplementedError):
+        instance.barcode(12345)
+
+
 def test_generic_formatter_raises_error_on_child_creation():
     instance = GenericBarcodeFormatter(prefix="SQPD")
     with pytest.raises(UnsupportedChildrenCreation):
