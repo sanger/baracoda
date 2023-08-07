@@ -1,7 +1,7 @@
 import pytest
 
 from baracoda import create_app
-from baracoda.db import db, reset_db
+from baracoda.db import reset_db
 from baracoda.formats.heron import HeronCogUkIdFormatter
 
 from tests.data.fixture_data import PREFIXES
@@ -27,7 +27,7 @@ def app():
     )
 
     with app.app_context():
-        db.init_app(app)  # Create the test schema
+        # db.init_app(app)  # Create the test schema
         reset_db()
 
     yield app
@@ -40,7 +40,7 @@ def client(app):
 
 @pytest.fixture
 def heron_formatter():
-    return HeronCogUkIdFormatter(prefix="SANG")
+    return HeronCogUkIdFormatter({"prefix": "SANG"})
 
 
 @pytest.fixture

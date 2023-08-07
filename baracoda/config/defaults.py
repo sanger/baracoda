@@ -326,7 +326,13 @@ PREFIXES: List[PrefixesType] = [
         "enableChildrenCreation": False,
     },
     {
-        "prefix": "COS",
+        "prefix": "WSI",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "CBAG",
         "sequence_name": "csm",
         "formatter_class": GenericBarcodeFormatter,
         "enableChildrenCreation": False,
@@ -338,19 +344,25 @@ PREFIXES: List[PrefixesType] = [
         "enableChildrenCreation": False,
     },
     {
-        "prefix": "CPL",
-        "sequence_name": "csm",
-        "formatter_class": GenericBarcodeFormatter,
-        "enableChildrenCreation": False,
-    },
-    {
-        "prefix": "CBAG",
+        "prefix": "CEPS",
         "sequence_name": "csm",
         "formatter_class": GenericBarcodeFormatter,
         "enableChildrenCreation": False,
     },
     {
         "prefix": "CFR",
+        "sequence_name": "csm",
+        "formatter_class": GenericBarcodeFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "COS",
+        "sequence_name": "csm",
+        "formatter_class": GenericBarcodeFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
+        "prefix": "CPL",
         "sequence_name": "csm",
         "formatter_class": GenericBarcodeFormatter,
         "enableChildrenCreation": False,

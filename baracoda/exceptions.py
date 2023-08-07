@@ -65,6 +65,21 @@ class InvalidCountError(Error):
             return f"InvalidCountError: {default_message}"
 
 
+class InvalidTextError(Error):
+    """Raised when a param text is not found."""
+
+    def __init__(self, message: str = ""):
+        self.message = message
+
+    def __str__(self):
+        default_message = "Please add the 'text' param to the request"
+
+        if self.message:
+            return f"InvalidTextError: {self.message}"
+        else:
+            return f"InvalidTextError: {default_message}"
+
+
 class InvalidBarcodeError(Error):
     """Raised when a barcode param is not given for a child barcode"""
 
@@ -78,3 +93,18 @@ class InvalidBarcodeError(Error):
             return f"InvalidBarcodeError: {self.message}"
         else:
             return f"InvalidBarcodeError: {default_message}"
+
+
+class UnsupportedTextCodeValue(Error):
+    """Raised when a text param is not with right format"""
+
+    def __init__(self, message: str = ""):
+        self.message = message
+
+    def __str__(self):
+        default_message = "The text param does not have the right format [A-Z0-9_]{1,3}"
+
+        if self.message:
+            return f"UnsupportedTextCodeValue: {self.message}"
+        else:
+            return f"UnsupportedTextCodeValue: {default_message}"
