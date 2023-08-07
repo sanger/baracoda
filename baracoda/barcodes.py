@@ -144,7 +144,10 @@ def get_count_param():
         return positive_value(int(request.values["count"]))
     else:
         try:
-            if request.json and ("count" in request.json):
+            # If request contains post data, Content-Type: application/json
+            # header must be available in request headers to parse it as json.
+            # If there is no post data, we don't need to decode data into json.
+            if request.data and request.json and ("count" in request.json):
                 return positive_value(int(request.json["count"]))
         except BadRequest as e:
             raise e
@@ -170,7 +173,10 @@ def get_text_param():
         raise InvalidTextError()
     else:
         try:
-            if request.json and ("text" in request.json):
+            # If request contains post data, Content-Type: application/json
+            # header must be available in request headers to parse it as json.
+            # If there is no post data, we don't need to decode data into json.
+            if request.data and request.json and ("text" in request.json):
                 return request.json["text"]
         except BadRequest:
             return None
