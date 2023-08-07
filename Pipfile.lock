@@ -263,11 +263,11 @@
         },
         "flask-migrate": {
             "hashes": [
-                "sha256:eaf85579b273874b25944016745ff84c7dc712297c42b7b71f4dc6cae8a2934d",
-                "sha256:f62b51f9cd2c4f444deac111726a2335d0b846dcf51909a97e261d2098b816f7"
+                "sha256:73293d40b10ac17736e715b377e7b7bde474cb8105165d77474df4c3619b10b3",
+                "sha256:77580f27ab39bc68be4906a43c56d7674b45075bc4f883b1d0b985db5164d58f"
             ],
             "index": "pypi",
-            "version": "==4.0.1"
+            "version": "==4.0.4"
         },
         "flask-sqlalchemy": {
             "hashes": [
