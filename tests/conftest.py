@@ -27,7 +27,6 @@ def app():
     )
 
     with app.app_context():
-        # db.init_app(app)  # Create the test schema
         reset_db()
 
     yield app

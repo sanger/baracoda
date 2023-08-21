@@ -13,7 +13,7 @@ def test_creates_app_right_config():
             "SEQUENCE_START": 1,
             "SLACK_API_TOKEN": "",
             "SLACK_CHANNEL_ID": "",
-            "SQLALCHEMY_DATABASE_URI": "postgresql+psycopg2://test:test@localhost:5432/mydb",
+            "SQLALCHEMY_DATABASE_URI": "",
             "SQLALCHEMY_TRACK_MODIFICATIONS": "False",
         }
     )
