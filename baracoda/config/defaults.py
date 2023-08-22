@@ -32,6 +32,12 @@ SLACK_CHANNEL_ID = "Cxxx"
 
 PREFIXES: List[PrefixesType] = [
     {
+        "prefix": "MATL",
+        "sequence_name": "heron",
+        "formatter_class": HeronCogUkIdFormatter,
+        "enableChildrenCreation": False,
+    },
+    {
         "prefix": "ALDP",
         "sequence_name": "heron",
         "formatter_class": HeronCogUkIdFormatter,
