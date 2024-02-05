@@ -162,8 +162,8 @@ class BarcodeOperations:
         Returns:
             bool -- whether the prefix passed validation
         """
-        if not isinstance(self.prefix, str):
-            return False  # type: ignore
+        if type(self.prefix) != str:
+            return False
 
         pattern = re.compile(r"^[A-Z0-9]{1,10}$")
 
