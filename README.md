@@ -64,9 +64,21 @@ The following tools are required for development:
     brew link postgresql --force
     ```
 
-    postgresql@9.6 is used in prod, since it is not supported any more, installing the latest version for development should work.
+    postgresql@14.5 is used in production.
 
     Create the development database and user using a RDBMS GUI or by running this query in a client:
+
+    ```shell
+    psql postgres
+    ```
+
+    Create a role for postgres and grant login permissions:
+
+    ```sql
+    create role postgres LOGIN;
+    ```
+
+    Create the database:
 
     ```sql
     create database baracoda_dev;
