@@ -14,7 +14,7 @@ sqlalchemy-stubs = "*"
 types-flask = "*"
 
 [packages]
-alembic = "~=1.10"
+alembic = "~=1.13"
 autoenv = "~=1.0"
 colorlog = "~=6.8"
 flask = "~=3.0"
