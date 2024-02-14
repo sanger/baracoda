@@ -24,7 +24,7 @@ gunicorn = "~=21.2"
 psycopg2 = "~=2.9"
 python-dotenv = "~=1.0"
 slackclient = "~=2.5"
-sqlalchemy = "~=1.4"
+sqlalchemy = "~=2.0"
 flask-migrate = "*"
 
 [requires]
