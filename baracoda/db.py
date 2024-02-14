@@ -1,6 +1,7 @@
 import logging
 
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text
 
 SCHEMA_FILE = "baracoda/sql/schema.sql"
 
@@ -19,5 +20,5 @@ def reset_db():
     with open(SCHEMA_FILE, "r") as schema_file:
         schema_loader = schema_file.read()
 
-    db.session.execute(schema_loader)
+    db.session.execute(text(schema_loader))
     db.session.commit()
