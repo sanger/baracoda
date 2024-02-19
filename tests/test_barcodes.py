@@ -35,6 +35,12 @@ def test_get_new_barcode_for_sqp(client):
     assert response.status_code == HTTPStatus.CREATED
 
 
+def test_get_new_barcode_for_rvi(client):
+    response = client.post("/barcodes/RVI/new", headers={"Content-Type": "application/json"})
+    assert response.json == {"barcode": "RVI-111111"}
+    assert response.status_code == HTTPStatus.CREATED
+
+
 def test_get_new_barcode_with_text(client):
     response = client.post("/barcodes/SQPD/new?text=T12", headers={"Content-Type": "application/json"})
     assert response.json == {"barcode": "SQPD-T12-1-J"}

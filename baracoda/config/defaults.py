@@ -385,6 +385,12 @@ PREFIXES: List[PrefixesType] = [
         "formatter_class": GenericBarcodeFormatter,
         "enableChildrenCreation": False,
     },
+    {
+        "prefix": "RVI",
+        "sequence_name": "rvi",
+        "formatter_class": GenericBarcodeFormatter,
+        "enableChildrenCreation": False,
+    },
 ]
 
 for prefix_item in PREFIXES:
