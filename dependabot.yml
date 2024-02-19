@@ -1,13 +1,9 @@
 version: 2
 updates:
-  - package-ecosystem: "all"
+  - package-ecosystem: "pip" 
     directory: "/"
     schedule:
       interval: "daily"
-    labels:
-      - "dependencies"
-      - "Technical debt"
-  - package-ecosystem: "pip" 
     labels:
       - "dependencies"
       - "Technical debt"
