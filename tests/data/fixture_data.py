@@ -46,4 +46,10 @@ PREFIXES: List[Dict[str, Union[str, object]]] = [
         "formatter_class": Sequencescape22Formatter,
         "enableChildrenCreation": True,
     },
+    {
+        "prefix": "RVI",
+        "sequence_name": "rvi",
+        "formatter_class": GenericBarcodeFormatter,
+        "enableChildrenCreation": False,
+    },
 ]

@@ -3,6 +3,9 @@ import re
 from datetime import datetime
 from typing import List, Optional, cast
 from xmlrpc.client import Boolean
+
+from sqlalchemy import text
+
 from baracoda.db import db
 from baracoda.exceptions import InvalidPrefixError
 from baracoda.helpers import get_prefix_item
@@ -162,8 +165,8 @@ class BarcodeOperations:
         Returns:
             bool -- whether the prefix passed validation
         """
-        if type(self.prefix) != str:
-            return False
+        if not isinstance(self.prefix, str):
+            return False  # type: ignore
 
         pattern = re.compile(r"^[A-Z0-9]{1,10}$")
 
@@ -234,7 +237,7 @@ class BarcodeOperations:
         Returns:
             str -- next value in sequence
         """
-        return int(db.session.execute(f"SELECT nextval('{sequence_name.lower()}');").fetchone()[0])
+        return int(db.session.execute(text(f"SELECT nextval('{sequence_name.lower()}');")).fetchone()[0])
 
     def __get_next_values(self, sequence_name: str, count: int) -> List[int]:
         """Get the next count values from the sequence.
@@ -249,7 +252,7 @@ class BarcodeOperations:
         return [
             int(val[0])
             for val in db.session.execute(
-                f"SELECT nextval('{sequence_name.lower()}') FROM    generate_series(1, {count}) l;"
+                text(f"SELECT nextval('{sequence_name.lower()}') FROM    generate_series(1, {count}) l;")
             ).fetchall()
         ]
 
