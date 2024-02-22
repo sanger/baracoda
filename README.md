@@ -165,6 +165,48 @@ To run the test suite:
 python -m pytest -vx
 ```
 
+### Verification of functionality
+
+#### Returning the last generated SQPD barcode:
+
+```
+curl --location 'http://localhost:7900/barcodes/SQPD/last'
+```
+
+Response:
+```json
+{"barcode":"SQPD-3959-C"}
+```
+
+---
+
+#### Generating a new RVI barcode:
+
+```
+curl --location --request POST 'http://localhost:7900/barcodes/RVI/new' \
+--header 'Content-Type: application/json'
+```
+
+Response: 
+```json
+{
+    "barcode": "RVI-111111"
+}
+```
+---
+#### Returning the last generated RVI barcode:
+
+```
+curl --location 'http://localhost:7900/barcodes/RVI/last'
+```
+
+Response:
+```json
+{
+    "barcode": "RVI-111111"
+}
+```
+
 ## Formatting, Linting and Type Checking
 
 ### Formatting
