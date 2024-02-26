@@ -3,7 +3,7 @@ import logging.config
 from http import HTTPStatus
 
 import click
-from flask import Flask
+from flask import Flask, Request
 from flask.cli import with_appcontext
 
 from baracoda import barcodes
@@ -22,9 +22,22 @@ def init_db_command():
     click.echo("Reseting the database")
 
 
+class SubRequest(Request):
+    """
+    A subclass to mitigate the forcing of application/json header
+    """
+    @property
+    def json(self):
+        return self.get_json(force=True)
+
+
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=False)
+
+    # Overrides the default Request class with a request class that does not force application/json header
+    # for request.json call
+    app.request_class = SubRequest
 
     if test_config is None:
         # load the config, if it exists, when not testing
