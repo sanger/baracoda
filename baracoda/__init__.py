@@ -26,6 +26,7 @@ class SubRequest(Request):
     """
     A subclass to mitigate the forcing of application/json header
     """
+
     @property
     def json(self):
         return self.get_json(force=True)
