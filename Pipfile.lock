@@ -264,12 +264,12 @@
         },
         "flask-migrate": {
             "hashes": [
-                "sha256:66ee5fbf94e815fafd5c8c07e703e981e0e7668b47c5c32ed3e5c2fd2fc8af7c",
-                "sha256:8d37f49b047e22bb0516a74b5f3f2560c0c78d5499b0e259752b41ca41817b81"
+                "sha256:5c532be17e7b43a223b7500d620edae33795df27c75811ddf32560f7d48ec617",
+                "sha256:dff7dd25113c210b069af280ea713b883f3840c1e3455274745d7355778c8622"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.6'",
-            "version": "==4.0.6"
+            "version": "==4.0.7"
         },
         "flask-sqlalchemy": {
             "hashes": [
@@ -449,7 +449,7 @@
                 "sha256:198f568f3230878cb1b44fbd7975f87906c22336dba2e4a7f05278c281fbd792",
                 "sha256:f4bc4c0c070c490abf4ce96d715f68e95923320370efb66143df00199bb6c100"
             ],
-            "markers": "python_version < '3.10'",
+            "markers": "python_version < '3.9'",
             "version": "==7.0.2"
         },
         "importlib-resources": {
