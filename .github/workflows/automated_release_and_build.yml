@@ -10,6 +10,15 @@ env:
   IMAGE_NAME: ${{ github.repository }}/${{ github.event.repository.name }}
 
 jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      python_version: ${{ steps.read_python_version.outputs.python_version }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read Python version
+        id: read_python_version
+        run: echo "::set-output name=python_version::$(cat .python-version)"
   build_test_release_push:
     runs-on: ubuntu-latest
     services:
