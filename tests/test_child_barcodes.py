@@ -25,9 +25,7 @@ def test_new_child_barcode_can_create_several_barcodes(client, prefix):
     )
     resp = response.json
     resp["barcodes_group"]["barcodes"].sort()
-    assert resp == {
-        "barcodes_group": {"id": 1, "barcodes": [f"{prefix}-1-1-K", f"{prefix}-1-2-L", f"{prefix}-1-3-M"]}
-    }
+    assert resp == {"barcodes_group": {"id": 1, "barcodes": [f"{prefix}-1-1-K", f"{prefix}-1-2-L", f"{prefix}-1-3-M"]}}
     assert response.status_code == HTTPStatus.CREATED
 
 
@@ -41,9 +39,7 @@ def test_new_child_barcode_different_parent_keep_their_own_counting_of_children(
     )
     resp = response.json
     resp["barcodes_group"]["barcodes"].sort()
-    assert resp == {
-        "barcodes_group": {"id": 1, "barcodes": [f"{prefix}-1-1-K", f"{prefix}-1-2-L", f"{prefix}-1-3-M"]}
-    }
+    assert resp == {"barcodes_group": {"id": 1, "barcodes": [f"{prefix}-1-1-K", f"{prefix}-1-2-L", f"{prefix}-1-3-M"]}}
     assert response.status_code == HTTPStatus.CREATED
 
     # Parent 2
@@ -104,9 +100,7 @@ def test_new_child_barcode_valid_parent_can_create_attributed_children_and_desce
     )
     resp = response.json
     resp["barcodes_group"]["barcodes"].sort()
-    assert resp == {
-        "barcodes_group": {"barcodes": [f"{prefix}-1-1-K", f"{prefix}-1-2-L", f"{prefix}-1-3-M"], "id": 1}
-    }
+    assert resp == {"barcodes_group": {"barcodes": [f"{prefix}-1-1-K", f"{prefix}-1-2-L", f"{prefix}-1-3-M"], "id": 1}}
     assert response.status_code == HTTPStatus.CREATED
 
     response = client.post(
@@ -116,9 +110,7 @@ def test_new_child_barcode_valid_parent_can_create_attributed_children_and_desce
     )
     resp = response.json
     resp["barcodes_group"]["barcodes"].sort()
-    assert resp == {
-        "barcodes_group": {"barcodes": [f"{prefix}-1-4-N", f"{prefix}-1-5-O", f"{prefix}-1-6-P"], "id": 2}
-    }
+    assert resp == {"barcodes_group": {"barcodes": [f"{prefix}-1-4-N", f"{prefix}-1-5-O", f"{prefix}-1-6-P"], "id": 2}}
     assert response.status_code == HTTPStatus.CREATED
 
     response = client.post(
@@ -142,9 +134,7 @@ def test_new_child_barcode_valid_parent_can_create_attributed_children_and_child
     )
     resp = response.json
     resp["barcodes_group"]["barcodes"].sort()
-    assert resp == {
-        "barcodes_group": {"barcodes": [f"{prefix}-1-1-K", f"{prefix}-1-2-L", f"{prefix}-1-3-M"], "id": 1}
-    }
+    assert resp == {"barcodes_group": {"barcodes": [f"{prefix}-1-1-K", f"{prefix}-1-2-L", f"{prefix}-1-3-M"], "id": 1}}
     assert response.status_code == HTTPStatus.CREATED
 
     # Children 1
@@ -155,9 +145,7 @@ def test_new_child_barcode_valid_parent_can_create_attributed_children_and_child
     )
     resp = response.json
     resp["barcodes_group"]["barcodes"].sort()
-    assert resp == {
-        "barcodes_group": {"barcodes": [f"{prefix}-1-4-N", f"{prefix}-1-5-O", f"{prefix}-1-6-P"], "id": 2}
-    }
+    assert resp == {"barcodes_group": {"barcodes": [f"{prefix}-1-4-N", f"{prefix}-1-5-O", f"{prefix}-1-6-P"], "id": 2}}
     assert response.status_code == HTTPStatus.CREATED
 
     # Children 2
@@ -309,9 +297,7 @@ def test_new_child_barcode_children_of_invalid_parent_can_create_children(client
     )
     resp = response.json
     resp["barcodes_group"]["barcodes"].sort()
-    assert resp == {
-        "barcodes_group": {"barcodes": [f"{prefix}-1-1-K", f"{prefix}-1-2-L", f"{prefix}-1-3-M"], "id": 2}
-    }
+    assert resp == {"barcodes_group": {"barcodes": [f"{prefix}-1-1-K", f"{prefix}-1-2-L", f"{prefix}-1-3-M"], "id": 2}}
     assert response.status_code == HTTPStatus.CREATED
 
 
