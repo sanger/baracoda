@@ -36,7 +36,7 @@ def get_new_barcode_group(prefix: str) -> Tuple[Any, int]:
         - OtherError: HTTP 500 with JSON representation of error.
     """
     try:
-        logger.debug(f"Creating a barcode group for '{ prefix }'")
+        logger.debug(f"Creating a barcode group for '{prefix}'")
         count = get_count_param()
 
         operator = BarcodeOperations(prefix=prefix)
@@ -70,7 +70,7 @@ def get_new_barcode(prefix: str) -> Tuple[Any, int]:
         - OtherError: HTTP 500 with JSON representation of error.
     """
     try:
-        logger.debug(f"Creating a barcode for '{ prefix }'")
+        logger.debug(f"Creating a barcode for '{prefix}'")
         text = get_text_param()
         operator = BarcodeOperations(prefix=prefix, text=text)
         barcode = operator.create_barcode()
@@ -98,7 +98,7 @@ def get_last_barcode(prefix: str) -> Tuple[Any, int]:
         - OtherError: HTTP 500 with JSON representation of error.
     """
     try:
-        logger.debug(f"Obtaining last from '{ prefix }'")
+        logger.debug(f"Obtaining last from '{prefix}'")
         operator = BarcodeOperations(prefix=prefix)
 
         barcode = operator.get_last_barcode(prefix)
