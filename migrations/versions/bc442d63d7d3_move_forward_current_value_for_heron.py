@@ -25,7 +25,7 @@ def __DANGER_restart_sequence_with(value):
         )
         raise ValueError(description)
     # Last value in database is 2564197, we want to move forward past this value
-    op.execute(f"ALTER SEQUENCE heron RESTART WITH { value };")
+    op.execute(f"ALTER SEQUENCE heron RESTART WITH {value};")
 
 
 def upgrade():

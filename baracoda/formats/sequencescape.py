@@ -73,4 +73,4 @@ class Sequencescape22Formatter(FormatterInterface):
         Returns:
             str -- the same barcode but with the suffix attached separated by '-'
         """
-        return f"{ barcode }-{ self.suffix(barcode) }"
+        return f"{barcode}-{self.suffix(barcode)}"
