@@ -75,7 +75,7 @@ def test_get_new_barcodes_group_without_count(client, caplog):
 def test_get_new_barcodes_group_with_wrong_value_count(client, caplog):
     response = client.post("/barcodes_group/SANG/new?count=WRONG")
     assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
-    assert "InvalidCountError: Count value is not a positive integer" in caplog.text
+    assert "InvalidCountError: Count value is not a valid integer" in caplog.text
 
 
 def test_get_new_barcodes_group_with_wrong_value_negative(client, caplog):

@@ -132,7 +132,7 @@ def positive_value(value: int) -> int:
     """
     if value > 0:
         return value
-    raise InvalidCountError()
+    raise InvalidCountError("Count value is not a positive integer")
 
 
 def get_count_param():
@@ -150,9 +150,12 @@ def get_count_param():
     """
     if "count" in request.values:
         try:
-            return positive_value(int(request.values["count"]))
-        except Exception:
-            raise InvalidCountError("Count value is not a positive integer")
+            # int can throw an exception if the value is not convertible
+            count = int(request.values["count"])
+        except ValueError:
+            raise InvalidCountError("Count value is not a valid integer")
+
+        return positive_value(count)
     else:
         try:
             if request.json and ("count" in request.json):
