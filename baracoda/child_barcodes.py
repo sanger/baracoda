@@ -6,7 +6,7 @@ from sqlalchemy import exc
 from flask_cors import CORS
 
 from baracoda.operations import BarcodeOperations, InvalidParentBarcode, InvalidPrefixForChildrenCreation
-from baracoda.exceptions import InvalidCountError, InvalidBarcodeError
+from baracoda.exceptions import InvalidCountError, InvalidBarcodeError, InvalidPrefixError
 from baracoda.types import BarcodeParentInfoType
 from typing import cast
 
@@ -59,17 +59,25 @@ def new_child_barcodes(prefix: str) -> Tuple[Any, int]:
             HTTPStatus.CREATED,
         )
     except InvalidCountError as e:
+        logger.error(e)
         return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.UNPROCESSABLE_ENTITY
     except InvalidBarcodeError as e:
+        logger.error(e)
         return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.UNPROCESSABLE_ENTITY
     except exc.IntegrityError as e:
         logger.error(f"{type(e).__name__}: Two creation requests recieved for the same barcode")
         return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.INTERNAL_SERVER_ERROR
     except InvalidParentBarcode as e:
+        logger.error(e)
         return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.INTERNAL_SERVER_ERROR
     except InvalidPrefixForChildrenCreation as e:
+        logger.error(f"{e} {prefix}")
+        return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.INTERNAL_SERVER_ERROR
+    except InvalidPrefixError as e:
+        logger.error(f"{e} {prefix}")
         return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.INTERNAL_SERVER_ERROR
     except Exception as e:
+        logger.error(e)
         return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.INTERNAL_SERVER_ERROR
 
 
