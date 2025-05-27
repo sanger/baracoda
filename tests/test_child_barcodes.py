@@ -1,6 +1,9 @@
 from http import HTTPStatus
 import json
 import pytest
+import logging
+
+logger = logging.getLogger(__name__)
 
 CHILD_BARCODE_PREFIXES = ["SQPD"]
 
@@ -244,7 +247,7 @@ def test_new_child_barcode_unattributed_children_of_invalid_parent_can_start_own
 
 
 @pytest.mark.parametrize("prefix", CHILD_BARCODE_PREFIXES)
-def test_new_child_barcode_impostor_children_with_possible_parent_can_be_stopped(client, prefix):
+def test_new_child_barcode_impostor_children_with_possible_parent_can_be_stopped(client, prefix, caplog):
     # invalid parent
     response = client.post(
         f"/child-barcodes/{prefix}/new",
@@ -264,10 +267,11 @@ def test_new_child_barcode_impostor_children_with_possible_parent_can_be_stopped
     )
     assert response.json == {"errors": ["InvalidParentBarcode"]}
     assert response.status_code == HTTPStatus.INTERNAL_SERVER_ERROR
+    assert "The barcode provided is an impostor barcode. Its parent has not generated this position yet." in caplog.text
 
 
 @pytest.mark.parametrize("prefix", CHILD_BARCODE_PREFIXES)
-def test_new_child_barcode_impostor_children_without_possible_parent_can_be_stopped(client, prefix):
+def test_new_child_barcode_impostor_children_without_possible_parent_can_be_stopped(client, prefix, caplog):
     # Hacking children
     response = client.post(
         f"/child-barcodes/{prefix}/new",
@@ -276,6 +280,7 @@ def test_new_child_barcode_impostor_children_without_possible_parent_can_be_stop
     )
     assert response.json == {"errors": ["InvalidParentBarcode"]}
     assert response.status_code == HTTPStatus.INTERNAL_SERVER_ERROR
+    assert "The barcode provided is an impostor barcode. It has no parent." in caplog.text
 
 
 @pytest.mark.parametrize("prefix", CHILD_BARCODE_PREFIXES)
@@ -302,7 +307,7 @@ def test_new_child_barcode_children_of_invalid_parent_can_create_children(client
 
 
 @pytest.mark.parametrize("prefix", CHILD_BARCODE_PREFIXES)
-def test_new_child_barcode_with_unknown_prefix_rejects_request(client, prefix):
+def test_new_child_barcode_with_unknown_prefix_rejects_request(client, prefix, caplog):
     response = client.post(
         "/child-barcodes/unknown/new",
         data=json.dumps({"barcode": "SANG-1", "count": 3}),
@@ -310,28 +315,31 @@ def test_new_child_barcode_with_unknown_prefix_rejects_request(client, prefix):
     )
     assert response.json == {"errors": ["InvalidPrefixError"]}
     assert response.status_code == HTTPStatus.INTERNAL_SERVER_ERROR
+    assert "InvalidPrefixError: Invalid prefix for Heron barcode unknown" in caplog.text
 
 
 @pytest.mark.parametrize("prefix", CHILD_BARCODE_PREFIXES)
-def test_no_child_barcode(client, prefix):
+def test_no_child_barcode(client, prefix, caplog):
     response = client.post(
         "/child-barcodes/test/new", data=json.dumps({}), headers={"Content-Type": "application/json"}
     )
     assert response.json == {"errors": ["InvalidBarcodeError"]}
     assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+    assert "InvalidBarcodeError: Please add the 'barcode' param to the request" in caplog.text
 
 
 @pytest.mark.parametrize("prefix", CHILD_BARCODE_PREFIXES)
-def test_bad_child_barcode(client, prefix):
+def test_bad_child_barcode(client, prefix, caplog):
     response = client.post(
         "/child-barcodes/test/new", data=json.dumps({"barcode": " "}), headers={"Content-Type": "application/json"}
     )
     assert response.json == {"errors": ["InvalidBarcodeError"]}
     assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+    assert "InvalidBarcodeError: Please add the 'barcode' param to the request" in caplog.text
 
 
 @pytest.mark.parametrize("prefix", CHILD_BARCODE_PREFIXES)
-def test_bad_count(client, prefix):
+def test_bad_count(client, prefix, caplog):
     response = client.post(
         "/child-barcodes/test/new",
         data=json.dumps({"barcode": "test", "count": 0}),
@@ -339,3 +347,4 @@ def test_bad_count(client, prefix):
     )
     assert response.json == {"errors": ["InvalidCountError"]}
     assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+    assert "InvalidCountError: Please add the 'count' param to the request" in caplog.text

@@ -47,12 +47,16 @@ def get_new_barcode_group(prefix: str) -> Tuple[Any, int]:
         )
 
     except InvalidPrefixError as e:
+        logger.error(f"{e} {prefix}")
         return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.BAD_REQUEST
     except InvalidCountError as e:
+        logger.error(e)
         return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.UNPROCESSABLE_ENTITY
     except BadRequest as e:
+        logger.error(e)
         return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.BAD_REQUEST
     except Exception as e:
+        logger.error(e)
         return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.INTERNAL_SERVER_ERROR
 
 
@@ -78,8 +82,10 @@ def get_new_barcode(prefix: str) -> Tuple[Any, int]:
         return barcode.to_dict(), HTTPStatus.CREATED
 
     except InvalidPrefixError as e:
+        logger.error(f"{e} {prefix}")
         return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.BAD_REQUEST
     except Exception as e:
+        logger.error(e)
         return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.INTERNAL_SERVER_ERROR
 
 
@@ -107,8 +113,10 @@ def get_last_barcode(prefix: str) -> Tuple[Any, int]:
         return barcode.to_dict(), HTTPStatus.OK
 
     except InvalidPrefixError as e:
+        logger.error(f"{e} {prefix}")
         return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.BAD_REQUEST
     except Exception as e:
+        logger.error(e)
         return {"errors": [f"{type(e).__name__}"]}, HTTPStatus.INTERNAL_SERVER_ERROR
 
 
@@ -124,7 +132,7 @@ def positive_value(value: int) -> int:
     """
     if value > 0:
         return value
-    raise InvalidCountError()
+    raise InvalidCountError("Count value is not a positive integer")
 
 
 def get_count_param():
@@ -141,7 +149,13 @@ def get_count_param():
 
     """
     if "count" in request.values:
-        return positive_value(int(request.values["count"]))
+        try:
+            # int can throw an exception if the value is not convertible
+            count = int(request.values["count"])
+        except ValueError:
+            raise InvalidCountError("Count value is not a valid integer")
+
+        return positive_value(count)
     else:
         try:
             if request.json and ("count" in request.json):
