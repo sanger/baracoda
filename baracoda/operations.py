@@ -4,12 +4,11 @@ from datetime import datetime
 from typing import List, Optional, cast
 from xmlrpc.client import Boolean
 
-from sqlalchemy import text
-
 from baracoda.db import db
 from baracoda.exceptions import InvalidPrefixError
 from baracoda.helpers import get_prefix_item
 from baracoda.orm.barcode import Barcode
+from baracoda.orm.barcode_sequence import BarcodeSequence
 from baracoda.orm.child_barcode import ChildBarcode
 from baracoda.orm.barcodes_group import BarcodesGroup
 from baracoda.formats.interfaces import FormatterInterface
@@ -195,7 +194,7 @@ class BarcodeOperations:
         """Creates a new barcode group and the associated barcodes.
 
         Arguments:
-            count {int} -- number of barcodes to create in the group
+            count {int} - number of barcodes to create in the group
 
         Returns:
             BarcodeGroup -- the barcode group created
@@ -229,32 +228,73 @@ class BarcodeOperations:
         return BarcodesGroup(created_at=datetime.now())
 
     def __get_next_value(self, sequence_name: str) -> int:
-        """Get the next value from the sequence.
+        """Get the next value from the sequence counter table.
+
+        Uses row-level locking to ensure atomic increment.
 
         Arguments:
-            sequence_name {str} -- name of the sequence to query
+            sequence_name {str} - name of the sequence to query
 
         Returns:
-            str -- next value in sequence
+            int - next value in sequence
         """
-        return int(db.session.execute(text(f"SELECT nextval('{sequence_name.lower()}');")).fetchone()[0])
+        try:
+            # Lock the row to prevent race conditions
+            sequence = (
+                db.session.query(BarcodeSequence)
+                .filter_by(sequence_name=sequence_name.lower())
+                .with_for_update()
+                .first()
+            )
+
+            if sequence is None:
+                raise ValueError(f"Sequence '{sequence_name}' not found in barcode_sequence_counter table.")
+
+            # increament and get the next value
+            next_value = sequence.current_value
+            sequence.current_value += 1
+
+            db.session.commit()
+            return next_value
+        except Exception as e:
+            db.session.rollback()
+            raise e
 
     def __get_next_values(self, sequence_name: str, count: int) -> List[int]:
-        """Get the next count values from the sequence.
+        """Get the next count values from the sequence counter table.
+
+        MySQL doesn't have generate_series, so we increment once
+        and return a range.
 
         Arguments:
-            sequence_name {str} -- name of the sequence to query
-            count {int} -- number of values from the sequence to generate
+            sequence_name {str} - name of the sequence to query
+            count {int} - number of values from the sequence to generate
 
         Returns:
-            str -- next value in sequence
+            List[int] - list of next values in sequence
         """
-        return [
-            int(val[0])
-            for val in db.session.execute(
-                text(f"SELECT nextval('{sequence_name.lower()}') FROM    generate_series(1, {count}) l;")
-            ).fetchall()
-        ]
+        try:
+            # Lock the row to prevent race conditions
+            sequence = (
+                db.session.query(BarcodeSequence)
+                .filter_by(sequence_name=sequence_name.lower())
+                .with_for_update()
+                .first()
+            )
+
+            if sequence is None:
+                raise ValueError(f"Sequence '{sequence_name}' not found in barcode_sequence_counter table.")
+
+            # Get the current value and increment by count
+            start_value = sequence.current_value
+            sequence.current_value += count
+
+            db.session.commit()
+            # return the range of values
+            return list(range(start_value, start_value + count))
+        except Exception as e:
+            db.session.rollback()
+            raise e
 
     def __set_prefix_item(self):
         """Get the prefix details.
