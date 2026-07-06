@@ -148,9 +148,9 @@ The test suite requires a test database, currently named `baracoda_test`.
 Create the database using a MySQL client:
 
 ```sql
-create database baracoda_test;
-grant all privileges on baracoda_test.* TO 'mysql'@'localhost';
-flush privileges; 
+CREATE DATABASE baracoda_test;
+GRANT ALL PRIVILEGES on baracoda_test.* TO 'mysql'@'localhost';
+FLUSH PRIVILEGES; 
 ```
 
 ### Running Tests
