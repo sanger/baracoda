@@ -4,12 +4,12 @@
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![codecov](https://codecov.io/gh/sanger/baracoda/branch/develop/graph/badge.svg)](https://codecov.io/gh/sanger/baracoda)
 
-Barcode generation using postgres sequences and pre-defined prefixes.
+Barcode generation using MySQL counter tables and pre-defined prefixes.
 
 ## Features
 
-Baracoda is a JSON-based microservice written in Python and backed in a
-PostgreSQL database, with the purpose of handling the creation
+Baracoda is a JSON-based microservice written in Python and backed by a
+MySQL database, with the purpose of handling the creation
 of new barcodes for the LIMS application supported currently in PSD.
 
 These are some of the key features currently supported:
@@ -45,8 +45,6 @@ These are some of the key features currently supported:
   - [Children barcode creation](#children-barcode-creation)
     - [Wrong parent barcodes](#wrong-parent-barcodes)
     - [Child Barcode Generation Logic Workflow](#child-barcode-generation-logic-workflow)
-  - [Troubleshooting](#troubleshooting)
-    - [Installing psycopg2](#installing-psycopg2)
   - [Updating the Table of Contents](#updating-the-table-of-contents)
 
 <!-- tocstop -->
@@ -56,45 +54,43 @@ These are some of the key features currently supported:
 The following tools are required for development:
 
 - python (use `pyenv` or something similar to install the python version specified in the `Pipfile`)
-- postgresql server and `pg_config` library
-  - if using homebrew (this will install both the server and library):
+- MySQL server (version 8.0)
+  - if using homebrew:
 
     ```shell
-    brew install postgresql
-    brew link postgresql --force
+    brew install mysql@8.0
+    brew services start mysql@8.0
     ```
 
-    postgresql@14.1 is used in production.
-    postgresql@14.6 is used in training.
-    postgresql@14.5 is used in UAT.
+    MySQL 8.0 is used across all environments (production, training, UAT).
 
-    Create the development database and user using a RDBMS GUI or by running this query in a client:
+    Create the development database and user using a MySQL client:
 
     ```shell
-    psql postgres
+    mysql -u root
     ```
 
-    Create a role for postgres and grant login permissions:
+    Create a user for the application:
 
     ```sql
-    create role postgres LOGIN;
+    CREATE USER 'mysql'@'localhost' IDENTIFIED BY 'mysql';
     ```
 
-    Create the database:
+    Create the database and grant permissions:
 
     ```sql
-    create database baracoda_dev;
-    grant all privileges on database baracoda_dev to postgres;
+    CREATE DATABASE baracoda_dev;
+    GRANT ALL PRIVILEGES ON baracoda_dev.* TO 'mysql'@'localhost';
+    FLUSH PRIVILEGES;
     ```
 
-  - to spin up a server using Docker (the `pg_config` library will still be needed by the
-application), use the `docker-compose.yml` file:
+  - to spin up a server using Docker, use the `docker-compose.yml` file:
 
     ```shell
     docker compose up -d
     ```
 
-    The compose service automatically creates the `baracoda_dev` database and `postgres` user.
+    The compose service automatically creates the `baracoda_dev` database and `mysql` user.
 
 - Git hooks are executed using [lefthook](https://github.com/evilmartians/lefthook), install
   lefthook using homebrew and add the pre-commit and pre-push hooks as follows:
@@ -122,7 +118,6 @@ application), use the `docker-compose.yml` file:
    pipenv install --dev
    ```
 
-   See the [Troubleshooting](#troubleshooting) section for any commonly encountered installation issues.
 
 1. Create the required sequences and tables:
 
@@ -150,11 +145,12 @@ flask run
 
 The test suite requires a test database, currently named `baracoda_test`.
 
-Create the database using a RDBMS GUI or by running this query in a client:
+Create the database using a MySQL client:
 
 ```sql
 create database baracoda_test;
-grant all privileges on database baracoda_test to postgres;
+grant all privileges on baracoda_test.* TO 'mysql'@'localhost';
+flush privileges; 
 ```
 
 ### Running Tests
@@ -288,9 +284,8 @@ These are the allowed keywords that we can specify to configure a prefix:
 
 - ```prefix```: This is the string that represents the prefix we are configuring for
 supporting new barcodes.
-- ```sequence_name```: This is the sequence name in the PostgreSQL database which will
-keep record of the last index created for a barcode. Prefixes can share the same
-sequence.
+- ```sequence_name```: This is the counter name in the MySQL database which will
+keep record of the next index to be used for a barcode. Prefixes can share the same counter.
 - ```formatter_class```: Defines the class that will generate the string that represents
 a new barcode by using the prefix and the new value obtained from the sequence.
 If we want to support a new formatter class we have to provide a class that implements
@@ -416,32 +411,3 @@ graph TD;
   ChildExist2 -->|No|ChildrenBarcodes;
 ```
 
-### Troubleshooting
-
-#### Installing psycopg2
-
-If errors are experienced while pipenv attempts to install `psycopg2`, try this:
-
-```shell
-LDFLAGS=`echo $(pg_config --ldflags)` pipenv install --dev
-```
-
-You can also try installing `psycopg2` from the binary, which avoids the need for `pg_config` locally.
-To install `psycopg2` as a binary, change the `psycopg2` entry in the Pipfile to say `psycopg2-binary` instead, and then run:
-
-```shell
-pipenv install psycopg2-binary
-```
-
-You can then run `pipenv install --dev` again to get all the other dependencies installed.
-This approach should allow you to install the postgres python driver (psycopg2) locally, without having a local copy of postgres. Use docker to run postgres as described in the 'Requirements for Development' section.
-Don't commit your changes to the Pipfile or Pipfile.lock.
-
-### Updating the Table of Contents
-
-To update the table of contents after adding things to this README you can use the [markdown-toc](https://github.com/jonschlinkert/markdown-toc)
-node module. To run:
-
-```shell
-npx markdown-toc --bullets="-" -i -- README.md
-```

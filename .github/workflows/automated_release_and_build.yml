@@ -13,19 +13,20 @@ jobs:
   build_test_release_push:
     runs-on: ubuntu-latest
     services:
-      postgres:
-        image: postgres
+      mysql:
+        image: mysql:8.0
         ports:
-          - 5432:5432
+          - 3306:3306
         env:
-          POSTGRES_USER: "postgres"
-          POSTGRES_PASSWORD: "postgres"
-          POSTGRES_DB: "baracoda_test"
+          MYSQL_ROOT_PASSWORD: "mysql"
+          MYSQL_DATABASE: "baracoda_test"
+          MYSQL_USER: "mysql"
+          MYSQL_PASSWORD: "mysql"
         options: >-
-          --health-cmd pg_isready
-          --health-interval 20s
-          --health-timeout 10s
-          --health-retries 5
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
     steps:
       - uses: actions/checkout@v4
 
@@ -42,6 +43,10 @@ jobs:
           docker run
           --network host
           --env SETTINGS_PATH=config/test.py
+          --env MYSQL_ROOT_PASSWORD=mysql
+          --env MYSQL_DATABASE=baracoda_test
+          --env MYSQL_USER=mysql
+          --env MYSQL_PASSWORD=mysql
           --entrypoint=""
           docker.pkg.github.com/${IMAGE_NAME}:${BRANCH_NAME}
           python -m pytest --no-cov -vx

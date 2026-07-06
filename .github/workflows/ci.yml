@@ -95,23 +95,23 @@ jobs:
         run: |
           python -m mypy .
   test:
-  runs-on: ubuntu-latest
-  needs: setup
-  services:
-    mysql:  # Was: postgres
-      image: mysql:8.0  # Was: postgres:14.5
-      ports:
-        - 3306:3306  # Was: 5432:5432
-      env:
-        MYSQL_ROOT_PASSWORD: "mysql"  # Was: POSTGRES_PASSWORD
-        MYSQL_DATABASE: "baracoda_test"  # Was: POSTGRES_DB
-        MYSQL_USER: "mysql"  # Was: POSTGRES_USER
-        MYSQL_PASSWORD: "mysql"  # New: required for MYSQL_USER
-      options: >-
-        --health-cmd="mysqladmin ping --silent"  # Was: pg_isready
-        --health-interval=10s  # Was: 20s
-        --health-timeout=5s  # Was: 10s
-        --health-retries=3  # Was: 5
+    runs-on: ubuntu-latest
+    needs: setup
+    services:
+      mysql:  
+        image: mysql:8.0  
+        ports:
+          - 3306:3306  
+        env:
+          MYSQL_ROOT_PASSWORD: "mysql"  
+          MYSQL_DATABASE: "baracoda_test"  
+          MYSQL_USER: "mysql"  
+          MYSQL_PASSWORD: "mysql"  
+        options: >-
+          --health-cmd="mysqladmin ping --silent" 
+          --health-interval=10s  
+          --health-timeout=5s  
+          --health-retries=3  
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
