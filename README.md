@@ -54,15 +54,15 @@ These are some of the key features currently supported:
 The following tools are required for development:
 
 - python (use `pyenv` or something similar to install the python version specified in the `Pipfile`)
-- MySQL server (version 8.0)
+- MySQL server (version 8.4 or later)
   - if using homebrew:
 
     ```shell
-    brew install mysql@8.0
-    brew services start mysql@8.0
+    brew install mysql@8.4
+    brew services start mysql@8.4
     ```
 
-    MySQL 8.0 is used across all environments (production, training, UAT).
+    MySQL 8.4 is used across all environments (production, training, UAT).
 
     Create the development database and user using a MySQL client:
 

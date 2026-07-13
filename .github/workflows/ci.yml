@@ -98,10 +98,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: setup
     services:
-      mysql:  
-        image: mysql:8.0  
+      mysql:
+        image: mysql:8.4
         ports:
-          - 3306:3306  
+          - 3306:3306
         env:
           MYSQL_ROOT_PASSWORD: "mysql"  
           MYSQL_DATABASE: "baracoda_test"  

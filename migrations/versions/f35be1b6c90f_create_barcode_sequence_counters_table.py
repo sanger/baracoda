@@ -26,19 +26,12 @@ def upgrade():
         sa.PrimaryKeyConstraint("sequence_name"),
     )
 
-    # Initialize all 6 sequences with their start values
-    op.execute(
-        """
-        INSERT INTO barcode_sequence_counters (sequence_name, current_value)
-        VALUES
-            ('heron', 200000),
-            ('ht', 111111),
-            ('sqp', 1),
-            ('csm', 111111),
-            ('pam', 111111),
-            ('rvi', 111111)
-    """
-    )
+    # IMPORTANT: Counter values must be seeded manually during deployment
+    # from the current PostgreSQL sequence values in production.
+    # DO NOT auto-populate - this must be done carefully to avoid duplicate barcodes.
+    # Set each sequence_name to (current_postgres_value + 1) to continue numbering.
+    # Example: if SQP is currently at 9000 in PostgreSQL, set it to 9001 here.
+    # This should be done via a separate deployment script before going live.
 
 
 def downgrade():

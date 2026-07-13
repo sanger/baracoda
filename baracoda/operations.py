@@ -250,7 +250,7 @@ class BarcodeOperations:
             if sequence is None:
                 raise ValueError(f"Sequence '{sequence_name}' not found in barcode_sequence_counter table.")
 
-            # increament and get the next value
+            # increment and get the next value
             next_value = sequence.current_value
             sequence.current_value += 1
 
