@@ -24,6 +24,7 @@ def upgrade():
         sa.Column("sequence_name", sa.String(50), nullable=False),
         sa.Column("current_value", sa.Integer(), nullable=False),
         sa.PrimaryKeyConstraint("sequence_name"),
+        if_not_exists=True,
     )
 
     # IMPORTANT: Counter values must be seeded manually during deployment
@@ -35,4 +36,4 @@ def upgrade():
 
 
 def downgrade():
-    op.drop_table("barcode_sequence_counters")
+    op.drop_table("barcode_sequence_counters", if_exists=True)
