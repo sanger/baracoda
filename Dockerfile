@@ -7,11 +7,9 @@ FROM python:3.13-slim
 # https://stackoverflow.com/a/59812588
 ENV PYTHONUNBUFFERED 1
 
-# libpq-dev & gcc: required by psycopg2
+
 RUN apt-get update && apt-get install -y \
   curl \
-  gcc \
-  libpq-dev \
   && rm -rf /var/lib/apt/lists/*
 
 # Install the package manager - pipenv
