@@ -4,7 +4,7 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
-if [ "${SKIP_MIGRATIONS:-true}" != "true" ]; then
+if [ "${RUN_MIGRATIONS:-false}" = "true" ]; then
   echo "Running migrations..."
   flask db upgrade
   echo "Database migrated"
