@@ -40,5 +40,7 @@ ENTRYPOINT ["flask"]
 CMD ["run"]
 
 # https://docs.docker.com/engine/reference/builder/#healthcheck
-HEALTHCHECK --interval=30s --timeout=5s \
+# start-period covers the time entrypoint.sh spends running migrations before gunicorn binds the port,
+# preventing Swarm from killing/restarting the container (and re-running migrations) while they're still in progress
+HEALTHCHECK --interval=30s --timeout=5s --start-period=180s \
   CMD curl -Lf http://localhost:8000/health || exit 1
