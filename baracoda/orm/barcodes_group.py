@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, Integer, Sequence
+from sqlalchemy import Column, DateTime, Integer
 from sqlalchemy.orm import relationship
 
 from baracoda.orm.base import Base
@@ -7,7 +7,7 @@ from baracoda.orm.base import Base
 class BarcodesGroup(Base):
     __tablename__ = "barcodes_groups"
 
-    id = Column(Integer, Sequence("barcodes_groups_id_seq"), primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     created_at = Column(DateTime)
     barcodes = relationship("Barcode", back_populates="barcodes_group", uselist=True)  # type: ignore
 

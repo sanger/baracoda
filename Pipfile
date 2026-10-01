@@ -4,7 +4,7 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-black = "*"
+black = "~=24.1"
 coverage = {extras = ["toml"],version = "*"}
 flake8 = "*"
 mypy = "*"
@@ -21,7 +21,7 @@ flask = "~=3.1"
 flask-cors = "~=6.0"
 flask-sqlalchemy = "~=3.1"
 gunicorn = "~=23.0"
-psycopg2 = "~=2.9"
+PyMySQL = "~=1.1"
 python-dotenv = "~=1.2"
 slackclient = "~=2.5"
 sqlalchemy = "~=2.0"

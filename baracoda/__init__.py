@@ -42,8 +42,11 @@ def create_app(test_config=None):
 
     if test_config is None:
         # load the config, if it exists, when not testing
-        # app.config.from_pyfile("config.py", silent=True)
-        app.config.from_envvar("SETTINGS_PATH")
+        # Use SETTINGS_PATH env var if set, otherwise use defaults
+        import os
+
+        settings_path = os.environ.get("SETTINGS_PATH", "config/defaults.py")
+        app.config.from_pyfile(settings_path)
     else:
         # load the test config if passed in
         app.config.from_mapping(test_config)

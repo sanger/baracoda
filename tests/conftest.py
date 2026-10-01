@@ -12,16 +12,16 @@ def app():
     app = create_app(
         {
             "DB_HOST": "localhost",
-            "DB_PORT": 5432,
-            "DB_USER": "postgres",
-            "DB_PASSWORD": "postgres",
+            "DB_PORT": 3306,  # Was: 5432
+            "DB_USER": "mysql",
+            "DB_PASSWORD": "mysql",
             "DB_DBNAME": "baracoda_test",
             "SEQUENCE_NAME": "heron",
             "SEQUENCE_START": "200000",
             "SEQUENCE_RESET": True,
             "SLACK_API_TOKEN": "",
             "SLACK_CHANNEL_ID": "",
-            "SQLALCHEMY_DATABASE_URI": "postgresql+psycopg2://postgres:postgres@localhost:5432/baracoda_test",
+            "SQLALCHEMY_DATABASE_URI": "mysql+pymysql://mysql:mysql@localhost:3306/baracoda_test",
             "PREFIXES": PREFIXES,
         }
     )
