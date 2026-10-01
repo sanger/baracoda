@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, Sequence, String
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 from baracoda.orm.base import Base
@@ -7,7 +7,7 @@ from baracoda.orm.base import Base
 class Barcode(Base):
     __tablename__ = "barcodes"
 
-    id = Column(Integer, Sequence("barcodes_id_seq"), primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     barcode = Column(String(255), nullable=False)
     prefix = Column(String(32), nullable=False)
     barcodes_group_id = Column(Integer, ForeignKey("barcodes_groups.id"), nullable=True, default=None, index=True)

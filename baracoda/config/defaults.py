@@ -9,10 +9,10 @@ from baracoda.types import PrefixesType
 ###
 DB_DBNAME = "baracoda_dev"
 DB_HOST = "localhost"
-DB_PASSWORD = "postgres"
-DB_PORT = "5432"
-DB_USER = "postgres"
-SQLALCHEMY_DATABASE_URI = f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_DBNAME}"
+DB_PASSWORD = "mysql"
+DB_PORT = "3306"
+DB_USER = "mysql"
+SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_DBNAME}"
 
 ###
 # sequence config
