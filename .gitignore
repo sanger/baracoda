@@ -130,3 +130,5 @@ dmypy.json
 
 # IDE
 .vscode
+safety_requirements_*.txt
+requirements.txt
