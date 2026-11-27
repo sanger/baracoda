@@ -4,7 +4,6 @@ from baracoda.exceptions import InvalidPrefixError
 from baracoda.helpers import get_prefix_item
 from baracoda.operations import BarcodeOperations, InvalidParentBarcode
 
-
 # BarcodeOperations
 
 
